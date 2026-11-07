@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Lesson, Scene } from "@/lib/schema";
+import SiteHeader from "@/components/ui/SiteHeader";
 
 type LessonStep = {
   chapterIndex: number;
@@ -22,7 +23,7 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
         <span className="visual-tag">A CODETUTOR MINI-LESSON</span>
         <h2>{scene.heading}</h2>
         {scene.subheading && <p>{scene.subheading}</p>}
-        <span className="visual-title-spark">✳</span>
+        <span className="visual-title-spark" aria-hidden="true">&lt;/&gt;</span>
       </div>
     );
   }
@@ -85,11 +86,11 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
       <div className="visual-diagram-scene">
         <div className="diagram-caption"><span className="diagram-live-dot" /> STEP THROUGH THE ARRAY</div>
         <div className="array-cells">
-        {diagram.values.map((value, index) => (
+          {diagram.values.map((value, index) => (
             <div className="array-cell-wrap" key={`${value}-${index}`}>
-            <div className={`array-cell ${diagram.highlight.includes(index) ? "array-cell-active" : ""}`}>{value}</div>
+              <div className={`array-cell ${diagram.highlight.includes(index) ? "array-cell-active" : ""}`}>{value}</div>
               <span>{index}</span>
-            {diagram.pointers.filter((pointer) => pointer.index === index).map((pointer) => (
+              {diagram.pointers.filter((pointer) => pointer.index === index).map((pointer) => (
                 <b className="array-pointer" key={pointer.label}>{pointer.label} <i>↑</i></b>
               ))}
             </div>
@@ -101,7 +102,7 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
 
   return (
     <div className="visual-recap-scene">
-      <span className="recap-spark">✳</span>
+      <span className="recap-spark" aria-hidden="true">&lt;/&gt;</span>
       <span className="visual-tag">THE BIG TAKEAWAYS</span>
       <h2>Keep these in<br />your toolkit.</h2>
       <ol>{scene.points.map((point, index) => <li key={point}><span>0{index + 1}</span>{point}</li>)}</ol>
@@ -140,11 +141,7 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
 
   return (
     <main className="lesson-shell">
-      <header className="lesson-topbar">
-        <a className="lesson-back" href="/"><span>←</span> Back to home</a>
-        <a className="brand lesson-brand" href="/"><span className="brand-mark">✳</span><span>codetutor<span className="brand-period">.</span></span></a>
-        <span className="lesson-top-label">SAMPLE LESSON <i /></span>
-      </header>
+      <SiteHeader badge="SAMPLE LESSON" />
 
       <div className="lesson-layout">
         <section className="lesson-main">
@@ -158,7 +155,7 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
           </div>
 
           <div className="lesson-player">
-            <SceneVisual scene={step.scene} language={lesson.codeLanguage} />
+            <SceneVisual key={step.scene.id} scene={step.scene} language={lesson.codeLanguage} />
             <div className="player-controls">
               <div className="player-control-row">
                 <button className="play-button" type="button" aria-label={playing ? "Pause auto-play" : "Auto-play lesson preview"} onClick={() => {
@@ -198,7 +195,7 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
 
           {lesson.practice && (
             <section className="practice-card">
-              <div className="practice-card-icon">✳</div>
+              <div className="practice-card-icon">✓</div>
               <div className="practice-copy">
                 <span className="section-eyebrow">YOUR TURN</span>
                 <h2>Ready to try one?</h2>
@@ -246,11 +243,11 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
           </div>
 
           <div className="sidebar-note">
-            <span>✳</span>
+            <span className="sidebar-note-arrow">↳</span>
             <b>Take it at your pace.</b>
             <p>Click any moment in the transcript to jump right to it.</p>
           </div>
-          <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>✳</span></div>
+          <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>●</span></div>
         </aside>
       </div>
     </main>

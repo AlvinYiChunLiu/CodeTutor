@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "title": "Loops: repeat with purpose",
+  "summary": "Use a loop to repeat instructions while changing one value each time.",
+  "level": "beginner",
+  "codeLanguage": "javascript",
+  "chapters": [
+    {
+      "id": "loops-basics",
+      "title": "Repeat a task",
+      "scenes": [
+        {
+          "id": "loops-title-01",
+          "type": "title",
+          "heading": "Loops, one step at a time.",
+          "subheading": "Repeat instructions without repeating code.",
+          "narration": "A loop repeats a set of instructions, changing one value each time."
+        },
+        {
+          "id": "loops-code-01",
+          "type": "code",
+          "code": "const names = [\"Mina\", \"Leo\", \"Asha\"];\n\nfor (const name of names) {\n  console.log(`Hello, ${name}!`);\n}",
+          "highlightLines": [3, 4, 5],
+          "narration": "A for of loop takes each name from the list and runs the same instruction for it."
+        },
+        {
+          "id": "loops-output-01",
+          "type": "output",
+          "output": "Hello, Mina!\nHello, Leo!\nHello, Asha!",
+          "narration": "The loop prints one greeting for every name in the list."
+        },
+        {
+          "id": "loops-recap-01",
+          "type": "recap",
+          "points": [
+            "A loop repeats a block of instructions",
+            "Each pass can use a different value",
+            "The loop ends when the collection is finished"
+          ],
+          "narration": "Use a loop when the same action needs to happen for several values."
+        }
+      ]
+    }
+  ]
+}

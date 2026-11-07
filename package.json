@@ -10,6 +10,9 @@
     "validate": "tsx scripts/validate-sample.ts",
     "video:audio": "tsx scripts/generate-lesson-audio.ts",
     "video:render": "remotion render remotion/index.ts RecursionLesson public/videos/recursion-lesson.mp4",
+    "video:render:loops": "remotion render remotion/index.ts LoopsLesson public/videos/loops-lesson.mp4",
+    "video:render:variables": "remotion render remotion/index.ts VariablesLesson public/videos/variables-lesson.mp4",
+    "video:render:silent-samples": "npm run video:render:loops && npm run video:render:variables",
     "video": "npm run video:audio && npm run video:render"
   },
   "dependencies": {

@@ -110,7 +110,7 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
   );
 }
 
-export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
+export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursion-lesson.mp4" }: { lesson: Lesson; videoSrc?: string }) {
   const steps = useMemo<LessonStep[]>(
     () => lesson.chapters.flatMap((chapter, chapterIndex) => chapter.scenes.map((scene, sceneIndex) => ({ chapterIndex, sceneIndex, scene }))),
     [lesson],
@@ -121,6 +121,7 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
   const step = steps[activeStep] ?? steps[0];
   const activeChapter = step?.chapterIndex ?? 0;
   const progress = steps.length > 1 ? (activeStep / (steps.length - 1)) * 100 : 100;
+  const hasNarrationAudio = steps.some(({ scene }) => Boolean(scene.audio?.url));
 
   useEffect(() => {
     if (!playing) return;
@@ -179,14 +180,14 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
           <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <span className="section-eyebrow">VIDEO EXPORT</span>
-                <h2 className="mt-2 text-xl font-semibold text-neutral-100">Narrated lesson video</h2>
+                <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
+                <h2 className="mt-2 text-xl font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
               </div>
-              <a className="rounded-md border border-white/15 px-4 py-2 text-sm text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href="/videos/recursion-lesson.mp4" download>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-sm text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
                 Download MP4
               </a>
             </div>
-            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src="/videos/recursion-lesson.mp4">
+            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src={videoSrc}>
               Your browser does not support HTML video.
             </video>
           </section>

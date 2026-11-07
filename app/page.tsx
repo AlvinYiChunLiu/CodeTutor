@@ -143,16 +143,16 @@ export default function Home() {
         </div>
         <div className="gallery-grid">
           <Link className="gallery-card gallery-featured" href="/lesson">
-            <div className="gallery-visual visual-recursion"><span>n!</span><div className="recursion-steps"><i>3</i><b>×</b><i>2</i><b>×</b><i>1</i><b>=</b><strong>6</strong></div></div>
+            <div className="gallery-visual gallery-video"><video src="/videos/recursion-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">WITH VOICEOVER</span></div>
             <div className="gallery-card-copy"><div><span className="gallery-tag">VISUAL LESSON</span><span className="gallery-time">4 MIN</span></div><h3>Recursion, without the headache</h3><p>Follow each function call and see how the answer comes back.</p><span className="gallery-open">Try this lesson <ArrowIcon /></span></div>
           </Link>
-          <Link className="gallery-card" href="/generate">
-            <div className="gallery-visual visual-code"><CodeIcon /><span>input</span><i>→</i><b>aha!</b></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">CODE WALKTHROUGH</span><span className="gallery-time">YOUR PACE</span></div><h3>Make tricky code feel simple</h3><p>Upload a snippet and choose how you want to understand it.</p><span className="gallery-open">Bring your own code <ArrowIcon /></span></div>
+          <Link className="gallery-card" href="/lesson/loops">
+            <div className="gallery-visual gallery-video"><video src="/videos/loops-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Loops, one step at a time</h3><p>See how one loop handles a list of names.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
-          <Link className="gallery-card" href="/generate">
-            <div className="gallery-visual visual-practice"><span className="practice-number">01</span><div className="practice-line" /><div className="practice-line short" /><div className="practice-choice"><b>A</b><span>Give it a try</span><i>✓</i></div></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">PRACTICE & QUIZZES</span><span className="gallery-time">JUST FOR YOU</span></div><h3>Learn it, then lock it in</h3><p>Turn your code into a quick quiz, flashcards, or a mini challenge.</p><span className="gallery-open">Make a practice set <ArrowIcon /></span></div>
+          <Link className="gallery-card" href="/lesson/variables">
+            <div className="gallery-visual gallery-video"><video src="/videos/variables-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Give a value a name</h3><p>Learn how variables store and update information.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
         </div>
       </section>

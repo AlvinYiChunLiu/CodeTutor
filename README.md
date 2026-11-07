@@ -1,27 +1,26 @@
-# HackCamp Full-Stack Starter
+# CodeTutor (HackCamp)
 
-A small website starter with a React front end, Vite dev server, Tailwind CSS, and a Node.js/Express API.
+Turns pasted code or a programming concept into a narrated explainer video.
 
-## Requirements
+Stack: Next.js (App Router) · React · Tailwind CSS · Remotion · Shiki
 
-- Node.js 20.19+ or 22.12+
-- npm
+## Setup
 
-## Run locally
+1. `npm install`
+2. `cp .env.example .env.local`, then fill in the keys (never commit `.env.local`)
+3. `npm run dev`, then open http://localhost:3000
 
-```bash
-npm install
-npm run dev
-```
+API keys are only read on the server (`app/api/*/route.ts` and `lib/`). Don't prefix them with `NEXT_PUBLIC_`.
 
-Open the Vite URL shown in the terminal (usually `http://localhost:5173`). The Express API runs on port 3001, and Vite proxies `/api` requests to it.
+## Folders
 
-## Included
-
-- Responsive React workspace with a working notes form
-- Tailwind CSS v4 through its Vite plugin
-- Express endpoints: `GET /api/health`, `GET /api/notes`, `POST /api/notes`, and `DELETE /api/notes/:id`
-- `npm run build` to create the production front-end bundle in `dist/`
-- `npm start` to run the API server
-
-Notes are held in memory and reset when the server restarts. Add a database and authentication before using this as a production app. In production, serve the built `dist/` directory through a static host or add static-file serving to Express.
+| Folder | What goes there |
+| --- | --- |
+| `app/` | Pages (`page.tsx`) and API routes (`api/*/route.ts`) |
+| `components/ui/` | React UI components |
+| `lib/ai/` | LLM calls: planner, writer, checker, prompts |
+| `lib/tts/` | Text-to-speech |
+| `lib/schema.ts` | Lesson JSON schema shared by everyone |
+| `remotion/` | Video composition, scenes and diagrams |
+| `mocks/` | Sample lesson for building without API calls |
+| `scripts/` | `npm run validate` checks the sample lesson against the schema |

@@ -7,10 +7,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "validate": "tsx scripts/validate-sample.ts"
+    "validate": "tsx scripts/validate-sample.ts",
+    "video:audio": "tsx scripts/generate-lesson-audio.ts",
+    "video:render": "remotion render remotion/index.ts RecursionLesson public/videos/recursion-lesson.mp4",
+    "video": "npm run video:audio && npm run video:render"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.77.0",
     "@remotion/player": "^4.0.541",
+    "dotenv": "^18.0.9",
     "next": "^15.5.29",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -19,6 +24,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@remotion/cli": "^4.0.541",
     "@tailwindcss/postcss": "^4.3.5",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",

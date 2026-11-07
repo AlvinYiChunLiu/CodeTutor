@@ -3,7 +3,7 @@
  * shared Lesson schema. Anything it can't safely repair is returned as `issues`
  * so the Writer can fix it on a retry.
  */
-import { Lesson } from "../schema";
+import { Lesson, Scene } from "../schema";
 import type { Plan } from "./planner";
 import type { LessonRequest } from "./request";
 
@@ -148,14 +148,36 @@ export function checkLesson(
     }
   }
 
+  // Last attempt: salvage instead of failing. Drop scenes the schema rejects (e.g. an invented
+  // scene type or diagram kind) and fill in an empty recap.
+  if (ctx.lastAttempt) {
+    chapters = chapters
+      .map((c, ci) => ({
+        ...c,
+        scenes: c.scenes.filter((s: Any, si: number) => {
+          if (s?.type === "recap" && Array.isArray(s.points) && s.points.length === 0) {
+            s.points = chapters.map((ch) => ch.title).slice(0, 5);
+          }
+          const ok = Scene.safeParse({ id: "x", ...s }).success;
+          if (!ok) warnings.push(`dropped invalid scene chapters.${ci}.scenes.${si} (type "${s?.type}")`);
+          return ok;
+        }),
+      }))
+      .filter((c) => c.scenes.length > 0);
+    if (chapters.length === 0) return { ok: false, issues: ["No valid scenes left."], warnings };
+  }
+
+  const codeLines = ctx.plan.mainCode.split("\n").filter((l) => l.trim()).length;
   const n = all().length;
   // Quality gates: ask the writer to fix these, but accept on the last attempt rather than fail.
   if (n < 4) issues.push(`Only ${n} scenes. Write at least 7.`);
-  else if (n < 7 && !ctx.lastAttempt) issues.push(`Only ${n} scenes. Write 7 to 11: split the code walkthrough into more scenes.`);
+  else if (n < (codeLines <= 3 ? 5 : 7) && !ctx.lastAttempt) issues.push(`Only ${n} scenes. Write 7 to 11: split the code walkthrough into more scenes.`);
   const codeScenes = all().filter((s: Any) => s.type === "code");
   const wide = codeScenes.filter((s: Any) => s.highlightLines.length > 4).length;
-  if (!ctx.lastAttempt && codeScenes.length < 3) {
-    issues.push(`Only ${codeScenes.length} code scene(s). Walk through the code in at least 3 code scenes, each highlighting different 1–3 lines.`);
+  // A 2-line program can't have 3 different code scenes, so scale the minimum to the code.
+  const minCode = Math.min(3, Math.max(1, codeLines - 1));
+  if (!ctx.lastAttempt && codeScenes.length < minCode) {
+    issues.push(`Only ${codeScenes.length} code scene(s). Walk through the code in at least ${minCode} code scenes, each highlighting different 1–3 lines.`);
   } else if (!ctx.lastAttempt && wide) {
     issues.push(`${wide} code scene(s) highlight more than 4 lines. Split them so each highlights 1–3 lines.`);
   }

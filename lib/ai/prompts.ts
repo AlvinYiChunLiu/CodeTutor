@@ -114,6 +114,7 @@ Each SCENE is exactly one of:
 { "type": "recap", "points": ["3 to 5 short takeaways"], "narration": "string" }
 
 Rules:
+- Use ONLY these 5 scene types and only "array" or "callstack" diagrams. Never invent others (no "concept", "explanation", "table"). To explain an idea without pointing at code, use a code scene with "highlightLines": [].
 - Follow the plan: one scene per beat, same chapters, same order.
 - The very first scene is "title"; the very last scene is "recap".
 - Code scenes show the main code automatically. Only add a "code" field if you must show a DIFFERENT snippet.

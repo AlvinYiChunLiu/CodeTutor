@@ -26,6 +26,7 @@ export default function GeneratePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   function changeMode(nextMode: CreateMode) {
@@ -90,9 +91,11 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     return;
   }
 
+  if (loading) return;
+  setLoading(true);
   setMessage("Making your lesson… this can take a minute.");
   try {
-    const res = await fetch("/api/lesson?mock=1", {
+    const res = await fetch("/api/lesson", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -108,6 +111,8 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
   } catch (e) {
     setMessage("");
     setError((e as Error).message || "Couldn’t make the lesson. Try again.");
+  } finally {
+    setLoading(false);
   }
 }
 
@@ -174,7 +179,7 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
           {error && <p className="generator-message generator-error" role="alert">{error}</p>}
           {message && <p className="generator-message generator-info" role="status">{message} <Link href="/lesson">Try the sample lesson →</Link></p>}
-          <button className="button-primary generate-submit" type="submit">{mode === "new-code" ? "Create my code" : "Make my learning kit"} <ArrowIcon /></button>
+          <button className="button-primary generate-submit" type="submit" disabled={loading}>{loading ? "Making your lesson…" : mode === "new-code" ? "Create my code" : "Make my learning kit"} <ArrowIcon /></button>
           <p className="generator-footnote">Your files stay in this browser. You’re always in control.</p>
         </form>
       </section>

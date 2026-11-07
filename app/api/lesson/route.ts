@@ -38,8 +38,9 @@ export async function POST(req: Request) {
 
   try {
     const { lesson, meta } = await generateLesson(parsed.data, (s) =>
-      console.log(`[lesson] ${s.step}#${s.attempt ?? 1} ${s.ms}ms${s.issues ? ` issues=${s.issues.length}` : ""}`),
+      console.log(`[lesson] ${s.step}#${s.attempt ?? 1} ${s.ms}ms${s.issues ? `\n  ✗ ${s.issues.join("\n  ✗ ")}` : ""}`),
     );
+    if (meta.warnings.length) console.log(`[lesson] warnings: ${meta.warnings.join("; ")}`);
     return Response.json({ lesson, meta });
   } catch (e) {
     console.error("[lesson] failed:", e);

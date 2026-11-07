@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "title": "What is Recursion?",
+  "summary": "A function that solves a problem by calling itself on a smaller version of the same problem.",
+  "level": "beginner",
+  "codeLanguage": "python",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "The idea",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "type": "title",
+          "heading": "What is Recursion?",
+          "subheading": "Functions that call themselves",
+          "narration": "Let's learn recursion: a function that solves a problem by calling itself."
+        },
+        {
+          "id": "c1-s2",
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
+          "highlightLines": [1],
+          "narration": "Here's factorial. It takes a number n and multiplies it by every number below it."
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Base case and recursive case",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
+          "highlightLines": [2, 3],
+          "narration": "First, the base case. When n is one, we stop and return one. Without this, it would never end."
+        },
+        {
+          "id": "c2-s2",
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
+          "highlightLines": [4],
+          "narration": "Otherwise, the function calls itself with n minus one, a slightly smaller problem."
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Watching it run",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              { "call": "factorial(3)", "vars": { "n": "3" } },
+              { "call": "factorial(2)", "vars": { "n": "2" } },
+              { "call": "factorial(1)", "vars": { "n": "1" }, "returns": "1" }
+            ]
+          },
+          "narration": "Each call waits on the stack until the base case returns. Then the answers multiply back up."
+        },
+        {
+          "id": "c3-s2",
+          "type": "output",
+          "output": ">>> factorial(3)\n6",
+          "narration": "Three times two times one gives us six."
+        },
+        {
+          "id": "c3-s3",
+          "type": "recap",
+          "points": [
+            "A recursive function calls itself",
+            "The base case stops the recursion",
+            "Each call works on a smaller problem"
+          ],
+          "narration": "Remember: a base case to stop, and a smaller problem on every call."
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "question": "Write a recursive function sum_to(n) that returns 1 + 2 + ... + n.",
+    "starterCode": "def sum_to(n):\n    pass",
+    "hint": "What should sum_to(1) return?",
+    "solution": "def sum_to(n):\n    if n == 1:\n        return 1\n    return n + sum_to(n - 1)"
+  }
+}

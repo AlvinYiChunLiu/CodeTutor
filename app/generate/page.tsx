@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChangeEvent, DragEvent, FormEvent, useState } from "react";
 import SiteHeader from "@/components/ui/SiteHeader";
+import { useRouter } from "next/navigation";
 
 type CreateMode = "new-code" | "from-code";
 
@@ -25,6 +26,7 @@ export default function GeneratePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const router = useRouter();
 
   function changeMode(nextMode: CreateMode) {
     setMode(nextMode);
@@ -71,24 +73,43 @@ export default function GeneratePage() {
     await loadFile(event.dataTransfer.files[0]);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setMessage("");
-    if (mode === "new-code" && !prompt.trim()) {
-      setError("Tell us what you’d like your code to do first.");
-      return;
-    }
-    if (mode === "from-code" && !source.trim()) {
-      setError("Add a code file or paste the snippet you want to explore.");
-      return;
-    }
-    if (selected.length === 0) {
-      setError("Choose at least one thing you’d like to make.");
-      return;
-    }
-    setMessage("Your choices are ready, but generation isn’t connected yet. For now, explore our sample lesson.");
+async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  setError("");
+  setMessage("");
+  if (mode === "new-code" && !prompt.trim()) {
+    setError("Tell us what you’d like your code to do first.");
+    return;
   }
+  if (mode === "from-code" && !source.trim()) {
+    setError("Add a code file or paste the snippet you want to explore.");
+    return;
+  }
+  if (selected.length === 0) {
+    setError("Choose at least one thing you’d like to make.");
+    return;
+  }
+
+  setMessage("Making your lesson… this can take a minute.");
+  try {
+    const res = await fetch("/api/lesson?mock=1", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        input: mode === "new-code" ? prompt : source,
+        mode,
+        language,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    sessionStorage.setItem("lesson", JSON.stringify(data.lesson));
+    router.push("/lesson");
+  } catch (e) {
+    setMessage("");
+    setError((e as Error).message || "Couldn’t make the lesson. Try again.");
+  }
+}
 
   return (
     <main className="generate-shell">

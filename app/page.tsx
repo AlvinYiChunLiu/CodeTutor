@@ -1,5 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import InputForm, { type LessonInput } from "@/components/ui/InputForm";
+import LoadingSteps from "@/components/ui/LoadingSteps";
 import SiteHeader from "@/components/ui/SiteHeader";
+import { Lesson as LessonSchema } from "@/lib/schema";
 
 function ArrowIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
@@ -14,6 +21,72 @@ function BookIcon() {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isSubmitting) return;
+
+    const timer = window.setInterval(() => {
+      setCurrentStepIndex((step) => Math.min(step + 1, 4));
+    }, 1200);
+    return () => window.clearInterval(timer);
+  }, [isSubmitting]);
+
+  async function handleSubmit(input: LessonInput) {
+    setError("");
+    setCurrentStepIndex(0);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/lesson", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      const result: unknown = await response.json();
+
+      if (!response.ok) {
+        const message = typeof result === "object" && result !== null && "error" in result
+          && typeof result.error === "string"
+          ? result.error
+          : `Lesson generation failed (${response.status}). Please try again.`;
+        throw new Error(message);
+      }
+
+      const lessonData = typeof result === "object" && result !== null && "lesson" in result
+        ? result.lesson
+        : result;
+      const parsedLesson = LessonSchema.safeParse(lessonData);
+      if (!parsedLesson.success) {
+        throw new Error("The lesson response was invalid. Please try again.");
+      }
+
+      window.sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(parsedLesson.data));
+      router.push("/lesson");
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Something went wrong. Please try again.");
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isSubmitting) {
+    return (
+      <main className="main-shell">
+        <SiteHeader />
+        <section className="mx-auto w-[min(560px,calc(100%_-_40px))] py-20">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 text-[var(--ink)] shadow-sm">
+            <h1 className="mb-2 text-2xl font-bold">Creating your lesson</h1>
+            <p className="mb-8 text-sm text-[var(--muted)]">We’re putting together a lesson just for you.</p>
+            <LoadingSteps currentStepIndex={currentStepIndex} />
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="main-shell">
       <SiteHeader />
@@ -46,6 +119,17 @@ export default function Home() {
           <div className="art-sticker sticker-bottom"><span>✓</span> LOOK AT YOU GO</div>
           <span className="art-orbit orbit-a" /><span className="art-orbit orbit-b" />
         </div>
+      </section>
+
+      <section className="mx-auto w-[min(760px,calc(100%_-_40px))] py-12" aria-labelledby="create-lesson-heading">
+        <div className="mb-6 text-center">
+          <span className="page-eyebrow">YOUR TURN</span>
+          <h2 id="create-lesson-heading" className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
+            Make a lesson from your question
+          </h2>
+        </div>
+        {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{error}</p>}
+        <InputForm onSubmit={handleSubmit} />
       </section>
 
       <section className="gallery-section">

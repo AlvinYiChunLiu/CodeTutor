@@ -11,17 +11,27 @@
       "scenes": [
         {
           "id": "c1-s1",
+          "narration": "Let's learn recursion: a function that solves a problem by calling itself.",
+          "audio": {
+            "url": "audio/c1-s1.mp3",
+            "durationSec": 5.0181875
+          },
           "type": "title",
           "heading": "What is Recursion?",
-          "subheading": "Functions that call themselves",
-          "narration": "Let's learn recursion: a function that solves a problem by calling itself."
+          "subheading": "Functions that call themselves"
         },
         {
           "id": "c1-s2",
+          "narration": "Here's factorial. It takes a number n and multiplies it by every number below it.",
+          "audio": {
+            "url": "audio/c1-s2.mp3",
+            "durationSec": 5.749625
+          },
           "type": "code",
           "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
-          "highlightLines": [1],
-          "narration": "Here's factorial. It takes a number n and multiplies it by every number below it."
+          "highlightLines": [
+            1
+          ]
         }
       ]
     },
@@ -31,17 +41,30 @@
       "scenes": [
         {
           "id": "c2-s1",
+          "narration": "First, the base case. When n is one, we stop and return one. Without this, it would never end.",
+          "audio": {
+            "url": "audio/c2-s1.mp3",
+            "durationSec": 7.839375
+          },
           "type": "code",
           "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
-          "highlightLines": [2, 3],
-          "narration": "First, the base case. When n is one, we stop and return one. Without this, it would never end."
+          "highlightLines": [
+            2,
+            3
+          ]
         },
         {
           "id": "c2-s2",
+          "narration": "Otherwise, the function calls itself with n minus one, a slightly smaller problem.",
+          "audio": {
+            "url": "audio/c2-s2.mp3",
+            "durationSec": 5.8279375
+          },
           "type": "code",
           "code": "def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)",
-          "highlightLines": [4],
-          "narration": "Otherwise, the function calls itself with n minus one, a slightly smaller problem."
+          "highlightLines": [
+            4
+          ]
         }
       ]
     },
@@ -51,32 +74,60 @@
       "scenes": [
         {
           "id": "c3-s1",
+          "narration": "Each call waits on the stack until the base case returns. Then the answers multiply back up.",
+          "audio": {
+            "url": "audio/c3-s1.mp3",
+            "durationSec": 6.3765625
+          },
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
             "frames": [
-              { "call": "factorial(3)", "vars": { "n": "3" } },
-              { "call": "factorial(2)", "vars": { "n": "2" } },
-              { "call": "factorial(1)", "vars": { "n": "1" }, "returns": "1" }
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              }
             ]
-          },
-          "narration": "Each call waits on the stack until the base case returns. Then the answers multiply back up."
+          }
         },
         {
           "id": "c3-s2",
+          "narration": "Three times two times one gives us six.",
+          "audio": {
+            "url": "audio/c3-s2.mp3",
+            "durationSec": 3.5030625
+          },
           "type": "output",
-          "output": ">>> factorial(3)\n6",
-          "narration": "Three times two times one gives us six."
+          "output": ">>> factorial(3)\n6"
         },
         {
           "id": "c3-s3",
+          "narration": "Remember: a base case to stop, and a smaller problem on every call.",
+          "audio": {
+            "url": "audio/c3-s3.mp3",
+            "durationSec": 5.0965625
+          },
           "type": "recap",
           "points": [
             "A recursive function calls itself",
             "The base case stops the recursion",
             "Each call works on a smaller problem"
-          ],
-          "narration": "Remember: a base case to stop, and a smaller problem on every call."
+          ]
         }
       ]
     }

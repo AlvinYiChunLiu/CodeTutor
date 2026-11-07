@@ -179,6 +179,21 @@ export default function InteractiveLesson({ lesson }: { lesson: Lesson }) {
             </div>
           </div>
 
+          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <span className="section-eyebrow">VIDEO EXPORT</span>
+                <h2 className="mt-2 text-xl font-semibold text-neutral-100">Narrated lesson video</h2>
+              </div>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-sm text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href="/videos/recursion-lesson.mp4" download>
+                Download MP4
+              </a>
+            </div>
+            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src="/videos/recursion-lesson.mp4">
+              Your browser does not support HTML video.
+            </video>
+          </section>
+
           <section className="transcript-section">
             <div className="transcript-heading">
               <div><span className="section-eyebrow">FOLLOW ALONG</span><h2>Lesson transcript</h2></div>

@@ -10,7 +10,9 @@
     "validate": "tsx scripts/validate-sample.ts"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.77.0",
     "@remotion/player": "^4.0.541",
+    "dotenv": "^18.0.9",
     "next": "^15.5.29",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

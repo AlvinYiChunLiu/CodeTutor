@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "validate": "tsx scripts/validate-sample.ts"
+    "validate": "tsx scripts/validate-sample.ts",
+    "lesson:test": "tsx scripts/test-lesson.ts"
   },
   "dependencies": {
     "@remotion/player": "^4.0.541",

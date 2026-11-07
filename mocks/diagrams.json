@@ -1,0 +1,16 @@
+{
+  "array": [
+    { "kind": "array", "values": [2, 7, 11, 15], "highlight": [], "pointers": [] },
+    { "kind": "array", "values": [2, 7, 11, 15], "highlight": [0], "pointers": [{ "label": "i", "index": 0 }] },
+    { "kind": "array", "values": [2, 7, 11, 15], "highlight": [0, 1], "pointers": [{ "label": "i", "index": 1 }] },
+    { "kind": "array", "values": ["a", "b", "c", "d", "e"], "highlight": [2], "pointers": [{ "label": "lo", "index": 0 }, { "label": "mid", "index": 2 }, { "label": "hi", "index": 4 }] },
+    { "kind": "array", "values": [5, 1, 4, 2, 8, 0, 3, 9, 6, 7, 11, 10], "highlight": [11], "pointers": [] }
+  ],
+  "callstack": [
+    { "kind": "callstack", "frames": [{ "call": "factorial(3)", "vars": { "n": "3" } }] },
+    { "kind": "callstack", "frames": [{ "call": "factorial(3)", "vars": { "n": "3" } }, { "call": "factorial(2)", "vars": { "n": "2" } }, { "call": "factorial(1)", "vars": { "n": "1" } }] },
+    { "kind": "callstack", "frames": [{ "call": "factorial(3)", "vars": { "n": "3" } }, { "call": "factorial(2)", "vars": { "n": "2" } }, { "call": "factorial(1)", "vars": { "n": "1" }, "returns": "1" }] },
+    { "kind": "callstack", "frames": [{ "call": "factorial(3)", "vars": { "n": "3" }, "returns": "6" }, { "call": "factorial(2)", "vars": { "n": "2" }, "returns": "2" }, { "call": "factorial(1)", "vars": { "n": "1" }, "returns": "1" }] },
+    { "kind": "callstack", "frames": [{ "call": "main()", "vars": {} }, { "call": "fib(4)", "vars": { "n": "4" } }, { "call": "fib(3)", "vars": { "n": "3" } }, { "call": "fib(2)", "vars": { "n": "2" } }, { "call": "fib(1)", "vars": { "n": "1" }, "returns": "1" }] }
+  ]
+}

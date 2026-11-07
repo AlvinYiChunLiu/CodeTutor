@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "title": "Filtering Numbers in JavaScript",
+  "summary": "By the end, you'll understand how to filter numbers in an array using JavaScript.",
+  "level": "beginner",
+  "codeLanguage": "javascript",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to our lesson on filtering numbers in JavaScript. By the end, you'll know how to pick specific numbers from an array.",
+          "type": "title",
+          "heading": "Filtering Numbers in JavaScript",
+          "subheading": "Learn how to filter numbers in an array using JavaScript."
+        },
+        {
+          "id": "c1-s2",
+          "narration": "First, we create an array called 'nums' with some numbers inside. Think of it like a box of different-sized toys.",
+          "type": "code",
+          "code": "const nums = [3, 8, 1, 10, 6];\nconst big = nums.filter((n) => n > 5);\nconsole.log(big);",
+          "highlightLines": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Filtering",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "Next, we use the 'filter' method on 'nums'. It's like sifting through the box to find only the bigger toys.",
+          "type": "code",
+          "code": "const nums = [3, 8, 1, 10, 6];\nconst big = nums.filter((n) => n > 5);\nconsole.log(big);",
+          "highlightLines": [
+            2
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "Here's our 'nums' array before we filter it. We have the numbers three, eight, one, ten, and six.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              3,
+              8,
+              1,
+              10,
+              6
+            ],
+            "highlight": [],
+            "pointers": []
+          }
+        },
+        {
+          "id": "c2-s3",
+          "narration": "After filtering, we keep only the numbers greater than five. So, we end up with eight, ten, and six.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              8,
+              10,
+              6
+            ],
+            "highlight": [],
+            "pointers": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Output",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "Finally, we print the filtered array using 'console.log'. This shows us the result in the console.",
+          "type": "code",
+          "code": "const nums = [3, 8, 1, 10, 6];\nconst big = nums.filter((n) => n > 5);\nconsole.log(big);",
+          "highlightLines": [
+            3
+          ]
+        },
+        {
+          "id": "c3-s2",
+          "narration": "And here's the output: an array containing the numbers eight, ten, and six. These are the numbers greater than five from our original array.",
+          "type": "output",
+          "output": "[8, 10, 6]"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Recap",
+      "scenes": [
+        {
+          "id": "c4-s1",
+          "narration": "To sum up, we created an array of numbers, filtered out the ones greater than five, and printed the result. Now you can do the same with any array of numbers!",
+          "type": "recap",
+          "points": [
+            "We created an array called 'nums' with some numbers.",
+            "We used the 'filter' method to keep only the numbers greater than five.",
+            "We printed the filtered array to see the result."
+          ]
+        }
+      ]
+    }
+  ]
+}

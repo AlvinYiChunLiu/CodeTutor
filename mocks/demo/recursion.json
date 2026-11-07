@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "title": "Understanding Recursion with Python",
+  "summary": "By the end, you'll understand how recursion works in Python.",
+  "level": "beginner",
+  "codeLanguage": "python",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to this lesson on recursion in Python. We'll explore how functions can call themselves to solve problems step by step.",
+          "type": "title",
+          "heading": "Understanding Recursion with Python",
+          "subheading": "By the end, you'll understand how recursion works in Python."
+        },
+        {
+          "id": "c1-s2",
+          "narration": "Let's start with our function signature. This is where we define our function, called 'countdown', which takes one parameter, 'n'.",
+          "type": "code",
+          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+          "highlightLines": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Base Case",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "The base case is the simplest part of our function. If 'n' equals zero, we print 'Blast off!'. This stops the recursion.",
+          "type": "code",
+          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+          "highlightLines": [
+            2,
+            3
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "When 'n' is zero, the function prints 'Blast off!' and stops. This is like the ground floor of a building.",
+          "type": "output",
+          "output": "Blast off!"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Recursive Call",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "If 'n' is not zero, we print the current value of 'n' and then call the function again with 'n minus one'. This is the recursive call.",
+          "type": "code",
+          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+          "highlightLines": [
+            5,
+            6
+          ]
+        },
+        {
+          "id": "c3-s2",
+          "narration": "Each call to 'countdown' creates a new frame on the call stack. We keep going down until we hit the base case.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "countdown(5)",
+                "vars": {
+                  "n": "5"
+                }
+              },
+              {
+                "call": "countdown(4)",
+                "vars": {
+                  "n": "4"
+                }
+              },
+              {
+                "call": "countdown(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "countdown(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "countdown(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "countdown(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "None"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c3-s3",
+          "narration": "Now, we start returning from each call. Each frame pops off the stack, and the function finishes its work.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "countdown(5)",
+                "vars": {
+                  "n": "5"
+                }
+              },
+              {
+                "call": "countdown(4)",
+                "vars": {
+                  "n": "4"
+                }
+              },
+              {
+                "call": "countdown(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "countdown(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "countdown(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "None"
+              },
+              {
+                "call": "countdown(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "None"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Conclusion",
+      "scenes": [
+        {
+          "id": "c4-s1",
+          "narration": "When we run 'countdown' with five, it prints the numbers from five down to one, and then 'Blast off!'.",
+          "type": "output",
+          "output": "5\n4\n3\n2\n1\nBlast off!"
+        },
+        {
+          "id": "c4-s2",
+          "narration": "To sum up, recursion is a powerful tool where a function calls itself. The base case stops the recursion, and each call adds a new frame to the stack. When the base case is reached, the function returns and the stack unwinds.",
+          "type": "recap",
+          "points": [
+            "Recursion is when a function calls itself.",
+            "The base case stops the recursion.",
+            "Each recursive call creates a new frame on the call stack.",
+            "The function returns and pops frames off the stack until it finishes."
+          ]
+        }
+      ]
+    }
+  ]
+}

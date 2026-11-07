@@ -181,7 +181,20 @@ button { color: inherit; }
 .window-dots { display: flex; gap: 5px; }
 .window-dots i { display: block; }
 .window-menu { margin-left: auto; font-size: 16px; }
-.lesson-code { width: min(470px, 100%); min-height: 190px; margin: 0; padding: 13px 0; border: 1px solid #44584b; border-radius: 0 0 8px 8px; color: #d6e0d1; background: #1b2b24; font: 12px/2 "Cascadia Code", Consolas, monospace; }
+.lesson-code {
+  width: min(470px, 100%);
+  min-height: 190px;
+  margin: 0;
+  padding: 13px 0;
+  border: 1px solid #44584b;
+  border-radius: 0 0 8px 8px;
+  color: #d6e0d1;
+  background: #1b2b24;
+  font: 12px/2 "Cascadia Code", Consolas, monospace;
+  overflow: auto;
+  max-height: 300px;
+  position: relative;
+}
 .lesson-code-line { display: flex; min-height: 24px; padding: 0 16px 0 0; white-space: pre; }
 .lesson-code-line.line-highlight { background: #b7ee7620; box-shadow: inset 2px 0 #b8eb78; }
 .line-number { width: 39px; flex: 0 0 auto; padding-right: 14px; color: #718577; text-align: right; user-select: none; }

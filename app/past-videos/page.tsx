@@ -28,7 +28,6 @@ export default async function PastVideosPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-[var(--ink)] sm:text-4xl">Past videos</h1>
           </div>
-          <Link className="button-primary" href="/generate">Make a lesson</Link>
         </div>
 
         {unavailable ? (

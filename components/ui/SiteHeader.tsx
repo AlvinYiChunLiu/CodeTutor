@@ -39,10 +39,10 @@ export default function SiteHeader() {
         <span>codetutor<span className="brand-period">.</span></span>
       </Link>
       <nav className="app-nav" aria-label="Main navigation">
-        <Link href="/" className={pathname === "/" ? "nav-active" : ""}>Main</Link>
+        <Link href="/" className={pathname === "/" ? "nav-active" : ""}>Home</Link>
         <Link href="/lesson" className={pathname === "/lesson" ? "nav-active" : ""}>Explore a lesson</Link>
-        <Link href="/generate" className={pathname === "/generate" ? "nav-active" : ""}>Generate Code</Link>
-        <Link href="/past-videos" className={pathname === "/past-videos" ? "nav-active" : ""}>Past videos</Link>
+        <Link href="/generate" className={pathname === "/generate" ? "nav-active" : ""}>Generate a lesson</Link>
+        <Link href="/past-videos" className={pathname === "/past-videos" ? "nav-active" : ""}>Past lessons</Link>
       </nav>
       <div className="header-actions">
         <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${dark ? "light" : "dark"} mode`} aria-pressed={dark}>

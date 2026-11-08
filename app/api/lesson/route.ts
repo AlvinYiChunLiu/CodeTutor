@@ -6,6 +6,9 @@
  * ?stream=1  → NDJSON progress lines, then {"type":"done","status":…,"body":…} (see lib/ai/progress.ts;
  *              pages can use requestLesson() from there instead of fetch).
  * ?mock=1 (or LLM_MOCK=1, or no LLM_API_KEY in dev) → the sample lesson instead of calling Featherless.
+ *
+ * Demo topics ("What is recursion?", bubble sort… see lib/ai/demo-topics.ts) skip the AI and use the
+ * fact-checked lesson in mocks/demo, plus its ready-made video when there is one (lib/demo-cache.ts).
  */
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -20,6 +23,8 @@ import { LLMError } from "@/lib/ai/llm";
 import { shouldMock } from "@/lib/ai/http";
 import { progress, type ProgressEvent } from "@/lib/ai/progress";
 import { saveLessonToDatabase } from "@/lib/lessons";
+import { findDemoTopic } from "@/lib/ai/demo-topics";
+import { cachedDemoVideo, loadDemoLesson, storeDemoVideo } from "@/lib/demo-cache";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -107,8 +112,25 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
   try {
     let lesson: LessonData;
     let meta: unknown;
+    const started = Date.now();
+    const demo = findDemoTopic(request);
 
-    if (mock) {
+    if (demo) {
+      console.log(`[lesson] demo topic: using the checked lesson mocks/demo/${demo.slug}.json`);
+      lesson = await loadDemoLesson(demo.slug);
+      // Tick through the steps so the screen looks the same as a normal run.
+      for (const stage of ["planning", "writing", "checking"] as const) {
+        emit(progress(stage, stage === "checking" ? "using a checked lesson" : undefined));
+        await sleep(250);
+      }
+      meta = { model: "demo", demo: demo.slug, totalMs: Date.now() - started, steps: [], warnings: [] };
+      const cached = await cachedDemoVideo(demo.slug, lesson);
+      if (cached) {
+        emit(progress("video", "ready", 100));
+        const id = await saveIfConfigured(cached.lesson, cached.videoSrc);
+        return { status: 200, body: { ...cached, savedAs: `mocks/demo/${demo.slug}.json`, id, meta } };
+      }
+    } else if (mock) {
       if (!process.env.LLM_API_KEY) console.log("[lesson] no LLM_API_KEY: returning the sample lesson");
       emit(progress("planning"));
       await sleep(300);
@@ -145,6 +167,14 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
       const sceneCount = lesson.chapters.reduce((n, c) => n + c.scenes.length, 0);
       emit(progress("voice", `0 of ${sceneCount} scenes`, 0));
       const result = await createLessonVideo(savedAs, sceneCount, emit);
+      if (demo) {
+        // Keep it, so the next time this topic is asked for, the video is instant too.
+        try {
+          result.videoSrc = await storeDemoVideo(demo.slug, result.lesson, result.videoSrc);
+        } catch (e) {
+          console.error("[lesson] could not keep the demo video (lesson still returned):", e);
+        }
+      }
       const id = await saveIfConfigured(result.lesson, result.videoSrc);
       return { status: 200, body: { ...result, id, meta } };
     } catch (videoError) {

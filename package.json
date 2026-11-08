@@ -18,7 +18,10 @@
     "practice:test": "tsx scripts/test-practice.ts",
     "prompt-video:test": "tsx scripts/test-prompt-video.ts",
     "lesson:tune": "tsx scripts/tune-lessons.ts",
-    "lesson:compare": "tsx scripts/compare-adjust.ts"
+    "lesson:compare": "tsx scripts/compare-adjust.ts",
+    "demo:test": "tsx scripts/test-demo-topics.ts",
+    "demo:videos": "tsx scripts/build-demo-videos.ts",
+    "judge:test": "tsx scripts/judge-inputs.ts"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",

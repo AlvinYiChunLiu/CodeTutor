@@ -14,7 +14,7 @@ export class Writer {
   constructor(req: LessonRequest, plan: Plan) {
     this.messages = [
       { role: "system", content: WRITER_SYSTEM },
-      { role: "user", content: writerUser({ req, plan: { title: plan.title, summary: plan.summary, chapters: plan.chapters }, mainCode: plan.mainCode }) },
+      { role: "user", content: writerUser({ req, plan: { title: plan.title, summary: plan.summary, chapters: plan.chapters, ...(plan.bug ? { bug: plan.bug, fixedCode: plan.fixedCode } : {}) }, mainCode: plan.mainCode }) },
     ];
   }
 

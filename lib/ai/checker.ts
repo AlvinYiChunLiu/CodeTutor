@@ -93,7 +93,13 @@ export function isRecursive(code: string): boolean {
   return false;
 }
 
-function normalizeScene(s: Any, mainCode: string, warnings: string[], where: string): Any {
+/** Same code apart from spacing and quote style? (Models rarely copy a program character for character.) */
+const sameCode = (a: string, b: string) => {
+  const squash = (c: string) => c.replace(/["'`]/g, '"').replace(/\s+/g, "");
+  return squash(a) === squash(b);
+};
+
+function normalizeScene(s: Any, mainCode: string, warnings: string[], where: string, fixedCode?: string): Any {
   if (!s || typeof s !== "object") return s;
   let type = str(s.type).toLowerCase();
   // Models sometimes put the diagram kind in "type".
@@ -109,7 +115,10 @@ function normalizeScene(s: Any, mainCode: string, warnings: string[], where: str
     case "title":
       return { type, heading: str(s.heading ?? s.title), ...(s.subheading ? { subheading: str(s.subheading) } : {}), narration };
     case "code": {
-      const code = stripLineNumbers(str(s.code).trim() ? str(s.code).replace(/\s+$/, "") : mainCode);
+      let code = stripLineNumbers(str(s.code).trim() ? str(s.code).replace(/\s+$/, "") : mainCode);
+      // Fix scenes: the writer marks them "fixed": true and we fill in the exact fixed program
+      // (also when it retyped the fixed program with small spacing differences).
+      if (fixedCode && (s.fixed === true || s.fixed === "true" || sameCode(code, fixedCode))) code = fixedCode;
       const lineCount = code.split("\n").length;
       const raw: Any[] = Array.isArray(s.highlightLines) ? s.highlightLines : Array.isArray(s.lines) ? s.lines : [];
       const lines = [...new Set(raw.map(Number))].filter((n) => Number.isInteger(n) && n >= 1).sort((a, b) => a - b);
@@ -145,7 +154,7 @@ export function checkLesson(
     .map((c: Any, ci: number) => ({
       title: str(c?.title, `Part ${ci + 1}`),
       scenes: (Array.isArray(c?.scenes) ? c.scenes : []).map((s: Any, si: number) =>
-        normalizeScene(s, ctx.plan.mainCode, warnings, `chapters.${ci}.scenes.${si}`),
+        normalizeScene(s, ctx.plan.mainCode, warnings, `chapters.${ci}.scenes.${si}`, ctx.plan.bug ? ctx.plan.fixedCode : undefined),
       ),
     }))
     .filter((c: Any) => c.scenes.length > 0);
@@ -197,8 +206,12 @@ export function checkLesson(
   }
 
   const codeLines = ctx.plan.mainCode.split("\n").filter((l) => l.trim()).length;
+  // A buggy program gets two output scenes: what it really prints (or its error), then the fixed program's output.
+  const maxOutputs = ctx.plan.bug ? 2 : 1;
   // Repeats: the same lines explained in several code scenes (usually a loop played out iteration by iteration).
-  const key = (s: Any) => (s.type === "code" && s.highlightLines.length ? `${s.code}::${s.highlightLines.join(",")}` : "");
+  // Pointing at the faulty line again to name the bug is not a repeat.
+  const namesBug = (s: Any) => Boolean(ctx.plan.bug) && /\b(bug|buggy|mistake|wrong|problem|fix|fixed)\b/i.test(str(s.narration));
+  const key = (s: Any) => (s.type === "code" && s.highlightLines.length && !namesBug(s) ? `${s.code}::${s.highlightLines.join(",")}` : "");
   const seenKeys = new Set<string>();
   let repeats = 0;
   for (const s of all()) {
@@ -208,10 +221,12 @@ export function checkLesson(
   }
   if (repeats && !ctx.lastAttempt) {
     issues.push(`${repeats} code scene(s) repeat lines that an earlier scene already highlighted. Explain each line once; for a loop, walk through the body once, then sum up the other iterations in one scene.`);
-  } else if (repeats || (ctx.lastAttempt && all().filter((s: Any) => s.type === "output").length > 1)) {
-    // Last attempt: drop the repeated code scenes and merge the output pieces into one scene.
+  } else if (repeats || (ctx.lastAttempt && all().filter((s: Any) => s.type === "output").length > maxOutputs)) {
+    // Last attempt: drop the repeated code scenes and merge the output pieces into one scene
+    // (with a bug: keep the first and the last, the buggy and the fixed output).
     seenKeys.clear();
-    const outs = all().filter((s: Any) => s.type === "output");
+    const allOuts = all().filter((s: Any) => s.type === "output");
+    const outs = allOuts.length > maxOutputs ? (ctx.plan.bug ? allOuts.slice(1) : allOuts) : [];
     const merged = [...new Set(outs.map((o: Any) => str(o.output).replace(/\n+$/, "")))].join("\n");
     const keepOut = outs.at(-1);
     chapters = chapters
@@ -223,7 +238,7 @@ export function checkLesson(
             if (seenKeys.has(k)) return false;
             seenKeys.add(k);
           }
-          if (s.type === "output" && outs.length > 1) {
+          if (s.type === "output" && outs.length > 1 && outs.includes(s)) {
             if (s !== keepOut) return false;
             s.output = merged;
           }
@@ -247,11 +262,31 @@ export function checkLesson(
   } else if (!ctx.lastAttempt && wide) {
     issues.push(`${wide} code scene(s) highlight more than 4 lines. Split them so each highlights 1–3 lines.`);
   }
-  const maxScenes = ctx.req.adjust === "deeper" ? 16 : 13;
+  const maxScenes = (ctx.req.adjust === "deeper" ? 16 : 13) + (ctx.plan.bug ? 2 : 0);
   if (n > maxScenes && !ctx.lastAttempt) issues.push(`${n} scenes is too long. Use 7 to 11: merge code scenes about neighbouring lines and drop repeats.`);
   else if (n > 18) warnings.push(`${n} scenes is a long video`);
   const outputs = all().filter((s: Any) => s.type === "output").length;
-  if (outputs > 1 && !ctx.lastAttempt) issues.push(`There are ${outputs} output scenes. Use exactly one, with the complete printed output.`);
+  if (outputs > maxOutputs && !ctx.lastAttempt) {
+    issues.push(
+      ctx.plan.bug
+        ? `There are ${outputs} output scenes. Use exactly two: what the original code prints (or its error message), then what the fixed code prints.`
+        : `There are ${outputs} output scenes. Use exactly one, with the complete printed output.`,
+    );
+  }
+  // Buggy code: the lesson must say so and show the fix, or the learner leaves thinking the bug is correct.
+  if (ctx.plan.bug && !ctx.lastAttempt) {
+    const spokenAll = all().map((s: Any) => str(s.narration)).join(" ");
+    const fixed = (ctx.plan.fixedCode ?? "").trim();
+    const showsFix = all().some((s: Any) => s.type === "code" && str(s.code).trim() === fixed);
+    if (!/\b(bug|buggy|mistake|wrong|error|problem|fix|fixed|incorrect)\b/i.test(spokenAll)) {
+      issues.push(`The code has a bug (${ctx.plan.bug}) but the narration never says so. In a "Spotting the bug" chapter, say plainly that this is a bug and why.`);
+    }
+    if (!showsFix) {
+      issues.push(`Add the fix: a code scene with "fixed": true (the app shows the plan's fixedCode) and "highlightLines" on the changed line(s), then an output scene with what the fixed code prints.`);
+    } else if (outputs < 2) {
+      issues.push(`Add a second output scene after the fix, showing what the fixed code prints.`);
+    }
+  }
   // Narration is read aloud: pasted code ("for j in range(len(nums) - 1 - i):") sounds broken.
   const codey = (t: string) => /\b(def|function|class|for|while|if|return)\b[^.!?]*[:{]\s*$/m.test(t) || /\w\[[^\]]*\]|\w\([^)]*\)\s*[:{]|==|!=|\+=|=>|;\s*$/.test(t);
   const pasted = all().filter((s: Any) => s.type !== "title" && codey(str(s.narration))).length;

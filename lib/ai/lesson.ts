@@ -1,6 +1,6 @@
 /** Planner → Writer → Checker, with schema-driven retries. Used by /api/lesson and scripts. */
 import type { Lesson } from "../schema";
-import { DEFAULT_MODEL, extractJson } from "./llm";
+import { currentModel, extractJson } from "./llm";
 import { planLesson } from "./planner";
 import { Writer } from "./writer";
 import { checkLesson } from "./checker";
@@ -52,7 +52,7 @@ export async function generateLesson(
       log({ step: "checker", ms: Date.now() - t, attempt });
       return {
         lesson: result.lesson,
-        meta: { model: DEFAULT_MODEL, totalMs: Date.now() - t0, steps, warnings: result.warnings },
+        meta: { model: currentModel(), totalMs: Date.now() - t0, steps, warnings: result.warnings },
       };
     }
     issues = result.issues;
@@ -66,7 +66,7 @@ export async function generateLesson(
       log({ step: "checker", ms: Date.now() - t, attempt: MAX_WRITER_ATTEMPTS + 1 });
       return {
         lesson: result.lesson,
-        meta: { model: DEFAULT_MODEL, totalMs: Date.now() - t0, steps, warnings: ["used the best earlier draft", ...result.warnings] },
+        meta: { model: currentModel(), totalMs: Date.now() - t0, steps, warnings: ["used the best earlier draft", ...result.warnings] },
       };
     }
   }

@@ -26,7 +26,16 @@ const MODE_ALIASES: Record<string, "explain-code" | "explain-solution" | "teach-
 export function looksLikeCode(text: string): boolean {
   const t = text.trim();
   if (t.split("\n").length >= 2 && /[{}();=]|^\s*(def|class|for|while|if|function|const|let|import|public)\b/m.test(t)) return true;
-  return /^\s*(def|class|function|const|let|import|public|#include)\b/.test(t) || /[;{}]\s*$/.test(t);
+  if (/^\s*(def|class|function|const|let|import|public|#include)\b/.test(t) || /[;{}]\s*$/.test(t)) return true;
+  // One-liners judges paste: print(sum(range(5))), nums.sort(), x = [n*n for n in range(4)], arr.map(x => x * 2).
+  // A question ("how do I use print()?") ends with "?" or starts with a question word, so it stays a question.
+  if (t.includes("\n") || /\?\s*$/.test(t) || /^(what|how|why|when|where|which|who|can|could|should|is|are|does|do|explain|teach|show|tell|help)\b/i.test(t)) return false;
+  return (
+    /^[\w$.]+(\[[^\]]*\])?\s*\(.*\)\s*;?$/.test(t) || // a call
+    /^[\w$.[\]]+\s*[-+*/%]?=\s*[^=\s]/.test(t) || // an assignment
+    /^for\s+\w+\s+in\s+.*[(:]/.test(t) || // a Python for loop
+    (/=>|==|!=|&&|\|\||\+\+/.test(t) && /[()[\]]/.test(t)) // operators that only appear in code
+  );
 }
 
 /** Accept other field names the forms use: `prompt` for `input`, `difficulty` for `level`. */

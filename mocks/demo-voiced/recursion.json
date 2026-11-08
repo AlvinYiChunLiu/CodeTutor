@@ -1,0 +1,1309 @@
+{
+  "version": 1,
+  "title": "Understanding Recursion",
+  "summary": "Learn how recursion works with a simple factorial example.",
+  "level": "beginner",
+  "codeLanguage": "python",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to our lesson on recursion! We'll learn how functions can call themselves using a factorial example.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c1-s1-1f2f28254cc6.mp3",
+            "durationSec": 6.95125,
+            "wordTimings": [
+              {
+                "word": "Welcome",
+                "startSec": 0,
+                "endSec": 0.48
+              },
+              {
+                "word": "to",
+                "startSec": 0.56,
+                "endSec": 0.64
+              },
+              {
+                "word": "our",
+                "startSec": 0.68,
+                "endSec": 0.72
+              },
+              {
+                "word": "lesson",
+                "startSec": 0.8,
+                "endSec": 1.12
+              },
+              {
+                "word": "on",
+                "startSec": 1.2,
+                "endSec": 1.36
+              },
+              {
+                "word": "recursion!",
+                "startSec": 1.48,
+                "endSec": 2.48
+              },
+              {
+                "word": "We'll",
+                "startSec": 2.56,
+                "endSec": 2.72
+              },
+              {
+                "word": "learn",
+                "startSec": 2.8,
+                "endSec": 2.96
+              },
+              {
+                "word": "how",
+                "startSec": 3.04,
+                "endSec": 3.28
+              },
+              {
+                "word": "functions",
+                "startSec": 3.36,
+                "endSec": 3.84
+              },
+              {
+                "word": "can",
+                "startSec": 3.92,
+                "endSec": 4.08
+              },
+              {
+                "word": "call",
+                "startSec": 4.16,
+                "endSec": 4.32
+              },
+              {
+                "word": "themselves",
+                "startSec": 4.4,
+                "endSec": 4.96
+              },
+              {
+                "word": "using",
+                "startSec": 5.04,
+                "endSec": 5.28
+              },
+              {
+                "word": "a",
+                "startSec": 5.32,
+                "endSec": 5.36
+              },
+              {
+                "word": "factorial",
+                "startSec": 5.44,
+                "endSec": 6.08
+              },
+              {
+                "word": "example.",
+                "startSec": 6.36,
+                "endSec": 6.96
+              }
+            ]
+          },
+          "type": "title",
+          "heading": "Understanding Recursion",
+          "subheading": "Learn how recursion works with a simple factorial example."
+        },
+        {
+          "id": "c1-s2",
+          "narration": "Here's our function named factorial. It takes one parameter, n.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c1-s2-4416d84c79e6.mp3",
+            "durationSec": 4.8614375,
+            "wordTimings": [
+              {
+                "word": "Here's",
+                "startSec": 0,
+                "endSec": 0.32
+              },
+              {
+                "word": "our",
+                "startSec": 0.4,
+                "endSec": 0.48
+              },
+              {
+                "word": "function",
+                "startSec": 0.56,
+                "endSec": 0.96
+              },
+              {
+                "word": "named",
+                "startSec": 1.04,
+                "endSec": 1.36
+              },
+              {
+                "word": "factorial.",
+                "startSec": 1.44,
+                "endSec": 2.44
+              },
+              {
+                "word": "It",
+                "startSec": 2.64,
+                "endSec": 2.72
+              },
+              {
+                "word": "takes",
+                "startSec": 2.8,
+                "endSec": 3.12
+              },
+              {
+                "word": "one",
+                "startSec": 3.2,
+                "endSec": 3.28
+              },
+              {
+                "word": "parameter,",
+                "startSec": 3.36,
+                "endSec": 4.24
+              },
+              {
+                "word": "n.",
+                "startSec": 4.32,
+                "endSec": 4.88
+              }
+            ]
+          },
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "If n is zero, we return 1. This is called the base case.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c1-s3-a3439778e978.mp3",
+            "durationSec": 5.279375,
+            "wordTimings": [
+              {
+                "word": "If",
+                "startSec": 0,
+                "endSec": 0.24
+              },
+              {
+                "word": "n",
+                "startSec": 0.32,
+                "endSec": 0.48
+              },
+              {
+                "word": "is",
+                "startSec": 0.64,
+                "endSec": 0.8
+              },
+              {
+                "word": "zero,",
+                "startSec": 0.88,
+                "endSec": 1.6
+              },
+              {
+                "word": "we",
+                "startSec": 1.68,
+                "endSec": 1.76
+              },
+              {
+                "word": "return",
+                "startSec": 1.96,
+                "endSec": 2.16
+              },
+              {
+                "word": "1.",
+                "startSec": 2.32,
+                "endSec": 2.92
+              },
+              {
+                "word": "This",
+                "startSec": 3.2,
+                "endSec": 3.28
+              },
+              {
+                "word": "is",
+                "startSec": 3.36,
+                "endSec": 3.44
+              },
+              {
+                "word": "called",
+                "startSec": 3.52,
+                "endSec": 3.84
+              },
+              {
+                "word": "the",
+                "startSec": 4,
+                "endSec": 4.08
+              },
+              {
+                "word": "base",
+                "startSec": 4.16,
+                "endSec": 4.48
+              },
+              {
+                "word": "case.",
+                "startSec": 4.56,
+                "endSec": 5.28
+              }
+            ]
+          },
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
+            2
+          ]
+        },
+        {
+          "id": "c1-s4",
+          "narration": "The base case stops the recursion. Without it, we'd call factorial forever!",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c1-s4-26cc64f41102.mp3",
+            "durationSec": 5.279375,
+            "wordTimings": [
+              {
+                "word": "The",
+                "startSec": 0,
+                "endSec": 0.16
+              },
+              {
+                "word": "base",
+                "startSec": 0.32,
+                "endSec": 0.48
+              },
+              {
+                "word": "case",
+                "startSec": 0.56,
+                "endSec": 0.88
+              },
+              {
+                "word": "stops",
+                "startSec": 0.96,
+                "endSec": 1.36
+              },
+              {
+                "word": "the",
+                "startSec": 1.4,
+                "endSec": 1.44
+              },
+              {
+                "word": "recursion.",
+                "startSec": 1.56,
+                "endSec": 2.36
+              },
+              {
+                "word": "Without",
+                "startSec": 2.56,
+                "endSec": 2.88
+              },
+              {
+                "word": "it,",
+                "startSec": 2.96,
+                "endSec": 3.28
+              },
+              {
+                "word": "we'd",
+                "startSec": 3.32,
+                "endSec": 3.52
+              },
+              {
+                "word": "call",
+                "startSec": 3.6,
+                "endSec": 3.68
+              },
+              {
+                "word": "factorial",
+                "startSec": 3.76,
+                "endSec": 4.4
+              },
+              {
+                "word": "forever!",
+                "startSec": 4.48,
+                "endSec": 5.28
+              }
+            ]
+          },
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Recursive Call",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "For other values of n, we return n times the factorial of n minus one. This is the recursive call.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s1-a23b83bec44b.mp3",
+            "durationSec": 7.5781875,
+            "wordTimings": [
+              {
+                "word": "For",
+                "startSec": 0,
+                "endSec": 0.24
+              },
+              {
+                "word": "other",
+                "startSec": 0.32,
+                "endSec": 0.48
+              },
+              {
+                "word": "values",
+                "startSec": 0.56,
+                "endSec": 0.88
+              },
+              {
+                "word": "of",
+                "startSec": 0.96,
+                "endSec": 1.04
+              },
+              {
+                "word": "n,",
+                "startSec": 1.2,
+                "endSec": 1.68
+              },
+              {
+                "word": "we",
+                "startSec": 1.76,
+                "endSec": 1.84
+              },
+              {
+                "word": "return",
+                "startSec": 1.92,
+                "endSec": 2.4
+              },
+              {
+                "word": "n",
+                "startSec": 2.56,
+                "endSec": 2.8
+              },
+              {
+                "word": "times",
+                "startSec": 2.88,
+                "endSec": 3.2
+              },
+              {
+                "word": "the",
+                "startSec": 3.28,
+                "endSec": 3.32
+              },
+              {
+                "word": "factorial",
+                "startSec": 3.36,
+                "endSec": 4
+              },
+              {
+                "word": "of",
+                "startSec": 4.08,
+                "endSec": 4.16
+              },
+              {
+                "word": "n",
+                "startSec": 4.32,
+                "endSec": 4.48
+              },
+              {
+                "word": "minus",
+                "startSec": 4.64,
+                "endSec": 4.8
+              },
+              {
+                "word": "one.",
+                "startSec": 4.96,
+                "endSec": 5.48
+              },
+              {
+                "word": "This",
+                "startSec": 5.76,
+                "endSec": 6.08
+              },
+              {
+                "word": "is",
+                "startSec": 6.16,
+                "endSec": 6.24
+              },
+              {
+                "word": "the",
+                "startSec": 6.32,
+                "endSec": 6.36
+              },
+              {
+                "word": "recursive",
+                "startSec": 6.4,
+                "endSec": 6.96
+              },
+              {
+                "word": "call.",
+                "startSec": 7.04,
+                "endSec": 7.6
+              }
+            ]
+          },
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
+            4
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "Let's run factorial of 3. It calls factorial of 2, which calls factorial of 1, which calls factorial of 0. Each call waits for the one above it.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s2-d9c6ff5bc80f.mp3",
+            "durationSec": 10.6345,
+            "wordTimings": [
+              {
+                "word": "Let's",
+                "startSec": 0,
+                "endSec": 0.28
+              },
+              {
+                "word": "run",
+                "startSec": 0.32,
+                "endSec": 0.56
+              },
+              {
+                "word": "factorial",
+                "startSec": 0.64,
+                "endSec": 1.2
+              },
+              {
+                "word": "of",
+                "startSec": 1.28,
+                "endSec": 1.36
+              },
+              {
+                "word": "3.",
+                "startSec": 1.44,
+                "endSec": 2.08
+              },
+              {
+                "word": "It",
+                "startSec": 2.32,
+                "endSec": 2.48
+              },
+              {
+                "word": "calls",
+                "startSec": 2.56,
+                "endSec": 2.8
+              },
+              {
+                "word": "factorial",
+                "startSec": 2.88,
+                "endSec": 3.44
+              },
+              {
+                "word": "of",
+                "startSec": 3.48,
+                "endSec": 3.52
+              },
+              {
+                "word": "2,",
+                "startSec": 3.68,
+                "endSec": 4.24
+              },
+              {
+                "word": "which",
+                "startSec": 4.36,
+                "endSec": 4.48
+              },
+              {
+                "word": "calls",
+                "startSec": 4.6,
+                "endSec": 4.72
+              },
+              {
+                "word": "factorial",
+                "startSec": 4.8,
+                "endSec": 5.28
+              },
+              {
+                "word": "of",
+                "startSec": 5.36,
+                "endSec": 5.44
+              },
+              {
+                "word": "1,",
+                "startSec": 5.6,
+                "endSec": 6.08
+              },
+              {
+                "word": "which",
+                "startSec": 6.2,
+                "endSec": 6.32
+              },
+              {
+                "word": "calls",
+                "startSec": 6.48,
+                "endSec": 6.64
+              },
+              {
+                "word": "factorial",
+                "startSec": 6.84,
+                "endSec": 7.2
+              },
+              {
+                "word": "of",
+                "startSec": 7.24,
+                "endSec": 7.28
+              },
+              {
+                "word": "0.",
+                "startSec": 7.44,
+                "endSec": 8.24
+              },
+              {
+                "word": "Each",
+                "startSec": 8.36,
+                "endSec": 8.48
+              },
+              {
+                "word": "call",
+                "startSec": 8.56,
+                "endSec": 8.88
+              },
+              {
+                "word": "waits",
+                "startSec": 9.04,
+                "endSec": 9.36
+              },
+              {
+                "word": "for",
+                "startSec": 9.44,
+                "endSec": 9.52
+              },
+              {
+                "word": "the",
+                "startSec": 9.6,
+                "endSec": 9.68
+              },
+              {
+                "word": "one",
+                "startSec": 9.76,
+                "endSec": 9.84
+              },
+              {
+                "word": "above",
+                "startSec": 10,
+                "endSec": 10.16
+              },
+              {
+                "word": "it.",
+                "startSec": 10.24,
+                "endSec": 10.64
+              }
+            ]
+          },
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s3",
+          "narration": "First, factorial of 0 returns 1. This is our base case.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s3-fbcb47f39f22.mp3",
+            "durationSec": 5.35775,
+            "wordTimings": [
+              {
+                "word": "First,",
+                "startSec": 0,
+                "endSec": 0.8
+              },
+              {
+                "word": "factorial",
+                "startSec": 0.88,
+                "endSec": 1.44
+              },
+              {
+                "word": "of",
+                "startSec": 1.52,
+                "endSec": 1.6
+              },
+              {
+                "word": "0",
+                "startSec": 1.68,
+                "endSec": 2.08
+              },
+              {
+                "word": "returns",
+                "startSec": 2.24,
+                "endSec": 2.8
+              },
+              {
+                "word": "1.",
+                "startSec": 2.96,
+                "endSec": 3.68
+              },
+              {
+                "word": "This",
+                "startSec": 3.76,
+                "endSec": 3.92
+              },
+              {
+                "word": "is",
+                "startSec": 3.96,
+                "endSec": 4
+              },
+              {
+                "word": "our",
+                "startSec": 4.08,
+                "endSec": 4.24
+              },
+              {
+                "word": "base",
+                "startSec": 4.32,
+                "endSec": 4.56
+              },
+              {
+                "word": "case.",
+                "startSec": 4.64,
+                "endSec": 5.28
+              }
+            ]
+          },
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s4",
+          "narration": "Next, factorial of 1 returns 1. It multiplies n by the result of factorial of 0.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s4-6f9d57dbdc3b.mp3",
+            "durationSec": 7.6565625,
+            "wordTimings": [
+              {
+                "word": "Next,",
+                "startSec": 0,
+                "endSec": 0.8
+              },
+              {
+                "word": "factorial",
+                "startSec": 0.88,
+                "endSec": 1.52
+              },
+              {
+                "word": "of",
+                "startSec": 1.6,
+                "endSec": 1.68
+              },
+              {
+                "word": "1",
+                "startSec": 1.84,
+                "endSec": 2.16
+              },
+              {
+                "word": "returns",
+                "startSec": 2.32,
+                "endSec": 2.8
+              },
+              {
+                "word": "1.",
+                "startSec": 2.96,
+                "endSec": 3.28
+              },
+              {
+                "word": "It",
+                "startSec": 3.76,
+                "endSec": 3.92
+              },
+              {
+                "word": "multiplies",
+                "startSec": 4.08,
+                "endSec": 4.56
+              },
+              {
+                "word": "n",
+                "startSec": 4.72,
+                "endSec": 5.04
+              },
+              {
+                "word": "by",
+                "startSec": 5.2,
+                "endSec": 5.28
+              },
+              {
+                "word": "the",
+                "startSec": 5.32,
+                "endSec": 5.36
+              },
+              {
+                "word": "result",
+                "startSec": 5.44,
+                "endSec": 5.84
+              },
+              {
+                "word": "of",
+                "startSec": 5.92,
+                "endSec": 6.08
+              },
+              {
+                "word": "factorial",
+                "startSec": 6.32,
+                "endSec": 6.72
+              },
+              {
+                "word": "of",
+                "startSec": 6.8,
+                "endSec": 6.96
+              },
+              {
+                "word": "0.",
+                "startSec": 7.04,
+                "endSec": 7.68
+              }
+            ]
+          },
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s5",
+          "narration": "Then, factorial of 2 returns 2. It multiplies n by the result of factorial of 1.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s5-91bebb40e0b2.mp3",
+            "durationSec": 7.4214375,
+            "wordTimings": [
+              {
+                "word": "Then,",
+                "startSec": 0,
+                "endSec": 0.4
+              },
+              {
+                "word": "factorial",
+                "startSec": 0.72,
+                "endSec": 1.28
+              },
+              {
+                "word": "of",
+                "startSec": 1.36,
+                "endSec": 1.44
+              },
+              {
+                "word": "2",
+                "startSec": 1.6,
+                "endSec": 1.92
+              },
+              {
+                "word": "returns",
+                "startSec": 2.08,
+                "endSec": 2.64
+              },
+              {
+                "word": "2.",
+                "startSec": 2.72,
+                "endSec": 3.12
+              },
+              {
+                "word": "It",
+                "startSec": 3.6,
+                "endSec": 3.68
+              },
+              {
+                "word": "multiplies",
+                "startSec": 3.76,
+                "endSec": 4.4
+              },
+              {
+                "word": "n",
+                "startSec": 4.56,
+                "endSec": 4.88
+              },
+              {
+                "word": "by",
+                "startSec": 5.04,
+                "endSec": 5.12
+              },
+              {
+                "word": "the",
+                "startSec": 5.2,
+                "endSec": 5.28
+              },
+              {
+                "word": "result",
+                "startSec": 5.52,
+                "endSec": 5.76
+              },
+              {
+                "word": "of",
+                "startSec": 5.84,
+                "endSec": 5.92
+              },
+              {
+                "word": "factorial",
+                "startSec": 6,
+                "endSec": 6.56
+              },
+              {
+                "word": "of",
+                "startSec": 6.64,
+                "endSec": 6.72
+              },
+              {
+                "word": "1.",
+                "startSec": 6.88,
+                "endSec": 7.44
+              }
+            ]
+          },
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                },
+                "returns": "2"
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s6",
+          "narration": "Finally, factorial of 3 returns 6. It multiplies n by the result of factorial of 2.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c2-s6-0126b947a4a6.mp3",
+            "durationSec": 7.5781875,
+            "wordTimings": [
+              {
+                "word": "Finally,",
+                "startSec": 0,
+                "endSec": 0.88
+              },
+              {
+                "word": "factorial",
+                "startSec": 0.96,
+                "endSec": 1.52
+              },
+              {
+                "word": "of",
+                "startSec": 1.6,
+                "endSec": 1.68
+              },
+              {
+                "word": "3",
+                "startSec": 1.84,
+                "endSec": 2.16
+              },
+              {
+                "word": "returns",
+                "startSec": 2.24,
+                "endSec": 2.8
+              },
+              {
+                "word": "6.",
+                "startSec": 2.88,
+                "endSec": 3.56
+              },
+              {
+                "word": "It",
+                "startSec": 3.76,
+                "endSec": 3.84
+              },
+              {
+                "word": "multiplies",
+                "startSec": 3.92,
+                "endSec": 4.48
+              },
+              {
+                "word": "n",
+                "startSec": 4.72,
+                "endSec": 5.04
+              },
+              {
+                "word": "by",
+                "startSec": 5.12,
+                "endSec": 5.28
+              },
+              {
+                "word": "the",
+                "startSec": 5.32,
+                "endSec": 5.36
+              },
+              {
+                "word": "result",
+                "startSec": 5.44,
+                "endSec": 5.84
+              },
+              {
+                "word": "of",
+                "startSec": 5.92,
+                "endSec": 6
+              },
+              {
+                "word": "factorial",
+                "startSec": 6.08,
+                "endSec": 6.72
+              },
+              {
+                "word": "of",
+                "startSec": 6.8,
+                "endSec": 6.88
+              },
+              {
+                "word": "2.",
+                "startSec": 7.04,
+                "endSec": 7.6
+              }
+            ]
+          },
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                },
+                "returns": "6"
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                },
+                "returns": "2"
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Output",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "And here's the result of our program. Factorial of 3 is 6.",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c3-s1-7ff54550a7de.mp3",
+            "durationSec": 4.7046875,
+            "wordTimings": [
+              {
+                "word": "And",
+                "startSec": 0,
+                "endSec": 0.16
+              },
+              {
+                "word": "here's",
+                "startSec": 0.24,
+                "endSec": 0.48
+              },
+              {
+                "word": "the",
+                "startSec": 0.56,
+                "endSec": 0.6
+              },
+              {
+                "word": "result",
+                "startSec": 0.64,
+                "endSec": 1.04
+              },
+              {
+                "word": "of",
+                "startSec": 1.12,
+                "endSec": 1.16
+              },
+              {
+                "word": "our",
+                "startSec": 1.2,
+                "endSec": 1.28
+              },
+              {
+                "word": "program.",
+                "startSec": 1.36,
+                "endSec": 1.92
+              },
+              {
+                "word": "Factorial",
+                "startSec": 2.32,
+                "endSec": 2.88
+              },
+              {
+                "word": "of",
+                "startSec": 2.96,
+                "endSec": 3.04
+              },
+              {
+                "word": "3",
+                "startSec": 3.12,
+                "endSec": 3.52
+              },
+              {
+                "word": "is",
+                "startSec": 3.68,
+                "endSec": 3.84
+              },
+              {
+                "word": "6.",
+                "startSec": 3.92,
+                "endSec": 4.72
+              }
+            ]
+          },
+          "type": "output",
+          "output": "6"
+        },
+        {
+          "id": "c3-s2",
+          "narration": "To wrap up, remember: recursion involves self-calling functions, needs a base case, and builds results from nested calls. Great job learning about recursion!",
+          "audio": {
+            "url": "audio/generated/2026-11-08T07-43-22-328Z-understanding-recursion-a71e403a-c3-s2-8ff1cf77b49f.mp3",
+            "durationSec": 11.4181875,
+            "wordTimings": [
+              {
+                "word": "To",
+                "startSec": 0,
+                "endSec": 0.16
+              },
+              {
+                "word": "wrap",
+                "startSec": 0.28,
+                "endSec": 0.4
+              },
+              {
+                "word": "up,",
+                "startSec": 0.48,
+                "endSec": 0.96
+              },
+              {
+                "word": "remember:",
+                "startSec": 1.04,
+                "endSec": 1.92
+              },
+              {
+                "word": "recursion",
+                "startSec": 2.04,
+                "endSec": 2.48
+              },
+              {
+                "word": "involves",
+                "startSec": 2.56,
+                "endSec": 3.12
+              },
+              {
+                "word": "self-calling",
+                "startSec": 3.28,
+                "endSec": 3.92
+              },
+              {
+                "word": "functions,",
+                "startSec": 4,
+                "endSec": 4.88
+              },
+              {
+                "word": "needs",
+                "startSec": 4.96,
+                "endSec": 5.2
+              },
+              {
+                "word": "a",
+                "startSec": 5.28,
+                "endSec": 5.36
+              },
+              {
+                "word": "base",
+                "startSec": 5.48,
+                "endSec": 5.6
+              },
+              {
+                "word": "case,",
+                "startSec": 5.68,
+                "endSec": 6.4
+              },
+              {
+                "word": "and",
+                "startSec": 6.52,
+                "endSec": 6.64
+              },
+              {
+                "word": "builds",
+                "startSec": 6.76,
+                "endSec": 6.96
+              },
+              {
+                "word": "results",
+                "startSec": 7.24,
+                "endSec": 7.52
+              },
+              {
+                "word": "from",
+                "startSec": 7.6,
+                "endSec": 7.68
+              },
+              {
+                "word": "nested",
+                "startSec": 7.76,
+                "endSec": 8.16
+              },
+              {
+                "word": "calls.",
+                "startSec": 8.24,
+                "endSec": 9.12
+              },
+              {
+                "word": "Great",
+                "startSec": 9.28,
+                "endSec": 9.44
+              },
+              {
+                "word": "job",
+                "startSec": 9.6,
+                "endSec": 9.84
+              },
+              {
+                "word": "learning",
+                "startSec": 9.92,
+                "endSec": 10.16
+              },
+              {
+                "word": "about",
+                "startSec": 10.24,
+                "endSec": 10.4
+              },
+              {
+                "word": "recursion!",
+                "startSec": 10.48,
+                "endSec": 11.44
+              }
+            ]
+          },
+          "type": "recap",
+          "points": [
+            "Recursion is when a function calls itself.",
+            "We need a base case to stop the recursion.",
+            "Each recursive call waits for the next one to finish.",
+            "Factorial of 3 is calculated as 3 times 2 times 1 times 1."
+          ]
+        }
+      ]
+    }
+  ]
+}

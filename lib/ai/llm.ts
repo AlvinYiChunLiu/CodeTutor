@@ -4,7 +4,25 @@
  */
 
 const BASE_URL = process.env.FEATHERLESS_BASE_URL ?? "https://api.featherless.ai/v1";
-export const DEFAULT_MODEL = process.env.FEATHERLESS_MODEL ?? "Qwen/Qwen2.5-Coder-32B-Instruct";
+/**
+ * Read at call time, not import time: scripts load .env.local after their imports run.
+ * FEATHERLESS_FALLBACK_MODEL (optional) is tried when the main model returns garbage.
+ */
+// 72B: ~25s per lesson and fewer Checker retries than Coder-32B (which was slow and glitchy on Featherless).
+export const currentModel = () => process.env.FEATHERLESS_MODEL || "Qwen/Qwen2.5-72B-Instruct";
+const fallbackModel = () => process.env.FEATHERLESS_FALLBACK_MODEL || "Qwen/Qwen2.5-Coder-32B-Instruct";
+
+/**
+ * Featherless sometimes returns junk like "{ !!!!!!!!…" (a server-side glitch, not a prompt problem).
+ * Spot it so we retry fresh instead of feeding the junk back to the model.
+ */
+export function isGarbage(text: string): boolean {
+  const t = text.trim();
+  if (t.length < 40) return false;
+  const run = (re: RegExp) => Math.max(0, ...[...t.matchAll(re)].map((m) => m[0].length));
+  // "!" / "?" never repeat 30 times in a real lesson; "=" or "-" lines can (a printed divider), but not 300 times.
+  return run(/([!?])\1+/g) >= 30 || run(/(\S)\1+/g) >= 300 || run(/(\S)\1+/g) / t.length > 0.6;
+}
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -30,8 +48,25 @@ export async function chat(opts: ChatOptions): Promise<string> {
   const key = process.env.LLM_API_KEY;
   if (!key) throw new LLMError("LLM_API_KEY is not set. Add your Featherless key to .env.local.", 500);
 
+  const model = opts.model ?? currentModel();
+  const FALLBACK_MODEL = fallbackModel();
+  // Garbage reply → one fresh retry, then the fallback model (if set) → else a clear error.
+  const models = [model, model, ...(FALLBACK_MODEL && FALLBACK_MODEL !== model ? [FALLBACK_MODEL] : [])];
+  for (let i = 0; i < models.length; i++) {
+    const text = await chatOnce(opts, models[i], key);
+    if (!isGarbage(text)) return text;
+    console.warn(`[llm] ${models[i]} returned garbage (${JSON.stringify(text.slice(0, 40))}…), ${i + 1 < models.length ? "retrying" : "giving up"}`);
+  }
+  throw new LLMError(
+    `The AI service sent back garbage ("!!!!…"). This is a Featherless glitch, not your input. Try again in a minute${FALLBACK_MODEL ? "" : ", or set FEATHERLESS_FALLBACK_MODEL in .env.local"}.`,
+    502,
+  );
+}
+
+/** One request (with one retry on 429 / 5xx / network errors). */
+async function chatOnce(opts: ChatOptions, model: string, key: string): Promise<string> {
   const body = JSON.stringify({
-    model: opts.model ?? DEFAULT_MODEL,
+    model,
     messages: opts.messages,
     temperature: opts.temperature ?? 0.4,
     max_tokens: opts.maxTokens ?? 3000,

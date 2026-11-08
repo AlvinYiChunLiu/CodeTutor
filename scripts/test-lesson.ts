@@ -8,6 +8,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { generateLesson } from "../lib/ai/lesson";
 import { LessonRequest, looksLikeCode } from "../lib/ai/request";
+import { currentModel } from "../lib/ai/llm";
 
 try {
   process.loadEnvFile(".env.local");
@@ -58,7 +59,7 @@ for (const name of names) {
     console.error(`Unknown preset "${name}". Try: ${Object.keys(PRESETS).join(", ")}`);
     process.exit(1);
   }
-  console.log(`\n▶ ${name}`);
+  console.log(`\n▶ ${name}  (model: ${currentModel()})`);
   try {
     const { lesson, meta } = await generateLesson(LessonRequest.parse(preset), (s) =>
       console.log(`  ${s.step} #${s.attempt ?? 1}  ${(s.ms / 1000).toFixed(1)}s${s.issues ? `  ✗ ${s.issues.join(" | ")}` : ""}`),

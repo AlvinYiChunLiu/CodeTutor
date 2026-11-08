@@ -1,8 +1,17 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import dotenv from "dotenv";
 import { POST } from "../app/api/lesson/route";
 import { Lesson } from "../lib/schema";
+
+// The video step needs ElevenLabs. Without a key, /api/lesson returns the lesson with no video,
+// so say that clearly instead of failing with "Rendered video not found: null".
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local"), quiet: true });
+if (!process.env.ELEVENLABS_API_KEY) {
+  console.log("⏭  Skipped: add ELEVENLABS_API_KEY to .env.local to test the video pipeline.");
+  process.exit(0);
+}
 
 const response = await POST(new Request("http://localhost/api/lesson?mock=1", {
   method: "POST",

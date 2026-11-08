@@ -144,6 +144,13 @@ function escapeControlCharsInStrings(s: string): string {
 function repairOutsideStrings(s: string): string {
   return s
     .split(/("(?:[^"\\]|\\.)*")/)
-    .map((part, i) => (i % 2 === 1 ? part : part.replace(/:\s*(?=[,}\]])/g, ": null").replace(/,\s*([}\]])/g, "$1")))
+    .map((part, i) =>
+      i % 2 === 1
+        ? part
+        : part
+            .replace(/,?\s*(?:\.\.\.|…)\s*(?=[,}\]])/g, "") // a copied "..." placeholder
+            .replace(/:\s*(?=[,}\]])/g, ": null")
+            .replace(/,\s*([}\]])/g, "$1"),
+    )
     .join("");
 }

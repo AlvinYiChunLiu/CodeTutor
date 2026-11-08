@@ -106,7 +106,7 @@ ${numberLines(args.mainCode)}
 
 Write the full lesson as JSON with this shape:
 {
-  "trace": [ { "call": "f(0)", "returns": "1", "how": "base case" }, ... ],
+  "trace": [ { "call": "f(0)", "returns": "1", "how": "base case" }, { "call": "f(1)", "returns": "1", "how": "1 × f(0) = 1" } ],
   "title": "string",
   "summary": "string",
   "chapters": [

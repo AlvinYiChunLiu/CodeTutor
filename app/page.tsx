@@ -65,6 +65,10 @@ export default function Home() {
       }
 
       window.sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(parsedLesson.data));
+      if (typeof result === "object" && result !== null && "id" in result && typeof result.id === "string") {
+        router.push(`/past-videos/${result.id}`);
+        return;
+      }
       const videoSrc = typeof result === "object" && result !== null && "videoSrc" in result
         && typeof result.videoSrc === "string"
         ? result.videoSrc

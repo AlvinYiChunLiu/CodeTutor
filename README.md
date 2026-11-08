@@ -7,7 +7,7 @@ Stack: Next.js (App Router) · React · Tailwind CSS · Remotion · Shiki
 ## Setup
 
 1. `npm install`
-2. `cp .env.example .env.local`, then fill in the keys (never commit `.env.local`)
+2. Create `.env.local` in the project root and add your keys, including `DATABASE_URL` for PostgreSQL (never commit `.env.local`)
 3. `npm run dev`, then open http://localhost:3000
 
 API keys are only read on the server (`app/api/*/route.ts` and `lib/`). Don't prefix them with `NEXT_PUBLIC_`.

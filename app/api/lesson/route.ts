@@ -19,6 +19,7 @@ import { generateLesson, LessonGenerationError } from "@/lib/ai/lesson";
 import { LLMError } from "@/lib/ai/llm";
 import { shouldMock } from "@/lib/ai/http";
 import { progress, type ProgressEvent } from "@/lib/ai/progress";
+import { saveLessonToDatabase } from "@/lib/lessons";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -126,16 +127,19 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
     // still return the lesson so the learner isn't left with nothing.
     if (!process.env.ELEVENLABS_API_KEY) {
       console.log("[lesson] no ELEVENLABS_API_KEY: skipping the video, returning the lesson only");
-      return { status: 200, body: { lesson, savedAs, videoSrc: null, meta } };
+      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(lesson, null) : null;
+      return { status: 200, body: { lesson, savedAs, videoSrc: null, id, meta } };
     }
     try {
       const sceneCount = lesson.chapters.reduce((n, c) => n + c.scenes.length, 0);
       emit(progress("voice", `0 of ${sceneCount} scenes`, 0));
       const result = await createLessonVideo(savedAs, sceneCount, emit);
-      return { status: 200, body: { ...result, meta } };
+      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(result.lesson, result.videoSrc) : null;
+      return { status: 200, body: { ...result, id, meta } };
     } catch (videoError) {
       console.error("[lesson] video step failed, returning the lesson without a video:", videoError);
-      return { status: 200, body: { lesson, savedAs, videoSrc: null, videoError: "The video couldn't be made this time.", meta } };
+      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(lesson, null) : null;
+      return { status: 200, body: { lesson, savedAs, videoSrc: null, id, videoError: "The video couldn't be made this time.", meta } };
     }
   } catch (e) {
     console.error("[lesson] failed:", e);

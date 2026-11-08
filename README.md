@@ -1,4 +1,4 @@
-# CodeTutor (HackCamp)
+# hackcamp-codetutor
 
 Turns pasted code or a programming concept into a narrated explainer video.
 

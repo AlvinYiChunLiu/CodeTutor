@@ -15,7 +15,7 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
   const resolvedLessonPath = path.resolve(lessonPath);
   const lessonName = path.basename(resolvedLessonPath, path.extname(resolvedLessonPath))
     .replace(/[^a-zA-Z0-9_-]/g, "-");
-  const audioDirectory = path.resolve(process.cwd(), "public/audio", lessonName);
+  const audioDirectory = path.resolve(process.cwd(), "public/audio/generated", lessonName);
   const lesson = LessonSchema.parse(JSON.parse(await readFile(resolvedLessonPath, "utf8")));
   const elevenlabs = new ElevenLabsClient();
   const voiceId = process.env.ELEVENLABS_VOICE_ID || "JBFqnCBsd6RMkjVDRZzb";
@@ -32,15 +32,19 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
       const fileName = `${safeSceneId}-${narrationHash}.mp3`;
       const audioPath = path.join(audioDirectory, fileName);
       let audioBytes: Buffer | undefined;
-      let audioUrl: string | undefined;
 
-      if (scene.audio?.url.startsWith("audio/")) {
+      try {
+        audioBytes = await readFile(audioPath);
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      }
+
+      if (!audioBytes && scene.audio?.url.startsWith("audio/")) {
         const existingAudioPath = path.resolve(process.cwd(), "public", scene.audio.url);
-        const audioRoot = `${path.resolve(process.cwd(), "public/audio")}${path.sep}`;
-        if (existingAudioPath.startsWith(audioRoot)) {
+        const publicAudioRoot = `${path.resolve(process.cwd(), "public/audio")}${path.sep}`;
+        if (existingAudioPath.startsWith(publicAudioRoot)) {
           try {
             audioBytes = await readFile(existingAudioPath);
-            audioUrl = scene.audio.url;
           } catch (error) {
             if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
           }
@@ -48,24 +52,18 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
       }
 
       if (!audioBytes) {
-        try {
-          audioBytes = await readFile(audioPath);
-        } catch (error) {
-          if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
-          const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
-            text: scene.narration,
-            modelId: "eleven_v4",
-            outputFormat: "mp3_44100_128",
-          });
-          audioBytes = Buffer.from(await new Response(audioStream).arrayBuffer());
-          await writeFile(audioPath, audioBytes);
-        }
-        audioUrl = `audio/${lessonName}/${fileName}`;
+        const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
+          text: scene.narration,
+          modelId: "eleven_v4",
+          outputFormat: "mp3_44100_128",
+        });
+        audioBytes = Buffer.from(await new Response(audioStream).arrayBuffer());
       }
-      if (!audioBytes || !audioUrl) throw new Error(`Could not prepare narration for scene ${scene.id}.`);
+      if (!audioBytes) throw new Error(`Could not prepare narration for scene ${scene.id}.`);
+      await writeFile(audioPath, audioBytes);
 
       scene.audio = {
-        url: audioUrl,
+        url: `audio/generated/${lessonName}/${fileName}`,
         durationSec: scene.audio?.durationSec ?? (audioBytes.byteLength * 8) / 128_000,
       };
       await writeFile(resolvedLessonPath, `${JSON.stringify(lesson, null, 2)}\n`);

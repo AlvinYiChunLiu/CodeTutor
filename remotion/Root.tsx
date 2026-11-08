@@ -1,5 +1,5 @@
 import { Composition } from "remotion";
-import sampleLesson from "../mocks/sample-lesson.json";
+import sampleLesson from "../mocks/lesson-recursion.json";
 import loopsLessonData from "../mocks/lesson-loops.json";
 import variablesLessonData from "../mocks/lesson-variables.json";
 import { Lesson as LessonSchema } from "../lib/schema";

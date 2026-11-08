@@ -11,40 +11,64 @@
       "scenes": [
         {
           "id": "variables-title-01",
+          "narration": "A variable gives a value a name so your program can use it again.",
           "type": "title",
           "heading": "Give a value a name.",
           "subheading": "Variables help your program remember information.",
-          "narration": "A variable gives a value a name so your program can use it again."
+          "audio": {
+            "url": "audio/variables/variables-title-01-cc05bbf90271.mp3",
+            "durationSec": 4.469625
+          }
         },
         {
           "id": "variables-code-01",
+          "narration": "Here, points is a name that starts with the value zero.",
           "type": "code",
           "code": "let points = 0;\npoints = points + 10;\nconsole.log(points);",
-          "highlightLines": [1],
-          "narration": "Here, points is a name that starts with the value zero."
+          "highlightLines": [
+            1
+          ],
+          "audio": {
+            "url": "audio/variables/variables-code-01-8174aa16d23a.mp3",
+            "durationSec": 3.999375
+          }
         },
         {
           "id": "variables-code-02",
+          "narration": "The next line reads the current value and stores ten back in points.",
           "type": "code",
           "code": "let points = 0;\npoints = points + 10;\nconsole.log(points);",
-          "highlightLines": [2],
-          "narration": "The next line reads the current value and stores ten back in points."
+          "highlightLines": [
+            2
+          ],
+          "audio": {
+            "url": "audio/variables/variables-code-02-e30f4157530d.mp3",
+            "durationSec": 4.469625
+          }
         },
         {
           "id": "variables-output-01",
+          "narration": "When we print points, its updated value is ten.",
           "type": "output",
           "output": "10",
-          "narration": "When we print points, its updated value is ten."
+          "audio": {
+            "url": "audio/variables/variables-output-01-4523809b6bcd.mp3",
+            "durationSec": 3.6598125
+          }
         },
         {
           "id": "variables-recap-01",
+          "narration": "Name values to make them easier to reuse and update.",
           "type": "recap",
           "points": [
             "A variable associates a name with a value",
             "Use the name to read the current value",
             "Assign again to update what it stores"
           ],
-          "narration": "Name values to make them easier to reuse and update."
+          "audio": {
+            "url": "audio/variables/variables-recap-01-93aec9a7bfc2.mp3",
+            "durationSec": 3.8165625
+          }
         }
       ]
     }

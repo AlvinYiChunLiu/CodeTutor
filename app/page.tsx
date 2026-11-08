@@ -146,16 +146,16 @@ export default function Home() {
         </div>
         <div className="gallery-grid">
           <Link className="gallery-card gallery-featured" href="/lesson">
-            <div className="gallery-visual gallery-video"><video src="/videos/recursion-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">WITH VOICEOVER</span></div>
+            <div className="gallery-visual gallery-video"><video src="/videos/recursion-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /></div>
             <div className="gallery-card-copy"><div><span className="gallery-tag">VISUAL LESSON</span><span className="gallery-time">4 MIN</span></div><h3>Recursion, without the headache</h3><p>Follow each function call and see how the answer comes back.</p><span className="gallery-open">Try this lesson <ArrowIcon /></span></div>
           </Link>
           <Link className="gallery-card" href="/lesson/loops">
-            <div className="gallery-visual gallery-video"><video src="/videos/loops-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Loops, one step at a time</h3><p>See how one loop handles a list of names.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
+            <div className="gallery-visual gallery-video"><video src="/videos/loops-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SHORT</span></div><h3>Loops, one step at a time</h3><p>See how one loop handles a list of names.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
           <Link className="gallery-card" href="/lesson/variables">
-            <div className="gallery-visual gallery-video"><video src="/videos/variables-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Give a value a name</h3><p>Learn how variables store and update information.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
+            <div className="gallery-visual gallery-video"><video src="/videos/variables-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SHORT</span></div><h3>Give a value a name</h3><p>Learn how variables store and update information.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
         </div>
       </section>

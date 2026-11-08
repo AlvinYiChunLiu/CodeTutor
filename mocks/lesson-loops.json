@@ -11,33 +11,53 @@
       "scenes": [
         {
           "id": "loops-title-01",
+          "narration": "A loop repeats a set of instructions, changing one value each time.",
           "type": "title",
           "heading": "Loops, one step at a time.",
           "subheading": "Repeat instructions without repeating code.",
-          "narration": "A loop repeats a set of instructions, changing one value each time."
+          "audio": {
+            "url": "audio/loops/loops-title-01-a6311f729a40.mp3",
+            "durationSec": 4.7830625
+          }
         },
         {
           "id": "loops-code-01",
+          "narration": "A for of loop takes each name from the list and runs the same instruction for it.",
           "type": "code",
           "code": "const names = [\"Mina\", \"Leo\", \"Asha\"];\n\nfor (const name of names) {\n  console.log(`Hello, ${name}!`);\n}",
-          "highlightLines": [3, 4, 5],
-          "narration": "A for of loop takes each name from the list and runs the same instruction for it."
+          "highlightLines": [
+            3,
+            4,
+            5
+          ],
+          "audio": {
+            "url": "audio/loops/loops-code-01-2c683a5732af.mp3",
+            "durationSec": 5.279375
+          }
         },
         {
           "id": "loops-output-01",
+          "narration": "The loop prints one greeting for every name in the list.",
           "type": "output",
           "output": "Hello, Mina!\nHello, Leo!\nHello, Asha!",
-          "narration": "The loop prints one greeting for every name in the list."
+          "audio": {
+            "url": "audio/loops/loops-output-01-2ea151558e56.mp3",
+            "durationSec": 3.5030625
+          }
         },
         {
           "id": "loops-recap-01",
+          "narration": "Use a loop when the same action needs to happen for several values.",
           "type": "recap",
           "points": [
             "A loop repeats a block of instructions",
             "Each pass can use a different value",
             "The loop ends when the collection is finished"
           ],
-          "narration": "Use a loop when the same action needs to happen for several values."
+          "audio": {
+            "url": "audio/loops/loops-recap-01-abb264eea094.mp3",
+            "durationSec": 4.312875
+          }
         }
       ]
     }

@@ -15,17 +15,21 @@
     "video:render:silent-samples": "npm run video:render:loops && npm run video:render:variables",
     "video": "npm run video:audio && npm run video:render",
     "lesson:test": "tsx scripts/test-lesson.ts",
-    "practice:test": "tsx scripts/test-practice.ts"
+    "practice:test": "tsx scripts/test-practice.ts",
+    "prompt-video:test": "tsx scripts/test-prompt-video.ts"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",
+    "@remotion/bundler": "^4.0.541",
     "@remotion/player": "^4.0.541",
+    "@remotion/renderer": "^4.0.541",
     "dotenv": "^18.0.9",
     "next": "^15.5.29",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "remotion": "^4.0.541",
     "shiki": "^4.6.0",
+    "tsx": "^4.23.15",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -35,7 +39,6 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.1.13",
-    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   },
   "allowScripts": {

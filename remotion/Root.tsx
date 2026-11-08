@@ -12,6 +12,8 @@ const lessons = [
   { id: "LoopsLesson", lesson: LessonSchema.parse(loopsLessonData) },
   { id: "VariablesLesson", lesson: LessonSchema.parse(variablesLessonData) },
 ];
+const NarratedLessonVideo = withLessonAudio(LessonVideo);
+const generatedLessonFallback = LessonSchema.parse(sampleLesson);
 
 export function RemotionRoot() {
   return (
@@ -20,13 +22,26 @@ export function RemotionRoot() {
         <Composition
           key={id}
           id={id}
-          component={withLessonAudio(LessonVideo, lesson)}
+          component={NarratedLessonVideo}
           durationInFrames={getLessonDurationInFrames(lesson)}
           fps={30}
           width={1280}
           height={720}
+          defaultProps={{ lesson }}
         />
       ))}
+      <Composition
+        id="GeneratedLesson"
+        component={NarratedLessonVideo}
+        durationInFrames={getLessonDurationInFrames(generatedLessonFallback)}
+        fps={30}
+        width={1280}
+        height={720}
+        defaultProps={{ lesson: generatedLessonFallback }}
+        calculateMetadata={({ props }) => ({
+          durationInFrames: getLessonDurationInFrames(LessonSchema.parse(props.lesson)),
+        })}
+      />
     </>
   );
 }

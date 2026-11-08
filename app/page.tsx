@@ -65,6 +65,12 @@ export default function Home() {
       }
 
       window.sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(parsedLesson.data));
+      const videoSrc = typeof result === "object" && result !== null && "videoSrc" in result
+        && typeof result.videoSrc === "string"
+        ? result.videoSrc
+        : "";
+      if (videoSrc) window.sessionStorage.setItem("codetutor-generated-video", videoSrc);
+      else window.sessionStorage.removeItem("codetutor-generated-video");
       router.push("/lesson");
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Something went wrong. Please try again.");

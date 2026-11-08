@@ -107,6 +107,11 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
     sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(data.lesson));
+    if (typeof data.videoSrc === "string" && data.videoSrc.startsWith("/videos/")) {
+      sessionStorage.setItem("codetutor-generated-video", data.videoSrc);
+    } else {
+      sessionStorage.removeItem("codetutor-generated-video");
+    }
     router.push("/lesson");
   } catch (e) {
     setMessage("");

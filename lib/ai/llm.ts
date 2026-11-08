@@ -62,7 +62,17 @@ export async function chat(opts: ChatOptions): Promise<string> {
         }
         throw err;
       }
-      const data = await res.json();
+      const responseText = await res.text();
+      let data: unknown;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        throw new LLMError(
+          `Featherless returned invalid JSON: ${(e as Error).message}`,
+          502,
+          responseText.slice(0, 500),
+        );
+      }
       const content: unknown = data?.choices?.[0]?.message?.content;
       if (typeof content !== "string" || !content.trim()) {
         throw new LLMError("Featherless returned an empty message.", 502, JSON.stringify(data).slice(0, 500));

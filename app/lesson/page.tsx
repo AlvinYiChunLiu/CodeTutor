@@ -7,12 +7,17 @@ import { Lesson as LessonSchema, type Lesson } from "@/lib/schema";
 
 export default function LessonPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [videoSrc, setVideoSrc] = useState<string>();
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     try {
+      const savedVideoSrc = window.sessionStorage.getItem("codetutor-generated-video");
+      if (savedVideoSrc?.startsWith("/videos/")) setVideoSrc(savedVideoSrc);
       const savedLesson = window.sessionStorage.getItem("codetutor-generated-lesson");
       if (!savedLesson) {
+        window.sessionStorage.removeItem("codetutor-generated-video");
+        setVideoSrc(undefined);
         setLesson(LessonSchema.parse(sampleLesson));
         return;
       }
@@ -46,10 +51,10 @@ export default function LessonPage() {
         <p className="mx-auto mt-6 w-[min(900px,calc(100%_-_40px))] rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800" role="status">
           {loadError}
         </p>
-        <InteractiveLesson lesson={lesson} />
+        <InteractiveLesson lesson={lesson} videoSrc={videoSrc} />
       </>
     );
   }
 
-  return <InteractiveLesson lesson={lesson} />;
+  return <InteractiveLesson lesson={lesson} videoSrc={videoSrc} />;
 }

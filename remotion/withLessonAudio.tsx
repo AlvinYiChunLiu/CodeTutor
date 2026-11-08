@@ -5,8 +5,8 @@ import { getLessonAudioTimeline } from "./timeline";
 
 type LessonVideoComponent = ComponentType<{ lesson: Lesson }>;
 
-export function withLessonAudio(VisualVideo: LessonVideoComponent, lesson: Lesson) {
-  return function LessonVideoWithAudio() {
+export function withLessonAudio(VisualVideo: LessonVideoComponent) {
+  return function LessonVideoWithAudio({ lesson }: { lesson: Lesson }) {
     const timeline = getLessonAudioTimeline(lesson);
 
     return (

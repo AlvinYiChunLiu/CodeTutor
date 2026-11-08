@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Test prompt-to-video pipeline",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\npm.cmd",
+			"args": [
+				"run",
+				"prompt-video:test"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

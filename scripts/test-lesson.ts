@@ -15,6 +15,21 @@ try {
 
 const PRESETS: Record<string, unknown> = {
   recursion: { mode: "teach-concept", input: "What is recursion?", language: "python" },
+  "binary-search": {
+    mode: "teach-concept",
+    input: "Teach binary search on a sorted array. Show how low, high, and mid move while searching for a target.",
+    language: "python",
+  },
+  factorial: {
+    mode: "teach-concept",
+    input: "Teach recursive factorial using factorial(4), showing the recursive calls and how the call stack returns values.",
+    language: "python",
+  },
+  "two-pointers": {
+    mode: "teach-concept",
+    input: "Teach the two-pointer technique by finding a pair that sums to a target in a sorted array. Show how the pointers move.",
+    language: "python",
+  },
   "two-sum": {
     mode: "explain-solution",
     input:

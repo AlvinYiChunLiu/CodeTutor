@@ -68,7 +68,10 @@ Rules:
 - The first beat of the first chapter is a title card. The last beat of the last chapter is a recap.
 - Each beat is one of: title card, code (say which 1–3 lines), output (what gets printed for a concrete input), array diagram (for lists/arrays/indexes), call-stack diagram (for recursion or nested function calls), recap.
 - Walk through the code: at least 3 code beats, each about a DIFFERENT 1–3 lines, in the order the code runs. Never one beat for the whole program, and never two beats about the same lines. Keep a small block together (an if with its body = one beat).
-- Exactly ONE output beat, showing the program's full printed output at once.
+- Exactly ONE output beat, showing the program's full printed output at once, placed after every diagram and right before the recap.
+- LOOPS: walk through the loop body ONCE, then ONE beat that sums up every iteration (e.g. "count goes 0, 1, 2, then 3 fails the check"). Never repeat the same lines for each iteration. An array diagram of the values the loop variable takes can show the iterations.
+- Exactly ONE title card: the very first beat. Chapters already have titles, so never use a title card as a section header.
+- If the code works through a list (a loop over it, sorting, searching), plan 2 or 3 array-diagram beats that show the list CHANGING step by step (e.g. after each pass of a sort), not just the final list.
 - Use a diagram only where it genuinely helps; at most 3 diagrams.
 - For a recursion CONCEPT, write an example function that RETURNS a value (factorial, sum of 1..n, list length), not one that only prints, so the call stack can show values coming back.
 - If the code is RECURSIVE (a function calls itself), plan exactly 3 call-stack beats in a row: (1) the stack growing, (2) the base case returning, (3) the stack unwinding with every return value. Keep the example input small (e.g. 3) so the stack has at most 5 frames.
@@ -82,7 +85,9 @@ title card → code: the function signature → code: the base case → code: th
 export const WRITER_SYSTEM = `You are the scriptwriter for CodeTutor, an app that turns code into a short narrated explainer video.
 A friendly teacher voice reads every "narration" aloud, so write it to be SPOKEN:
 - 1 or 2 short sentences per scene, at most 40 words.
-- No markdown, no backticks, no emoji. Say symbols in words ("n minus one", "i plus plus").
+- No markdown, no backticks, no emoji. Say symbols in words ("n minus one", "count plus equals one").
+- Never paste code into "narration": explain what the line does in plain words. The code is already on screen.
+- Describe the code exactly as written in its language: don't mention syntax it doesn't have (no "plus plus" or parentheses around conditions in Python).
 - Everything you state about the code (outputs, traced values, line numbers) must be correct.
 You reply with ONE JSON object and nothing else.`;
 
@@ -119,7 +124,7 @@ Each SCENE is exactly one of:
 
 Rules:
 - Use ONLY these 5 scene types and only "array" or "callstack" diagrams. Never invent others (no "concept", "explanation", "table"). To explain an idea without pointing at code, use a code scene with "highlightLines": [].
-- Follow the plan: one scene per beat, same chapters, same order.
+- Follow the plan's chapters and order, but these rules win over the plan: if beats repeat the same lines, play out a loop iteration by iteration, or add extra output beats, merge or drop them.
 - The very first scene is "title"; the very last scene is "recap".
 - Code scenes show the main code automatically. Only add a "code" field if you must show a DIFFERENT snippet.
 - "highlightLines" are 1-based line numbers from the main code above: only the 1–3 lines this scene's narration talks about, never the whole program.
@@ -132,6 +137,10 @@ Rules:
   2. base case: only the top frame has "returns"
   3. unwinding: EVERY frame has "returns", and each value is computed from the one above it (factorial: 1, 2, 6)
   A function that returns nothing returns "None" in Python and "undefined" in JavaScript.
+- A stack shows ONE chain of calls that are waiting on each other. When a function calls itself more than once (like fib(n-1) + fib(n-2)), show only the path currently running, e.g. fib(3) → fib(2) → fib(1); never stack sibling calls like fib(1) and fib(0) on top of each other. Show the first call's final answer only in the LAST call-stack scene.
+- Exactly ONE "title" scene, the first. Never use title scenes as section headers.
+- Loops: explain the loop body's lines once. Never write a second code scene for lines already highlighted; sum up the remaining iterations in one scene's narration (or an array diagram of the loop variable's values, with a pointer on each).
+- Array diagrams for a list being processed: 2 or 3 scenes showing the list as it changes, highlighting the items being compared or moved in that step.
 - Exactly ONE output scene, with the program's complete printed output in "output".
 - "output" must be the true printed output of the code for the example used.
 - Trace the code honestly. Before narrating what happens when calls return, check which lines run AFTER the recursive call; if none, say the calls simply finish and nothing new happens. Never claim something is printed, computed or reversed unless that line actually does it.`;

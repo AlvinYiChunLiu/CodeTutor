@@ -66,9 +66,11 @@ for (const name of names) {
   process.stdout.write(`▶ ${name} … `);
   const t = Date.now();
   let tries = 0;
+  const rejected: string[] = [];
   try {
     const { lesson, meta } = await generateLesson(LessonRequest.parse(TOPICS[name]), (s) => {
       if (s.step === "writer") tries = s.attempt ?? 1;
+      if (s.step === "checker" && s.issues) rejected.push(...s.issues.map((i) => `try ${s.attempt} rejected: ${i.slice(0, 140)}`));
     });
     writeFileSync(`mocks/tuning/${name}.json`, JSON.stringify(lesson, null, 2) + "\n");
     const scenes = lesson.chapters.flatMap((c) => c.scenes);
@@ -76,11 +78,11 @@ for (const name of names) {
     rows.push({
       name, ok: true, secs: (Date.now() - t) / 1000, tries, scenes: scenes.length,
       code: scenes.filter((s) => s.type === "code").length, arrays: count("array"), stacks: count("callstack"),
-      notes: [...review(lesson), ...meta.warnings.map((w) => `checker: ${w}`)],
+      notes: [...review(lesson), ...meta.warnings.map((w) => `checker: ${w}`), ...rejected],
     });
     console.log(`✅ ${((Date.now() - t) / 1000).toFixed(0)}s`);
   } catch (e) {
-    rows.push({ name, ok: false, secs: (Date.now() - t) / 1000, tries, scenes: 0, code: 0, arrays: 0, stacks: 0, notes: [(e as Error).message, ...((e as any).issues ?? [])] });
+    rows.push({ name, ok: false, secs: (Date.now() - t) / 1000, tries, scenes: 0, code: 0, arrays: 0, stacks: 0, notes: [(e as Error).message, ...rejected] });
     console.log("❌");
   }
 }

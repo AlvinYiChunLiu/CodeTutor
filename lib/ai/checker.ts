@@ -197,6 +197,43 @@ export function checkLesson(
   }
 
   const codeLines = ctx.plan.mainCode.split("\n").filter((l) => l.trim()).length;
+  // Repeats: the same lines explained in several code scenes (usually a loop played out iteration by iteration).
+  const key = (s: Any) => (s.type === "code" && s.highlightLines.length ? `${s.code}::${s.highlightLines.join(",")}` : "");
+  const seenKeys = new Set<string>();
+  let repeats = 0;
+  for (const s of all()) {
+    const k = key(s);
+    if (k && seenKeys.has(k)) repeats++;
+    if (k) seenKeys.add(k);
+  }
+  if (repeats && !ctx.lastAttempt) {
+    issues.push(`${repeats} code scene(s) repeat lines that an earlier scene already highlighted. Explain each line once; for a loop, walk through the body once, then sum up the other iterations in one scene.`);
+  } else if (repeats || (ctx.lastAttempt && all().filter((s: Any) => s.type === "output").length > 1)) {
+    // Last attempt: drop the repeated code scenes and merge the output pieces into one scene.
+    seenKeys.clear();
+    const outs = all().filter((s: Any) => s.type === "output");
+    const merged = [...new Set(outs.map((o: Any) => str(o.output).replace(/\n+$/, "")))].join("\n");
+    const keepOut = outs.at(-1);
+    chapters = chapters
+      .map((c) => ({
+        ...c,
+        scenes: c.scenes.filter((s: Any) => {
+          const k = key(s);
+          if (k) {
+            if (seenKeys.has(k)) return false;
+            seenKeys.add(k);
+          }
+          if (s.type === "output" && outs.length > 1) {
+            if (s !== keepOut) return false;
+            s.output = merged;
+          }
+          return true;
+        }),
+      }))
+      .filter((c) => c.scenes.length > 0);
+    warnings.push(`removed ${repeats} repeated code scene(s)${outs.length > 1 ? ` and merged ${outs.length} output scenes` : ""}`);
+  }
+
   const n = all().length;
   // Quality gates: ask the writer to fix these, but accept on the last attempt rather than fail.
   if (n < 4) issues.push(`Only ${n} scenes. Write at least 7.`);
@@ -214,6 +251,32 @@ export function checkLesson(
   else if (n > 18) warnings.push(`${n} scenes is a long video`);
   const outputs = all().filter((s: Any) => s.type === "output").length;
   if (outputs > 1 && !ctx.lastAttempt) issues.push(`There are ${outputs} output scenes. Use exactly one, with the complete printed output.`);
+  // Narration is read aloud: pasted code ("for j in range(len(nums) - 1 - i):") sounds broken.
+  const codey = (t: string) => /\b(def|function|class|for|while|if|return)\b[^.!?]*[:{]\s*$/m.test(t) || /\w\[[^\]]*\]|\w\([^)]*\)\s*[:{]|==|!=|\+=|=>|;\s*$/.test(t);
+  const pasted = all().filter((s: Any) => s.type !== "title" && codey(str(s.narration))).length;
+  if (pasted && !ctx.lastAttempt) issues.push(`${pasted} narration(s) contain pasted code. Narration is read aloud: explain each line in plain spoken words (e.g. "we compare each number with the one after it"), never copy the code itself.`);
+  const rambling = all().filter((s: Any) => str(s.narration).split(" ").length > 60).length;
+  if (rambling && !ctx.lastAttempt) issues.push(`${rambling} scene(s) have narration over 60 words. Keep each narration to 1 or 2 short sentences (under 40 words).`);
+  const order = all().map((s: Any) => s.type);
+  if (!ctx.lastAttempt && order.includes("output") && order.lastIndexOf("diagram") > order.indexOf("output")) {
+    issues.push(`The output scene comes before a diagram scene. Put the output scene after all the diagrams, right before the recap.`);
+  }
+  const prints = /\bprint\s*\(|console\.log\s*\(|System\.out\.print|printf\s*\(|\bcout\s*<</.test(ctx.plan.mainCode);
+  if (prints && outputs === 0 && !ctx.lastAttempt) issues.push(`The code prints something but there is no output scene. Add one { "type": "output", "output": "<exact printed text>" } before the recap.`);
+
+  // Only the opening scene is a title card; extra ones were being used as section headers.
+  const titles = all().filter((s: Any) => s.type === "title").length;
+  if (titles > 1) {
+    if (ctx.lastAttempt) {
+      let seen = false;
+      chapters = chapters
+        .map((c) => ({ ...c, scenes: c.scenes.filter((s: Any) => s.type !== "title" || (!seen && (seen = true))) }))
+        .filter((c) => c.scenes.length > 0);
+      warnings.push(`dropped ${titles - 1} extra title scene(s)`);
+    } else {
+      issues.push(`There are ${titles} title scenes. Use exactly one (the first scene); chapters already have titles, so remove the title scenes used as section headers.`);
+    }
+  }
 
   // Call stacks: returns must fill in from the top, and recursion needs the 3-step sequence.
   const stacks = all().filter((s: Any) => s.type === "diagram" && s.diagram?.kind === "callstack");
@@ -245,6 +308,11 @@ export function checkLesson(
   }
   if (!ctx.lastAttempt && isRecursive(ctx.plan.mainCode) && traced.size === 0) {
     issues.push(`The code is recursive but "trace" is empty. Fill "trace" first: every call with its return value, from the base case up.`);
+  }
+
+  // The first call (bottom frame) finishes last: its answer belongs only in the final stack scene.
+  if (!ctx.lastAttempt && stacks.slice(0, -1).some((st: Any) => st.diagram.frames?.[0]?.returns !== undefined)) {
+    issues.push(`A call-stack scene before the last one shows the first call (the bottom frame) already returning. The first call finishes last: show its answer only in the final call-stack scene.`);
   }
 
   const lastStack: Any = stacks.at(-1);

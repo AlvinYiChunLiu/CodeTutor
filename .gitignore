@@ -8,3 +8,6 @@ next-env.d.ts
 .env*.local
 .DS_Store
 Claude outputs/
+/public/audio/generated/*
+/public/videos/generated/*
+/mocks/generated/*

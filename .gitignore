@@ -12,3 +12,5 @@ Claude outputs/
 /public/videos/generated/*
 /mocks/generated/*
 /mocks/tuning/
+# Narration from older audio code (timestamped lesson folders)
+/public/audio/20*-*/

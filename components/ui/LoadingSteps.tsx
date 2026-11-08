@@ -1,5 +1,9 @@
 type LoadingStepsProps = {
   currentStepIndex: number;
+  /** Extra words for the active step, e.g. "fixing 1 issue" or "4 of 10 scenes". */
+  detail?: string;
+  /** 0–100 progress within the active step (voice and video). */
+  percent?: number;
 };
 
 const steps = [
@@ -10,7 +14,7 @@ const steps = [
   "Preparing video player",
 ];
 
-export default function LoadingSteps({ currentStepIndex }: LoadingStepsProps) {
+export default function LoadingSteps({ currentStepIndex, detail, percent }: LoadingStepsProps) {
   return (
     <ol aria-label="Lesson generation progress" className="flex flex-col gap-4">
       {steps.map((step, index) => {
@@ -55,8 +59,14 @@ export default function LoadingSteps({ currentStepIndex }: LoadingStepsProps) {
                 <span className="text-xs">{index + 1}</span>
               )}
             </span>
-            <span>{step}</span>
-            {isActive && <span className="sr-only">In progress</span>}
+            <span className="loading-step-copy">
+              <span>{step}</span>
+              {isActive && detail && <small>{detail}</small>}
+              {isActive && percent !== undefined && (
+                <span className="loading-step-bar" aria-hidden="true"><span style={{ width: `${percent}%` }} /></span>
+              )}
+            </span>
+            {isActive && <span className="sr-only">In progress{detail ? `: ${detail}` : ""}</span>}
           </li>
         );
       })}

@@ -415,6 +415,7 @@ button { color: inherit; }
   /* Main page and inspiration gallery */
   .main-shell, .generate-shell { min-height: 100vh; color: var(--ink); background: var(--paper); }
   .main-hero { width: min(1200px, calc(100% - 64px)); min-height: 550px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 36px; margin: 0 auto; padding: 53px 0 66px; }
+  .home-create-section { margin-top: 32px; }
   .main-hero-copy { position: relative; z-index: 1; animation: enter-up .55s both; }
   .friendly-pill { width: fit-content; display: inline-flex; align-items: center; gap: 9px; padding: 8px 12px; border: 1px solid #d6e6ff; border-radius: 20px; color: #4775b4; background: var(--blue-pale); font-size: 9px; font-weight: 750; letter-spacing: 1px; }
   .friendly-pill > span { width: 7px; height: 7px; border-radius: 50%; background: #5da3ff; box-shadow: 0 0 0 4px #5da3ff23; }

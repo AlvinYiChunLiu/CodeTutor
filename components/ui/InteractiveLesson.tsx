@@ -179,15 +179,19 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     if (elapsed >= sceneEnd && activeStep < steps.length - 1) setActiveStep(activeStep + 1);
   }, [elapsed, playing, activeStep, steps.length, timeline]);
 
-  function chooseStep(index: number) {
+  const chooseStep = useCallback((index: number) => {
     setActiveStep(index);
     setElapsed(timeline.starts[index] ?? 0);
     setPlaying(false);
-  }
+  }, [timeline.starts]);
 
   // The video below: transcript clicks jump it to that moment, and while it plays the transcript follows it.
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoInSync, setVideoInSync] = useState(false);
+  const selectSlide = useCallback((index: number) => {
+    chooseStep(index);
+    if (videoInSync) videoRef.current?.pause();
+  }, [chooseStep, videoInSync]);
 
   function checkVideoMatches() {
     const video = videoRef.current;
@@ -209,24 +213,24 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     void video.play().catch(() => {});
     const box = video.getBoundingClientRect();
     if (box.top < 0 || box.bottom > window.innerHeight) video.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [videoInSync, timeline.starts]);
+  }, [chooseStep, videoInSync, timeline.starts]);
 
   useEffect(() => {
     function handleArrowNavigation(event: KeyboardEvent) {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, button, a, video, [contenteditable='true']")) return;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) return;
 
+      event.preventDefault();
       const nextStep = activeStep + (event.key === "ArrowRight" ? 1 : -1);
       if (nextStep < 0 || nextStep >= steps.length) return;
-      event.preventDefault();
-      jumpTo(nextStep);
+      selectSlide(nextStep);
     }
 
-    window.addEventListener("keydown", handleArrowNavigation);
-    return () => window.removeEventListener("keydown", handleArrowNavigation);
-  }, [activeStep, jumpTo, steps.length]);
+    window.addEventListener("keydown", handleArrowNavigation, true);
+    return () => window.removeEventListener("keydown", handleArrowNavigation, true);
+  }, [activeStep, selectSlide, steps.length]);
 
   if (!step) return null;
 
@@ -283,7 +287,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
               const completed = chapterSteps.every(({ index }) => index < activeStep);
               return (
                 <div className={`chapter-group ${chapterIndex === activeChapter ? "chapter-current" : ""}`} key={chapter.id}>
-                  <button type="button" className="chapter-button" onClick={() => chooseStep(firstStep)}>
+                  <button type="button" className="chapter-button" onClick={() => selectSlide(firstStep)}>
                     <span className={`chapter-marker ${completed ? "chapter-completed" : ""}`}>{completed ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span>
                     <span><b>{chapter.title}</b><small>{chapter.scenes.length} {chapter.scenes.length === 1 ? "moment" : "moments"}</small></span>
                     <span className="chapter-chevron">{chapterIndex === activeChapter ? "⌄" : "›"}</span>
@@ -292,11 +296,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                     <div className="chapter-scenes">
                       {chapter.scenes.map((scene, sceneIndex) => {
                         const sceneStep = firstStep + sceneIndex;
-<<<<<<< HEAD
-                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => chooseStep(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
-=======
                         return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => selectSlide(sceneStep)}><i />{sceneLabel(scene)}</button>;
->>>>>>> 80dafe8aa66085c949bc32a6872b01e239d6e9cc
                       })}
                     </div>
                   )}

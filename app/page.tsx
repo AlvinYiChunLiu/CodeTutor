@@ -98,7 +98,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-[min(760px,calc(100%_-_40px))] py-12" aria-labelledby="create-lesson-heading">
+      <section className="home-create-section mx-auto w-[min(760px,calc(100%_-_40px))] py-12" aria-labelledby="create-lesson-heading">
         <div className="mb-6 text-center">
           <h2 id="create-lesson-heading" className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             Make a lesson from your question

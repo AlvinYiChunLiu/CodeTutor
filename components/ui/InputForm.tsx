@@ -78,7 +78,7 @@ export default function InputForm({ onSubmit }: InputFormProps) {
 
       <fieldset>
         <legend className="mb-2 text-sm font-semibold">Lesson style</legend>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" role="group" aria-label="Lesson style">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="group" aria-label="Lesson style">
           {modes.map((option) => (
             <button
               key={option}
@@ -87,7 +87,7 @@ export default function InputForm({ onSubmit }: InputFormProps) {
               onClick={() => setMode(option)}
               className={`min-h-11 rounded-lg border px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue)] focus-visible:ring-offset-2 ${
                 mode === option
-                  ? "border-[var(--blue)] bg-[var(--blue-pale)] text-[var(--blue-strong)]"
+                  ? "border-[var(--blue)] bg-[var(--surface)] text-[var(--blue-strong)]"
                   : "border-[var(--line)] bg-[var(--surface)] text-[var(--muted)] hover:border-[var(--blue)] hover:text-[var(--ink)]"
               }`}
             >

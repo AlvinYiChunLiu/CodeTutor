@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Lesson, Scene } from "@/lib/schema";
 import SiteHeader from "@/components/ui/SiteHeader";
+import PracticePanel from "@/components/ui/PracticePanel";
 
 type LessonStep = {
   chapterIndex: number;
@@ -125,7 +126,6 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
   );
   const [activeStep, setActiveStep] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [practiceOpen, setPracticeOpen] = useState(false);
   const step = steps[activeStep] ?? steps[0];
   const activeChapter = step?.chapterIndex ?? 0;
   const progress = steps.length > 1 ? (activeStep / (steps.length - 1)) * 100 : 100;
@@ -185,58 +185,6 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
             </div>
           </div>
 
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
-                <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
-              </div>
-              <a className="rounded-md border border-white/15 px-4 py-2 text-base text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
-                Download MP4
-              </a>
-            </div>
-            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src={videoSrc}>
-              Your browser does not support HTML video.
-            </video>
-          </section>
-
-          <section className="transcript-section">
-            <div className="transcript-heading">
-              <div><span className="section-eyebrow">FOLLOW ALONG</span><h2>Lesson transcript</h2></div>
-              <span className="transcript-count">{steps.length} moments</span>
-            </div>
-            <div className="transcript-list">
-              {steps.map((item, index) => (
-                <button type="button" key={item.scene.id} className={`transcript-item ${index === activeStep ? "transcript-active" : ""}`} onClick={() => chooseStep(index)}>
-                  <span className="transcript-time">{formatTime(Math.round((index / Math.max(steps.length, 1)) * 240))}</span>
-                  <span className="transcript-indicator">{index === activeStep ? "▶" : String(index + 1).padStart(2, "0")}</span>
-                  <span className="transcript-copy"><b>{lesson.chapters[item.chapterIndex].title}</b><span>{item.scene.narration}</span></span>
-                  {index === activeStep && <span className="transcript-now">NOW</span>}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {lesson.practice && (
-            <section className="practice-card">
-              <div className="practice-card-icon">✓</div>
-              <div className="practice-copy">
-                <span className="section-eyebrow">YOUR TURN</span>
-                <h2>Ready to try one?</h2>
-                <p>{lesson.practice.question}</p>
-                {practiceOpen && (
-                  <div className="practice-answer">
-                    {lesson.practice.hint && <p><b>Hint:</b> {lesson.practice.hint}</p>}
-                    <span>ONE POSSIBLE SOLUTION</span>
-                    <pre>{lesson.practice.solution}</pre>
-                  </div>
-                )}
-              </div>
-              <button type="button" className="practice-button" onClick={() => setPracticeOpen(!practiceOpen)}>
-                {practiceOpen ? "Hide solution" : "Show a hint"} <span>{practiceOpen ? "−" : "+"}</span>
-              </button>
-            </section>
-          )}
         </section>
 
         <aside className="lesson-sidebar">
@@ -273,6 +221,42 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
           </div>
           <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>●</span></div>
         </aside>
+
+        <div className="lesson-wide">
+          <section className="rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
+                <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
+              </div>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-base text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
+                Download MP4
+              </a>
+            </div>
+            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src={videoSrc}>
+              Your browser does not support HTML video.
+            </video>
+          </section>
+
+          <section className="transcript-section">
+            <div className="transcript-heading">
+              <div><span className="section-eyebrow">FOLLOW ALONG</span><h2>Lesson transcript</h2></div>
+              <span className="transcript-count">{steps.length} moments</span>
+            </div>
+            <div className="transcript-list">
+              {steps.map((item, index) => (
+                <button type="button" key={item.scene.id} className={`transcript-item ${index === activeStep ? "transcript-active" : ""}`} onClick={() => chooseStep(index)}>
+                  <span className="transcript-time">{formatTime(Math.round((index / Math.max(steps.length, 1)) * 240))}</span>
+                  <span className="transcript-indicator">{index === activeStep ? "▶" : String(index + 1).padStart(2, "0")}</span>
+                  <span className="transcript-copy"><b>{lesson.chapters[item.chapterIndex].title}</b><span>{item.scene.narration}</span></span>
+                  {index === activeStep && <span className="transcript-now">NOW</span>}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <PracticePanel lesson={lesson} />
+        </div>
       </div>
     </main>
   );

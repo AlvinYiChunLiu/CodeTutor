@@ -7,7 +7,7 @@ import InputForm, { type LessonInput } from "@/components/ui/InputForm";
 import LoadingSteps from "@/components/ui/LoadingSteps";
 import SiteHeader from "@/components/ui/SiteHeader";
 import { requestLesson } from "@/lib/ai/progress";
-import { saveGeneratedLesson } from "@/lib/lesson-session";
+import { lessonUrl, saveGeneratedLesson } from "@/lib/lesson-session";
 
 function ArrowIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
@@ -44,7 +44,7 @@ export default function Home() {
         setStepPercent(p.percent);
       });
       saveGeneratedLesson(result, input);
-      router.push("/lesson");
+      router.push(lessonUrl(result));
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Something went wrong. Please try again.");
       setIsSubmitting(false);

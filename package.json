@@ -27,6 +27,7 @@
     "@remotion/renderer": "^4.0.541",
     "dotenv": "^18.0.9",
     "next": "^15.5.29",
+    "postgres": "^4.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "remotion": "^4.0.541",

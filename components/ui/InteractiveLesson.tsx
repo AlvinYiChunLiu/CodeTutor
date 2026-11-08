@@ -214,7 +214,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
 
   return (
     <main className="lesson-shell">
-      <SiteHeader badge="SAMPLE LESSON" />
+      <SiteHeader />
 
       <div className="lesson-layout">
         <section className="lesson-main">

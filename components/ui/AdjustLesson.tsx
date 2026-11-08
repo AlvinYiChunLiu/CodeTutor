@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Lesson } from "@/lib/schema";
 import LoadingSteps from "@/components/ui/LoadingSteps";
 import { requestLesson } from "@/lib/ai/progress";
-import { requestForLesson, saveGeneratedLesson, type Adjust } from "@/lib/lesson-session";
+import { lessonUrl, requestForLesson, saveGeneratedLesson, type Adjust } from "@/lib/lesson-session";
 
 const LABEL: Record<Adjust, string> = { simpler: "Explain simpler", deeper: "Go deeper" };
 const MAKING: Record<Adjust, string> = { simpler: "Making a simpler version…", deeper: "Making a deeper version…" };
@@ -36,7 +36,7 @@ export default function AdjustLesson({ lesson }: { lesson: Lesson }) {
       });
       saveGeneratedLesson(result, request, direction);
       // Full navigation so the lesson page (and its video) reload with the new version.
-      window.location.assign("/lesson");
+      window.location.assign(lessonUrl(result));
     } catch (e) {
       if ((e as Error).name !== "AbortError") setError((e as Error).message || "Couldn't make that version. Try again.");
       setRunning(null);

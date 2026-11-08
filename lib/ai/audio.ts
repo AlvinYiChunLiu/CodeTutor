@@ -16,7 +16,7 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
   const lessonName = path.basename(resolvedLessonPath, path.extname(resolvedLessonPath))
     .replace(/[^a-zA-Z0-9_-]/g, "-");
   const folderName = lessonName.replace(/^lesson-/, "");
-  const audioDirectory = path.resolve(process.cwd(), "public/audio", folderName);
+  const audioDirectory = path.resolve(process.cwd(), "public/audio/generated");
   const lesson = LessonSchema.parse(JSON.parse(await readFile(resolvedLessonPath, "utf8")));
   const elevenlabs = new ElevenLabsClient();
   const voiceId = process.env.ELEVENLABS_VOICE_ID || "JBFqnCBsd6RMkjVDRZzb";
@@ -31,7 +31,8 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
         .digest("hex")
         .slice(0, 12);
       const fileName = `${safeSceneId}-${narrationHash}.mp3`;
-      const audioPath = path.join(audioDirectory, fileName);
+      const generatedFileName = `${folderName}-${fileName}`;
+      const audioPath = path.join(audioDirectory, generatedFileName);
       let audioBytes: Buffer | undefined;
 
       try {
@@ -64,7 +65,7 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
       await writeFile(audioPath, audioBytes);
 
       scene.audio = {
-        url: `audio/${folderName}/${fileName}`,
+        url: `audio/generated/${generatedFileName}`,
         durationSec: scene.audio?.durationSec ?? (audioBytes.byteLength * 8) / 128_000,
       };
       await writeFile(resolvedLessonPath, `${JSON.stringify(lesson, null, 2)}\n`);

@@ -19,11 +19,23 @@ import { generateLesson, LessonGenerationError } from "@/lib/ai/lesson";
 import { LLMError } from "@/lib/ai/llm";
 import { shouldMock } from "@/lib/ai/http";
 import { progress, type ProgressEvent } from "@/lib/ai/progress";
+import { saveLessonToDatabase } from "@/lib/lessons";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
 type Emit = (event: ProgressEvent) => void;
+
+/** Save to the database for Past videos. A database problem must never cost the learner their lesson. */
+async function saveIfConfigured(lesson: LessonData, videoSrc: string | null): Promise<string | null> {
+  if (!process.env.DATABASE_URL) return null;
+  try {
+    return await saveLessonToDatabase(lesson, videoSrc);
+  } catch (e) {
+    console.error("[lesson] could not save to the database (lesson still returned):", e);
+    return null;
+  }
+}
 type Result = { status: number; body: unknown };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -126,16 +138,19 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
     // still return the lesson so the learner isn't left with nothing.
     if (!process.env.ELEVENLABS_API_KEY) {
       console.log("[lesson] no ELEVENLABS_API_KEY: skipping the video, returning the lesson only");
-      return { status: 200, body: { lesson, savedAs, videoSrc: null, meta } };
+      const id = await saveIfConfigured(lesson, null);
+      return { status: 200, body: { lesson, savedAs, videoSrc: null, id, meta } };
     }
     try {
       const sceneCount = lesson.chapters.reduce((n, c) => n + c.scenes.length, 0);
       emit(progress("voice", `0 of ${sceneCount} scenes`, 0));
       const result = await createLessonVideo(savedAs, sceneCount, emit);
-      return { status: 200, body: { ...result, meta } };
+      const id = await saveIfConfigured(result.lesson, result.videoSrc);
+      return { status: 200, body: { ...result, id, meta } };
     } catch (videoError) {
       console.error("[lesson] video step failed, returning the lesson without a video:", videoError);
-      return { status: 200, body: { lesson, savedAs, videoSrc: null, videoError: "The video couldn't be made this time.", meta } };
+      const id = await saveIfConfigured(lesson, null);
+      return { status: 200, body: { lesson, savedAs, videoSrc: null, id, videoError: "The video couldn't be made this time.", meta } };
     }
   } catch (e) {
     console.error("[lesson] failed:", e);

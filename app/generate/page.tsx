@@ -6,7 +6,7 @@ import SiteHeader from "@/components/ui/SiteHeader";
 import { useRouter } from "next/navigation";
 import LoadingSteps from "@/components/ui/LoadingSteps";
 import { requestLesson } from "@/lib/ai/progress";
-import { saveGeneratedLesson } from "@/lib/lesson-session";
+import { lessonUrl, saveGeneratedLesson } from "@/lib/lesson-session";
 
 type CreateMode = "new-code" | "from-code";
 
@@ -103,7 +103,7 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     // Live progress: the steps under the button move as each stage of /api/lesson happens.
     const result = await requestLesson(request, (p) => setProgress({ step: p.step, detail: p.detail, percent: p.percent }));
     saveGeneratedLesson(result, request);
-    router.push("/lesson");
+    router.push(lessonUrl(result));
   } catch (e) {
     setMessage("");
     setError((e as Error).message || "Couldn’t make the lesson. Try again.");

@@ -48,3 +48,8 @@ export function requestForLesson(lesson: Lesson): { request: SavedRequest; adjus
     adjust: null,
   };
 }
+
+/** Where to open a freshly made lesson: its saved page (Past videos) when the database stored it, else /lesson. */
+export function lessonUrl(result: { id?: unknown }): string {
+  return typeof result?.id === "string" && result.id ? `/past-videos/${result.id}` : "/lesson";
+}

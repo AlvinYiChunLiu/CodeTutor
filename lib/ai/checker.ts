@@ -142,6 +142,73 @@ function normalizeScene(s: Any, mainCode: string, warnings: string[], where: str
   }
 }
 
+// ---------------------------------------------------------------- highlight alignment
+// Models often number lines one off ("we define the function" lighting up line 2). Compare what each
+// narration talks about with what each line does, and move a highlight only when it clearly fits better.
+const LINE_IDEAS: [string, RegExp][] = [
+  ["define", /^\s*(def|function|async\s+function|class|public|private|static)\b|^\s*(int|void|double|float|char|bool|boolean|string|auto|long)\s+\w+\s*\(/],
+  ["loop", /^\s*(for|while|do)\b|\.(forEach|map|filter|reduce)\s*\(/],
+  ["check", /^\s*(if|elif|else\s+if|else|switch|case)\b|\?.*:/],
+  ["return", /^\s*return\b/],
+  ["print", /\b(print|console\.log|printf|puts|cout|System\.out\.print)/],
+  ["assign", /^\s*(let|const|var|int|double|float|char|bool|auto|long|string)?\s*[\w.[\]]+\s*([-+*/%]?=)(?!=)/],
+  ["import", /^\s*(import|from|#include|using|require)\b/],
+];
+const SPOKEN_IDEAS: [string, RegExp][] = [
+  ["define", /\b(defin\w*|declar\w*|function (called|named)|takes? (a|an|the|two|one)|signature|parameters?)\b/i],
+  ["loop", /\b(loop\w*|each|iterat\w*|go(es)? through|repeat\w*|every (number|item|element))\b/i],
+  ["check", /\b(check\w*|if|whether|compar\w*|condition\w*|greater|less|equal|otherwise|else)\b/i],
+  ["return", /\b(return\w*|hands? back|gives? back|send\w* back)\b/i],
+  ["print", /\b(print\w*|display\w*|show\w* (it|the result)|outputs?)\b/i],
+  ["assign", /\b(set\w*|initiali\w*|start\w* (at|with|from)|assign\w*|stor\w*|updat\w*|becomes?|variable)\b/i],
+  ["import", /\b(import\w*|includ\w*|bring\w* in|librar\w*|module)\b/i],
+];
+const KEYWORDS = new Set("def function return for while if elif else in and or not int void const let var print console log true false none null class public static import from include std cout printf the".split(" "));
+const flat = (w: string) => w.toLowerCase().replace(/_/g, "");
+/** generateLessonAudio / find_max → its whole name plus each word in it (generate, lesson, audio). */
+const nameWords = (w: string) => [flat(w), ...w.replace(/([a-z0-9])([A-Z])/g, "$1 $2").split(/[\s_]+/).map((p) => p.toLowerCase())].filter((p) => p.length >= 3);
+
+function lineFit(narration: string, lines: string[], ownNames: string[] = []): { ideas: number; score: number } {
+  const said = new Set(SPOKEN_IDEAS.filter(([, re]) => re.test(narration)).map(([k]) => k));
+  if (/\b(calls? itself|recursive call|calling itself)\b/i.test(narration)) said.add("recurse");
+  if (/\bbase case|\bstop(s|ping)?\b/i.test(narration)) said.add("base");
+  const shown = new Set(lines.flatMap((l) => LINE_IDEAS.filter(([, re]) => re.test(l)).map(([k]) => k)));
+  // A line that calls a function defined in this code (not the def line itself) is the recursive / call step.
+  if (lines.some((l) => !LINE_IDEAS[0][1].test(l) && ownNames.some((n) => new RegExp(`\\b${n}\\s*\\(`).test(l)))) shown.add("recurse");
+  if (lines.some((l) => /^\s*(if|elif|else|return)\b/.test(l))) shown.add("base");
+  const ideas = [...said].filter((k) => shown.has(k)).length;
+  const spokenWords = new Set(narration.split(/[^A-Za-z0-9_]+/).filter((w) => w.length >= 3).flatMap(nameWords));
+  const names = new Set(lines.flatMap((l) => l.split(/[^A-Za-z0-9_]+/)).filter((w) => w.length >= 3 && !KEYWORDS.has(w.toLowerCase())).flatMap(nameWords));
+  const shared = [...names].filter((n) => spokenWords.has(n)).length;
+  return { ideas, score: ideas * 2 + shared };
+}
+
+/** Move a code scene's highlight by a line or two when its narration clearly describes neighbouring lines. */
+export function alignHighlights(scenes: Any[], mainCode: string): number {
+  const code = mainCode.split("\n");
+  const ownNames = [...mainCode.matchAll(/(?:\bdef|\bfunction)\s+(\w+)|^\s*(?:\w+\s+)+(\w+)\s*\([^)]*\)\s*\{/gm)].map((m) => m[1] ?? m[2]).filter(Boolean);
+  let moved = 0;
+  for (const s of scenes) {
+    if (s.type !== "code" || s.code !== mainCode || !s.highlightLines?.length || s.highlightLines.length > 3) continue;
+    const pick = (shift: number) => s.highlightLines.map((n: number) => n + shift);
+    const valid = (ls: number[]) => ls.every((n) => n >= 1 && n <= code.length && code[n - 1].trim());
+    const now = lineFit(s.narration, pick(0).map((n: number) => code[n - 1] ?? ""), ownNames);
+    if (now.score > 0) continue; // the narration already mentions something on the highlighted line
+    let best = { shift: 0, score: now.score };
+    for (const shift of [-1, 1, -2, 2]) {
+      const ls = pick(shift);
+      if (!valid(ls)) continue;
+      const fit = lineFit(s.narration, ls.map((n: number) => code[n - 1]), ownNames);
+      if (fit.ideas > 0 && fit.score >= best.score + 2) best = { shift, score: fit.score };
+    }
+    if (best.shift) {
+      s.highlightLines = pick(best.shift);
+      moved++;
+    }
+  }
+  return moved;
+}
+
 export function checkLesson(
   draft: unknown,
   ctx: { plan: Plan; req: LessonRequest; lastAttempt: boolean },
@@ -205,6 +272,10 @@ export function checkLesson(
     if (chapters.length === 0) return { ok: false, issues: ["No valid scenes left."], warnings };
   }
 
+  {
+    const moved = alignHighlights(all(), ctx.plan.mainCode);
+    if (moved) warnings.push(`moved ${moved} highlight(s) to the line the narration describes`);
+  }
   const codeLines = ctx.plan.mainCode.split("\n").filter((l) => l.trim()).length;
   // A buggy program gets two output scenes: what it really prints (or its error), then the fixed program's output.
   const maxOutputs = ctx.plan.bug ? 2 : 1;

@@ -94,14 +94,12 @@ export const Practice = z.object({
   solution: z.string(),
 });
 
-export const CodeLanguage = z.enum(["python", "javascript", "typescript", "java", "c", "cpp"]);
-
 export const Lesson = z.object({
   version: z.literal(1),
   title: z.string().min(1),
   summary: z.string(),
   level: z.enum(["beginner", "intermediate"]),
-  codeLanguage: CodeLanguage,
+  codeLanguage: z.enum(["python", "javascript", "typescript", "java", "c", "cpp"]),
   chapters: z.array(Chapter).min(1),
   practice: Practice.optional(),
 });
@@ -111,4 +109,3 @@ export type Chapter = z.infer<typeof Chapter>;
 export type Scene = z.infer<typeof Scene>;
 export type SceneType = Scene["type"];
 export type Practice = z.infer<typeof Practice>;
-export type CodeLanguage = z.infer<typeof CodeLanguage>;

@@ -93,7 +93,7 @@ export default function Home() {
             <span className="art-duration">3 friendly chapters <b>·</b> 4 min</span>
             <div className="art-progress"><span /></div>
           </div>
-          <div className="art-sticker sticker-bottom"><span>✓</span> LOOK AT YOU GO</div>
+          <div className="art-sticker sticker-bottom"><span>✓</span> THREE IN A ROW!</div>
           <span className="art-orbit orbit-a" /><span className="art-orbit orbit-b" />
         </div>
       </section>

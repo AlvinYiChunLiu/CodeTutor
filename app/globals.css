@@ -425,15 +425,17 @@ button { color: inherit; }
   .button-primary, .button-secondary { min-height: 45px; display: inline-flex; justify-content: center; align-items: center; gap: 10px; padding: 0 17px; border: 1px solid transparent; border-radius: 9px; font-size: 11px; font-weight: 750; cursor: pointer; transition: transform .18s, box-shadow .18s, background .18s; }
   .button-primary { color: #fff; background: var(--blue-strong); box-shadow: 0 5px 13px #2868ce26; }
   .button-primary:hover { transform: translateY(-2px); background: #1d5bb9; box-shadow: 0 8px 18px #2868ce36; }
+  .hero-actions .button-primary { background: #174b8d; box-shadow: 0 5px 13px #174b8d30; }
+  .hero-actions .button-primary:hover { background: #123d75; box-shadow: 0 8px 18px #174b8d42; }
   .button-primary svg, .button-secondary svg, .text-link svg, .gallery-open svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; }
   .button-secondary { border-color: var(--line); color: var(--ink); background: var(--surface); }
   .button-secondary:hover { transform: translateY(-2px); border-color: var(--blue); }
   .small-play { color: var(--blue); font-size: 9px; }
   .main-trust { display: flex; align-items: center; gap: 8px; margin-top: 27px; color: var(--muted); font-size: 10px; }
   .trust-check { width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; color: #2874d6; background: #dceaff; font-size: 10px; }
-  .hero-art { min-height: 380px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; padding: 35px; isolation: isolate; animation: enter-up .65s .08s both; }
-  .art-glow { position: absolute; z-index: -2; width: 390px; height: 340px; border-radius: 48%; background: radial-gradient(ellipse, #c6ddff99, #dceaff45 55%, transparent 72%); animation: glow-pulse 4s ease-in-out infinite; }
-  .art-orbit { position: absolute; z-index: -1; width: 345px; height: 345px; border: 1px solid #8db9f42b; border-radius: 50%; }
+  .hero-art { min-height: 380px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: visible; padding: 35px; isolation: isolate; animation: enter-up .65s .08s both; }
+  .art-glow { position: absolute; z-index: -2; width: 390px; height: 340px; border-radius: 48%; background: radial-gradient(ellipse, #c6ddff66, #dceaff24 55%, transparent 72%); animation: glow-pulse 4s ease-in-out infinite; }
+  .art-orbit { position: absolute; z-index: -1; width: 345px; height: 345px; border: 1px solid #8db9f45e; border-radius: 50%; }
   .orbit-a { transform: scaleX(1.33) rotate(-23deg); }
   .orbit-b { width: 290px; height: 290px; transform: scaleX(1.35) rotate(29deg); }
   .art-code-card, .art-lesson-card { position: relative; z-index: 1; width: min(370px, 100%); overflow: hidden; border: 1px solid #d6e4f7; border-radius: 12px; background: var(--surface); box-shadow: 0 16px 40px #336aaf1b; }
@@ -454,10 +456,10 @@ button { color: inherit; }
   .art-lesson-card strong { display: block; color: var(--ink); font-size: 12px; }
   .art-duration { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; }.art-duration b { padding: 0 3px; color: #9ab6dc; }
   .art-progress { height: 4px; overflow: hidden; margin-top: 13px; border-radius: 5px; background: var(--blue-pale); }.art-progress span { display: block; width: 40%; height: 100%; border-radius: inherit; background: #4a8ee9; }
-  .art-sticker { position: absolute; z-index: 2; padding: 9px 12px; border: 1px solid #d3e2f6; border-radius: 8px; color: #416caa; background: var(--surface); box-shadow: 0 7px 20px #3166a41a; font-size: 8px; font-weight: 800; letter-spacing: .8px; }
-  .sticker-top { top: 31px; right: 9px; transform: rotate(5deg); color: #6b67a9; }
+  .art-sticker { position: absolute; z-index: 2; padding: 10px 14px; border: 1px solid #78aef0; border-radius: 8px; color: #176bd1; background: #edf5ff; box-shadow: 0 7px 20px #2868ce2b; font-size: 11px; font-weight: 800; letter-spacing: .8px; }
+  .sticker-top { top: 31px; right: 9px; transform: rotate(5deg); }
   .sticker-bottom { bottom: 13px; left: 3px; transform: rotate(-5deg); }
-  .sticker-bottom span { padding-right: 4px; color: #4686df; }
+  .sticker-bottom span { padding-right: 4px; color: #176bd1; }
   .gallery-section { padding: 65px max(32px, calc((100% - 1200px) / 2)) 71px; border-top: 1px solid var(--line); background: var(--soft-surface); }
   .gallery-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
   .page-eyebrow { color: #6c8cb8; font-size: 9px; font-weight: 750; letter-spacing: 1.3px; }
@@ -638,8 +640,8 @@ button { color: inherit; }
 .app-header .theme-toggle { font-size: 14px; }
 .app-header .theme-toggle-icon { font-size: 18px; }
 .app-header .header-badge { font-size: 12px; }
-.app-header .app-nav a.nav-active { color: #fff; background: #2868ce; }
-.app-header .app-nav a.nav-active::after { display: none; }
+.app-header .app-nav a.nav-active { color: var(--blue-strong); background: transparent; }
+.app-header .app-nav a.nav-active::after { display: block; }
 
 /* Labels and eyebrows (small caps text) */
 .page-eyebrow, .section-eyebrow, .gallery-tag, .gallery-time, .lesson-breadcrumb, .field-label { font-size: 12px; }
@@ -681,6 +683,10 @@ button { color: inherit; }
 
 /* Phones: same steps down as the Generate page already uses */
 @media (max-width: 650px) {
+  .art-orbit { width: min(210px, 54vw); height: min(210px, 54vw); }
+  .orbit-b { width: min(180px, 46vw); height: min(180px, 46vw); }
+  .app-header { width: 100%; height: 101px; padding: 0 16px; }
+  .app-header .app-nav { gap: 2px; }
   .app-header .app-brand { font-size: 21px; }
   .app-header .app-nav a { font-size: 14px; }
   .gallery-card-copy h3 { font-size: 16px; }
@@ -691,6 +697,7 @@ button { color: inherit; }
   .app-header .app-nav a { padding-right: 7px; padding-left: 7px; font-size: 12.5px; }
 }
 @media (max-width: 380px) {
+  .app-header { width: 100%; padding: 0 12px; }
   .app-header .app-nav a { font-size: 12px; }
   .app-header .theme-toggle { font-size: 12px; }
 }
@@ -747,20 +754,12 @@ html[data-theme="dark"] .practice-copy > p.practice-error { color: #ffb4a8; back
   .practice-actions .button-primary { width: 100%; }
 }
 
-/* Explore a lesson uses a blue-and-white palette in both themes. */
+/* Explore a lesson follows the shared site palette; the lesson visuals stay blue. */
 .lesson-shell {
-  --ink: #174b8d;
-  --muted: #456f9f;
-  --paper: #fff;
-  --surface: #fff;
-  --soft-surface: #edf5ff;
-  --blue: #4285ed;
-  --blue-strong: #2868ce;
-  --blue-pale: #e8f1ff;
-  --line: #d3e3f7;
   color: var(--ink);
   background: var(--paper);
 }
+.lesson-shell .lesson-title-row h1 { color: var(--ink); }
 .lesson-shell .lesson-player { border-color: #b7d1f2; background: #153967; }
 .lesson-shell .visual-title-scene,
 .lesson-shell .visual-code-scene,
@@ -879,17 +878,6 @@ html[data-theme="dark"] .practice-copy > p.practice-error { color: #ffb4a8; back
 .lesson-shell .practice-error { color: #174b8d !important; background: var(--blue-pale) !important; }
 .lesson-shell .adjust-error { border: 1px solid var(--line); color: var(--ink); background: var(--blue-pale); }
 
-html[data-theme="dark"] .lesson-shell {
-  --ink: #fff;
-  --muted: #fff;
-  --paper: #102e53;
-  --surface: #173c68;
-  --soft-surface: #1d497b;
-  --blue: #8ebeff;
-  --blue-strong: #9cc7ff;
-  --blue-pale: #214d7d;
-  --line: #3b6b9f;
-}
 html[data-theme="dark"] .lesson-shell .transcript-list,
 html[data-theme="dark"] .lesson-shell .transcript-item { border-color: var(--line); background: var(--surface); }
 html[data-theme="dark"] .lesson-shell .transcript-item:hover { background: #1d497b; }
@@ -901,6 +889,42 @@ html[data-theme="dark"] .lesson-shell .sidebar-note { border-color: var(--line);
 html[data-theme="dark"] .lesson-shell .practice-result-code code { color: #fff; background: #2b5b90; }
 html[data-theme="dark"] .lesson-shell .practice-score-bar { background: #ffffff35; }
 html[data-theme="dark"] .lesson-shell .lesson-export-video { background: #0c2340; }
+
+/* Friendly minimal shared header */
+.app-header {
+  position: relative;
+  width: 100%;
+  height: 76px;
+  padding: 0 max(24px, calc((100% - 1200px) / 2));
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: none;
+}
+.app-header .app-brand { color: var(--ink); }
+.app-header .brand-period { color: var(--blue-strong); }
+.app-header .app-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 0;
+  color: var(--blue-strong);
+  background: transparent;
+  box-shadow: none;
+}
+.app-header .app-nav { gap: 7px; }
+.app-header .app-nav a { transition: color .18s ease, background .18s ease; }
+.app-header .app-nav a:hover { color: var(--blue-strong); background: var(--blue-pale); }
+.app-header .app-nav a.nav-active,
+.app-header .app-nav a.nav-active:hover { color: var(--blue-strong); background: transparent; }
+.app-header .app-nav a.nav-active::after { display: block; background: var(--blue-strong); }
+.app-header .theme-toggle {
+  border-color: transparent;
+  border-radius: 7px;
+  color: var(--muted);
+  background: transparent;
+}
+.app-header .theme-toggle:hover { transform: none; border-color: transparent; color: var(--blue-strong); background: var(--blue-pale); }
+.app-header .theme-toggle-icon { color: var(--blue-strong); }
+.app-header :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 /* ------------------------------------------------------------------
    Live loading steps, and Explain simpler / Go deeper

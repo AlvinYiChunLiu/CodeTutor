@@ -178,20 +178,15 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     if (elapsed >= sceneEnd && activeStep < steps.length - 1) setActiveStep(activeStep + 1);
   }, [elapsed, playing, activeStep, steps.length, timeline]);
 
-  const chooseStep = useCallback((index: number) => {
+  function chooseStep(index: number) {
     setActiveStep(index);
     setElapsed(timeline.starts[index] ?? 0);
     setPlaying(false);
-  }, [timeline.starts]);
+  }
 
   // The video below: transcript clicks jump it to that moment, and while it plays the transcript follows it.
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoInSync, setVideoInSync] = useState(false);
-
-  const selectSlide = useCallback((index: number) => {
-    chooseStep(index);
-    if (videoInSync) videoRef.current?.pause();
-  }, [chooseStep, videoInSync]);
 
   function checkVideoMatches() {
     const video = videoRef.current;
@@ -213,24 +208,24 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     void video.play().catch(() => {});
     const box = video.getBoundingClientRect();
     if (box.top < 0 || box.bottom > window.innerHeight) video.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [chooseStep, videoInSync, timeline.starts]);
+  }, [videoInSync, timeline.starts]);
 
   useEffect(() => {
     function handleArrowNavigation(event: KeyboardEvent) {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, button, a, video, [contenteditable='true']")) return;
 
       const nextStep = activeStep + (event.key === "ArrowRight" ? 1 : -1);
       if (nextStep < 0 || nextStep >= steps.length) return;
       event.preventDefault();
-      selectSlide(nextStep);
+      jumpTo(nextStep);
     }
 
-    window.addEventListener("keydown", handleArrowNavigation, true);
-    return () => window.removeEventListener("keydown", handleArrowNavigation, true);
-  }, [activeStep, selectSlide, steps.length]);
+    window.addEventListener("keydown", handleArrowNavigation);
+    return () => window.removeEventListener("keydown", handleArrowNavigation);
+  }, [activeStep, jumpTo, steps.length]);
 
   if (!step) return null;
 
@@ -250,26 +245,10 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
           </div>
           <AdjustLesson lesson={lesson} />
 
-          <div
-            className="lesson-player"
-            tabIndex={0}
-            role="group"
-            aria-label="Lesson chapter slides. Use left and right arrow keys anywhere on this page to change slides."
-            aria-keyshortcuts="ArrowLeft ArrowRight"
-          >
+          <div className="lesson-player">
             <SceneVisual key={step.scene.id} scene={step.scene} language={lesson.codeLanguage} />
             <div className="player-controls">
               <div className="player-control-row">
-                <button
-                  className="player-step-button"
-                  type="button"
-                  aria-label="Previous slide"
-                  title="Previous slide · Left arrow"
-                  onClick={() => selectSlide(activeStep - 1)}
-                  disabled={activeStep === 0}
-                >
-                  <span aria-hidden="true">←</span>
-                </button>
                 <button className="play-button" type="button" aria-label={playing ? "Pause auto-play" : "Auto-play lesson preview"} onClick={() => {
                   if (!playing && elapsed >= timeline.total - 0.25) {
                     setActiveStep(0);
@@ -285,18 +264,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                   <span>{playing ? "AUTO-PLAYING VISUALS" : `CHAPTER ${String(activeChapter + 1).padStart(2, "0")}`}</span>
                   <p>{step.scene.narration}</p>
                 </div>
-                <button
-                  className="player-step-button"
-                  type="button"
-                  aria-label="Next slide"
-                  title="Next slide · Right arrow"
-                  onClick={() => selectSlide(activeStep + 1)}
-                  disabled={activeStep === steps.length - 1}
-                >
-                  <span aria-hidden="true">→</span>
-                </button>
               </div>
-              <span className="player-keyboard-hint">Use ← → anywhere on this page to change slides</span>
               <div className="progress-track" role="progressbar" aria-label="Lesson progress" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
                 <span style={{ width: `${progress}%` }} />
               </div>
@@ -314,7 +282,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
               const completed = chapterSteps.every(({ index }) => index < activeStep);
               return (
                 <div className={`chapter-group ${chapterIndex === activeChapter ? "chapter-current" : ""}`} key={chapter.id}>
-                  <button type="button" className="chapter-button" onClick={() => selectSlide(firstStep)}>
+                  <button type="button" className="chapter-button" onClick={() => chooseStep(firstStep)}>
                     <span className={`chapter-marker ${completed ? "chapter-completed" : ""}`}>{completed ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span>
                     <span><b>{chapter.title}</b><small>{chapter.scenes.length} {chapter.scenes.length === 1 ? "moment" : "moments"}</small></span>
                     <span className="chapter-chevron">{chapterIndex === activeChapter ? "⌄" : "›"}</span>
@@ -323,7 +291,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                     <div className="chapter-scenes">
                       {chapter.scenes.map((scene, sceneIndex) => {
                         const sceneStep = firstStep + sceneIndex;
-                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => selectSlide(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
+                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => chooseStep(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
                       })}
                     </div>
                   )}
@@ -341,19 +309,19 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
         </aside>
 
         <div className="lesson-wide">
-          <section className="lesson-video-card">
+          <section className="rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
                 <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
               </div>
-              <a className="lesson-video-download" href={videoSrc} download>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-base text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
                 Download MP4
               </a>
             </div>
             <video
               ref={videoRef}
-              className="lesson-export-video"
+              className="aspect-video w-full rounded-lg bg-black"
               controls
               preload="metadata"
               src={videoSrc}

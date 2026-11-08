@@ -34,6 +34,15 @@ export type ProgressEvent = {
 export type DoneEvent = { type: "done"; status: number; body: any };
 export type StreamEvent = ProgressEvent | DoneEvent;
 
+function reportFailure(status: number, body: any) {
+  console.error("[lesson] generation request failed", {
+    status,
+    error: body?.error,
+    issues: body?.issues,
+    debugError: body?.debugError,
+  });
+}
+
 export function progress(stage: StageId, detail?: string, percent?: number): ProgressEvent {
   const step = STAGES.findIndex((s) => s.id === stage);
   const event: ProgressEvent = { type: "progress", stage, step, label: STAGES[step].label };
@@ -65,7 +74,10 @@ export async function requestLesson(
   // Bad requests (empty input, etc.) come back as plain JSON before any streaming starts.
   if (!res.body || !(res.headers.get("content-type") ?? "").includes("ndjson")) {
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error ?? `Lesson request failed (${res.status}).`);
+    if (!res.ok) {
+      reportFailure(res.status, data);
+      throw new Error(data.error ?? `Lesson request failed (${res.status}).`);
+    }
     return data;
   }
 
@@ -90,6 +102,12 @@ export async function requestLesson(
   }
 
   if (!done) throw new Error("The connection closed before the lesson was ready. Try again.");
-  if (done.status >= 400) throw new Error(done.body?.error ?? "Couldn't make the lesson. Try again.");
+  if (done.status >= 400) {
+    reportFailure(done.status, done.body);
+    throw new Error(done.body?.error ?? "Couldn't make the lesson. Try again.");
+  }
+  if (done.body?.videoError) {
+    console.error("[lesson] video generation failed", done.body.videoDebugError ?? done.body.videoError);
+  }
   return done.body;
 }

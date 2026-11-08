@@ -19,7 +19,7 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
   const audioDirectory = path.resolve(process.cwd(), "public/audio/generated");
   const lesson = LessonSchema.parse(JSON.parse(await readFile(resolvedLessonPath, "utf8")));
   const elevenlabs = new ElevenLabsClient();
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || "JBFqnCBsd6RMkjVDRZzb";
+  const voiceId = process.env.ELEVENLABS_VOICE_ID || "pYZE1337lBWuhle0xzSs";
 
   await mkdir(audioDirectory, { recursive: true });
 
@@ -34,6 +34,7 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
       const generatedFileName = `${folderName}-${fileName}`;
       const audioPath = path.join(audioDirectory, generatedFileName);
       let audioBytes: Buffer | undefined;
+      let wordTimings = scene.audio?.wordTimings;
 
       try {
         audioBytes = await readFile(audioPath);
@@ -53,20 +54,26 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
         }
       }
 
-      if (!audioBytes) {
-        const audioStream = await elevenlabs.textToSpeech.convert(voiceId, {
+      if (!audioBytes || !wordTimings?.length) {
+        const response = await elevenlabs.textToSpeech.convertWithTimestamps(voiceId, {
           text: scene.narration,
           modelId: "eleven_v4",
           outputFormat: "mp3_44100_128",
         });
-        audioBytes = Buffer.from(await new Response(audioStream).arrayBuffer());
+        audioBytes = Buffer.from(response.audioBase64, "base64");
+        const alignment = response.alignment ?? response.normalizedAlignment;
+        wordTimings = alignment ? extractWordTimings(alignment) : [];
       }
       if (!audioBytes) throw new Error(`Could not prepare narration for scene ${scene.id}.`);
       await writeFile(audioPath, audioBytes);
+      if (wordTimings?.length) {
+        await writeFile(audioPath.replace(/\.mp3$/i, ".words.json"), `${JSON.stringify(wordTimings, null, 2)}\n`);
+      }
 
       scene.audio = {
         url: `audio/generated/${generatedFileName}`,
         durationSec: scene.audio?.durationSec ?? (audioBytes.byteLength * 8) / 128_000,
+        ...(wordTimings?.length ? { wordTimings } : {}),
       };
       await writeFile(resolvedLessonPath, `${JSON.stringify(lesson, null, 2)}\n`);
       console.log(`[audio] ${scene.id}: ${scene.audio.durationSec.toFixed(1)}s`);
@@ -74,4 +81,24 @@ export async function generateLessonAudio(lessonPath: string): Promise<Lesson> {
   }
 
   return lesson;
+}
+
+function extractWordTimings(alignment: { characters: string[]; characterStartTimesSeconds: number[]; characterEndTimesSeconds: number[] }) {
+  const words: { word: string; startSec: number; endSec: number }[] = [];
+  let current = "";
+  let startSec = 0;
+  let endSec = 0;
+  for (let index = 0; index < alignment.characters.length; index++) {
+    const character = alignment.characters[index];
+    if (/\s/.test(character)) {
+      if (current) words.push({ word: current, startSec, endSec });
+      current = "";
+      continue;
+    }
+    if (!current) startSec = alignment.characterStartTimesSeconds[index] ?? 0;
+    current += character;
+    endSec = alignment.characterEndTimesSeconds[index] ?? endSec;
+  }
+  if (current) words.push({ word: current, startSec, endSec });
+  return words;
 }

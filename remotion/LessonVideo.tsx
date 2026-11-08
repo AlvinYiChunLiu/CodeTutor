@@ -10,7 +10,7 @@ import { flattenLessonScenes, sceneDurationInFrames, type LessonSceneEntry } fro
 
 type LessonVideoProps = { lesson: Lesson };
 
-function SceneContent({ scene, language, lessonTitle }: { scene: Scene; language: string; lessonTitle: string }) {
+function SceneContent({ scene, language, lessonTitle, frame, durationInFrames }: { scene: Scene; language: string; lessonTitle: string; frame: number; durationInFrames: number }) {
 	if (scene.type === "title") {
 		return (
 			<div style={{ maxWidth: 1050 }}>
@@ -22,20 +22,29 @@ function SceneContent({ scene, language, lessonTitle }: { scene: Scene; language
 	}
 
 	if (scene.type === "code") {
+		const lines = scene.code.split("\n");
+		const longestLine = Math.max(0, ...lines.map((line) => line.length));
+		const fontSize = Math.max(14, Math.min(25, 25 - Math.max(0, longestLine - 48) * 0.18, 28 / Math.max(1, lines.length / 15)));
+		const lineHeight = fontSize * 1.45 + 4;
+		const visibleLines = Math.max(1, Math.floor(320 / lineHeight));
+		const maxScrollLines = Math.max(0, lines.length - visibleLines);
+		const focusLine = scene.highlightLines.length
+			? scene.highlightLines.reduce((sum, line) => sum + line - 1, 0) / scene.highlightLines.length
+			: maxScrollLines;
+		const targetScrollLines = Math.max(0, Math.min(maxScrollLines, focusLine - (visibleLines - 1) / 2));
+		const scrollOffset = interpolate(frame, [0, durationInFrames], [0, targetScrollLines * lineHeight], { extrapolateRight: "clamp" });
 		return (
 			<div style={styles.codeWindow}>
 				<div style={styles.codeHeader}><span style={styles.windowDots}>● ● ●</span><span>{language.toUpperCase()} · EXAMPLE</span></div>
-				<pre style={styles.codeBlock}>
-					{scene.code.split("\n").map((line, index) => (
-						<div key={`${index}-${line}`} style={{
-							...styles.codeLine,
-							backgroundColor: scene.highlightLines.includes(index + 1) ? "#c9ef7420" : "transparent",
-							color: scene.highlightLines.includes(index + 1) ? "#d8ff8a" : "#e4e8df",
-						}}>
-							<span style={styles.lineNumber}>{String(index + 1).padStart(2, "0")}</span>{line || " "}
-						</div>
-					))}
-				</pre>
+				<div style={styles.codeViewport}>
+					<pre style={{ ...styles.codeBlock, fontSize, lineHeight: 1.45, transform: `translateY(-${scrollOffset}px)` }}>
+						{lines.map((line, index) => (
+							<div key={`${index}-${line}`} style={{ ...styles.codeLine, fontSize, backgroundColor: scene.highlightLines.includes(index + 1) ? "#c9ef7420" : "transparent", color: scene.highlightLines.includes(index + 1) ? "#d8ff8a" : "#e4e8df" }}>
+								<span style={{ ...styles.lineNumber, fontSize: Math.max(11, fontSize * 0.6) }}>{String(index + 1).padStart(2, "0")}</span>{line || " "}
+							</div>
+						))}
+					</pre>
+				</div>
 			</div>
 		);
 	}
@@ -113,6 +122,10 @@ function LessonScene({ item, index, total, durationInFrames, lessonTitle, langua
 	const entrance = interpolate(frame, [0, 18], [0, 1], { extrapolateRight: "clamp" });
 	const lift = interpolate(frame, [0, 18], [22, 0], { extrapolateRight: "clamp" });
 	const progress = Math.min(100, (frame / durationInFrames) * 100);
+	const wordTimings = item.scene.audio?.wordTimings;
+	const activeWordIndex = wordTimings?.findIndex(
+		({ startSec, endSec }) => frame / 30 >= startSec && frame / 30 < endSec,
+	) ?? -1;
 
 	return (
 		<AbsoluteFill style={styles.canvas}>
@@ -124,11 +137,17 @@ function LessonScene({ item, index, total, durationInFrames, lessonTitle, langua
 				<span style={styles.chapterLabel}>CHAPTER {String(item.chapterNumber).padStart(2, "0")} · {item.chapterTitle.toUpperCase()}</span>
 			</header>
 			<main style={{ ...styles.main, opacity: entrance, transform: `translateY(${lift}px)` }}>
-				<SceneContent scene={item.scene} language={language} lessonTitle={lessonTitle} />
+				<SceneContent scene={item.scene} language={language} lessonTitle={lessonTitle} frame={frame} durationInFrames={durationInFrames} />
 			</main>
 			<footer style={styles.footer}>
 				<div style={styles.captionMark} />
-				<p style={styles.caption}>{item.scene.narration}</p>
+				<p style={styles.caption}>
+					{wordTimings?.length
+						? wordTimings.map(({ word }, wordIndex) => (
+							<span key={`${wordIndex}-${word}`} style={wordIndex === activeWordIndex ? styles.activeCaptionWord : undefined}>{word}{wordIndex < wordTimings.length - 1 ? " " : ""}</span>
+						))
+						: item.scene.narration}
+				</p>
 				<span style={styles.sceneCount}>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
 			</footer>
 		</AbsoluteFill>
@@ -177,12 +196,13 @@ const styles: Record<string, CSSProperties> = {
 	eyebrow: { margin: "0 0 24px", color: "#c9ef74", fontSize: 15, letterSpacing: 4 },
 	title: { margin: 0, fontFamily: "Georgia, serif", fontSize: 92, lineHeight: 1.06, fontWeight: 400 },
 	subtitle: { margin: "25px 0 0", color: "#bdc4b8", fontSize: 28 },
-	codeWindow: { width: 900, padding: "20px 26px 28px", border: "1px solid #ffffff25", borderRadius: 12, backgroundColor: "#202720" },
+	codeWindow: { width: "100%", maxWidth: 1080, height: "100%", maxHeight: "100%", boxSizing: "border-box", overflow: "hidden", display: "flex", flexDirection: "column", padding: "16px 20px", border: "1px solid #ffffff25", borderRadius: 12, backgroundColor: "#202720" },
 	codeHeader: { display: "flex", alignItems: "center", gap: 20, paddingBottom: 17, color: "#a9b39f", fontSize: 12, letterSpacing: 2 },
+	codeViewport: { flex: 1, minHeight: 0, overflow: "hidden" },
 	windowDots: { color: "#d98263", letterSpacing: 4 },
-	codeBlock: { margin: 0, fontFamily: "Consolas, monospace", fontSize: 25, lineHeight: 1.7 },
-	codeLine: { minHeight: 42, padding: "0 10px", borderRadius: 4, whiteSpace: "pre" },
-	lineNumber: { display: "inline-block", width: 72, color: "#788276", fontSize: 15 },
+	codeBlock: { margin: 0, fontFamily: "Consolas, monospace", lineHeight: 1.45, whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" },
+	codeLine: { minHeight: 0, padding: "2px 8px", borderRadius: 4, whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" },
+	lineNumber: { display: "inline-block", width: 48, color: "#788276", fontSize: 15, verticalAlign: "top" },
 	outputWindow: { width: 820, padding: 38, border: "1px solid #ffffff25", borderRadius: 12, backgroundColor: "#202720" },
 	outputText: { margin: 0, color: "#d8ff8a", fontFamily: "Consolas, monospace", fontSize: 42, lineHeight: 1.5 },
 	outputResult: { margin: "25px 0 0", color: "#c5cabe", fontSize: 21 },
@@ -199,5 +219,6 @@ const styles: Record<string, CSSProperties> = {
 	footer: { position: "absolute", right: 58, bottom: 34, left: 58, display: "flex", alignItems: "center", gap: 16, padding: "18px 22px", border: "1px solid #ffffff20", borderRadius: 8, backgroundColor: "#101410ef" },
 	captionMark: { width: 3, height: 38, flex: "0 0 auto", backgroundColor: "#d98263" },
 	caption: { flex: 1, margin: 0, color: "#e4e8df", fontSize: 21, lineHeight: 1.4 },
+	activeCaptionWord: { color: "#d8ff8a", backgroundColor: "#c9ef7430", borderRadius: 3 },
 	sceneCount: { flex: "0 0 auto", color: "#8e998a", fontFamily: "Consolas, monospace", fontSize: 14 },
 };

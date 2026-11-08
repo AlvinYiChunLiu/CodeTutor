@@ -13,7 +13,11 @@ const base = {
   narration: z.string().min(1), // one or two spoken sentences
   // Filled in by TTS later. Leave it out when the AI writes the lesson.
   audio: z
-    .object({ url: z.string(), durationSec: z.number().positive() })
+    .object({
+      url: z.string(),
+      durationSec: z.number().positive(),
+      wordTimings: z.array(z.object({ word: z.string(), startSec: z.number().nonnegative(), endSec: z.number().nonnegative() })).optional(),
+    })
     .optional(),
 };
 

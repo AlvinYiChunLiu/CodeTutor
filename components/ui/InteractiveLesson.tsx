@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lesson, Scene } from "@/lib/schema";
 import SiteHeader from "@/components/ui/SiteHeader";
 import PracticePanel from "@/components/ui/PracticePanel";
+import AdjustLesson from "@/components/ui/AdjustLesson";
+import { sceneDurationInFrames } from "@/remotion/timeline";
 
 type LessonStep = {
   chapterIndex: number;
@@ -12,7 +14,21 @@ type LessonStep = {
 };
 
 function formatTime(seconds: number) {
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  const whole = Math.max(0, Math.floor(seconds));
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
+}
+
+/**
+ * How long a scene lasts, using the exact same timing the video renderer uses (remotion/timeline.ts):
+ * the narration audio's length (or an estimate) plus a short pause. So page times match the video.
+ */
+const VIDEO_FPS = 30;
+function sceneSeconds(scene: Scene) {
+  return sceneDurationInFrames(scene) / VIDEO_FPS;
+}
+
+function lessonLength(totalSeconds: number) {
+  return totalSeconds < 60 ? "under 1 min" : `${Math.round(totalSeconds / 60)} min`;
 }
 
 function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
@@ -124,26 +140,74 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     () => lesson.chapters.flatMap((chapter, chapterIndex) => chapter.scenes.map((scene, sceneIndex) => ({ chapterIndex, sceneIndex, scene }))),
     [lesson],
   );
+  // Real timeline: where each scene starts and how long the whole lesson is.
+  const timeline = useMemo(() => {
+    const starts: number[] = [];
+    let total = 0;
+    for (const { scene } of steps) {
+      starts.push(total);
+      total += sceneSeconds(scene);
+    }
+    return { starts, total };
+  }, [steps]);
   const [activeStep, setActiveStep] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
   const step = steps[activeStep] ?? steps[0];
   const activeChapter = step?.chapterIndex ?? 0;
-  const progress = steps.length > 1 ? (activeStep / (steps.length - 1)) * 100 : 100;
+  const progress = timeline.total > 0 ? Math.min(100, (elapsed / timeline.total) * 100) : 0;
   const hasNarrationAudio = steps.some(({ scene }) => Boolean(scene.audio?.url));
+
+  // Auto-play: the clock ticks, and each scene stays up for its own length.
+  useEffect(() => {
+    if (!playing) return;
+    const started = performance.now();
+    const from = elapsed;
+    const timer = window.setInterval(() => setElapsed(Math.min(timeline.total, from + (performance.now() - started) / 1000)), 200);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, timeline.total]);
 
   useEffect(() => {
     if (!playing) return;
-    if (activeStep >= steps.length - 1) {
+    if (elapsed >= timeline.total) {
       setPlaying(false);
       return;
     }
-    const timer = window.setTimeout(() => setActiveStep(activeStep + 1), 6500);
-    return () => window.clearTimeout(timer);
-  }, [activeStep, playing, steps.length]);
+    const sceneEnd = (timeline.starts[activeStep + 1] ?? timeline.total);
+    if (elapsed >= sceneEnd && activeStep < steps.length - 1) setActiveStep(activeStep + 1);
+  }, [elapsed, playing, activeStep, steps.length, timeline]);
 
   function chooseStep(index: number) {
     setActiveStep(index);
+    setElapsed(timeline.starts[index] ?? 0);
     setPlaying(false);
+  }
+
+  // The video below: transcript clicks jump it to that moment, and while it plays the transcript follows it.
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoInSync, setVideoInSync] = useState(false);
+
+  function checkVideoMatches() {
+    const video = videoRef.current;
+    // Only seek a video made from THIS lesson (a sample page may show another lesson's video).
+    setVideoInSync(Boolean(video && Number.isFinite(video.duration) && Math.abs(video.duration - timeline.total) < 2));
+  }
+
+  function sceneAt(seconds: number) {
+    let index = 0;
+    while (index + 1 < timeline.starts.length && timeline.starts[index + 1] <= seconds + 0.05) index++;
+    return index;
+  }
+
+  function jumpTo(index: number) {
+    chooseStep(index);
+    const video = videoRef.current;
+    if (!video || !videoInSync) return;
+    video.currentTime = (timeline.starts[index] ?? 0) + 0.05;
+    void video.play().catch(() => {});
+    const box = video.getBoundingClientRect();
+    if (box.top < 0 || box.bottom > window.innerHeight) video.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   if (!step) return null;
@@ -160,15 +224,21 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
               <h1>{lesson.title}</h1>
               <p>{lesson.summary}</p>
             </div>
-            <span className="lesson-length"><span>◷</span> 4 min</span>
+            <span className="lesson-length"><span>◷</span> {lessonLength(timeline.total)}</span>
           </div>
+          <AdjustLesson lesson={lesson} />
 
           <div className="lesson-player">
             <SceneVisual key={step.scene.id} scene={step.scene} language={lesson.codeLanguage} />
             <div className="player-controls">
               <div className="player-control-row">
                 <button className="play-button" type="button" aria-label={playing ? "Pause auto-play" : "Auto-play lesson preview"} onClick={() => {
-                  if (activeStep >= steps.length - 1 && !playing) setActiveStep(0);
+                  if (!playing && elapsed >= timeline.total - 0.25) {
+                    setActiveStep(0);
+                    setElapsed(0);
+                  } else if (!playing && elapsed < (timeline.starts[activeStep] ?? 0)) {
+                    setElapsed(timeline.starts[activeStep] ?? 0);
+                  }
                   setPlaying(!playing);
                 }}>
                   {playing ? <span className="pause-icon">Ⅱ</span> : <span className="play-icon">▶</span>}
@@ -177,7 +247,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                   <span>{playing ? "AUTO-PLAYING VISUALS" : `CHAPTER ${String(activeChapter + 1).padStart(2, "0")}`}</span>
                   <p>{step.scene.narration}</p>
                 </div>
-                <span className="player-time">{formatTime(Math.round((activeStep / Math.max(steps.length, 1)) * 240))} <i>/</i> 4:00</span>
+                <span className="player-time">{formatTime(elapsed)} <i>/</i> {formatTime(Math.round(timeline.total))}</span>
               </div>
               <div className="progress-track" role="progressbar" aria-label="Lesson progress" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
                 <span style={{ width: `${progress}%` }} />
@@ -233,7 +303,22 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                 Download MP4
               </a>
             </div>
-            <video className="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src={videoSrc}>
+            <video
+              ref={videoRef}
+              className="aspect-video w-full rounded-lg bg-black"
+              controls
+              preload="metadata"
+              src={videoSrc}
+              onLoadedMetadata={checkVideoMatches}
+              onPlay={() => setPlaying(false)}
+              onTimeUpdate={(e) => {
+                if (!videoInSync || e.currentTarget.paused) return;
+                const t = e.currentTarget.currentTime;
+                setElapsed(t);
+                const index = sceneAt(t);
+                if (index !== activeStep) setActiveStep(index);
+              }}
+            >
               Your browser does not support HTML video.
             </video>
           </section>
@@ -241,12 +326,12 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
           <section className="transcript-section">
             <div className="transcript-heading">
               <div><span className="section-eyebrow">FOLLOW ALONG</span><h2>Lesson transcript</h2></div>
-              <span className="transcript-count">{steps.length} moments</span>
+              <span className="transcript-count">{videoInSync ? "Click a moment to jump the video there · " : ""}{steps.length} moments</span>
             </div>
             <div className="transcript-list">
               {steps.map((item, index) => (
-                <button type="button" key={item.scene.id} className={`transcript-item ${index === activeStep ? "transcript-active" : ""}`} onClick={() => chooseStep(index)}>
-                  <span className="transcript-time">{formatTime(Math.round((index / Math.max(steps.length, 1)) * 240))}</span>
+                <button type="button" key={item.scene.id} className={`transcript-item ${index === activeStep ? "transcript-active" : ""}`} onClick={() => jumpTo(index)} title={videoInSync ? `Play the video from ${formatTime(timeline.starts[index] ?? 0)}` : undefined}>
+                  <span className="transcript-time">{formatTime(timeline.starts[index] ?? 0)}</span>
                   <span className="transcript-indicator">{index === activeStep ? "▶" : String(index + 1).padStart(2, "0")}</span>
                   <span className="transcript-copy"><b>{lesson.chapters[item.chapterIndex].title}</b><span>{item.scene.narration}</span></span>
                   {index === activeStep && <span className="transcript-now">NOW</span>}

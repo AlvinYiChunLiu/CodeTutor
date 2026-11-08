@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InputForm, { type LessonInput } from "@/components/ui/InputForm";
 import LoadingSteps from "@/components/ui/LoadingSteps";
 import SiteHeader from "@/components/ui/SiteHeader";
-import { Lesson as LessonSchema } from "@/lib/schema";
+import { requestLesson } from "@/lib/ai/progress";
+import { lessonUrl, saveGeneratedLesson } from "@/lib/lesson-session";
 
 function ArrowIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
@@ -24,58 +25,26 @@ export default function Home() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [stepDetail, setStepDetail] = useState<string>();
+  const [stepPercent, setStepPercent] = useState<number>();
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!isSubmitting) return;
-
-    const timer = window.setInterval(() => {
-      setCurrentStepIndex((step) => Math.min(step + 1, 4));
-    }, 1200);
-    return () => window.clearInterval(timer);
-  }, [isSubmitting]);
 
   async function handleSubmit(input: LessonInput) {
     setError("");
     setCurrentStepIndex(0);
+    setStepDetail(undefined);
+    setStepPercent(undefined);
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/lesson", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+      // Live progress: each stage of /api/lesson moves the loading steps as it happens.
+      const result = await requestLesson(input, (p) => {
+        setCurrentStepIndex(p.step);
+        setStepDetail(p.detail);
+        setStepPercent(p.percent);
       });
-      const result: unknown = await response.json();
-
-      if (!response.ok) {
-        const message = typeof result === "object" && result !== null && "error" in result
-          && typeof result.error === "string"
-          ? result.error
-          : `Lesson generation failed (${response.status}). Please try again.`;
-        throw new Error(message);
-      }
-
-      const lessonData = typeof result === "object" && result !== null && "lesson" in result
-        ? result.lesson
-        : result;
-      const parsedLesson = LessonSchema.safeParse(lessonData);
-      if (!parsedLesson.success) {
-        throw new Error("The lesson response was invalid. Please try again.");
-      }
-
-      window.sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(parsedLesson.data));
-      if (typeof result === "object" && result !== null && "id" in result && typeof result.id === "string") {
-        router.push(`/past-videos/${result.id}`);
-        return;
-      }
-      const videoSrc = typeof result === "object" && result !== null && "videoSrc" in result
-        && typeof result.videoSrc === "string"
-        ? result.videoSrc
-        : "";
-      if (videoSrc) window.sessionStorage.setItem("codetutor-generated-video", videoSrc);
-      else window.sessionStorage.removeItem("codetutor-generated-video");
-      router.push("/lesson");
+      saveGeneratedLesson(result, input);
+      router.push(lessonUrl(result));
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Something went wrong. Please try again.");
       setIsSubmitting(false);
@@ -90,7 +59,7 @@ export default function Home() {
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 text-[var(--ink)] shadow-sm">
             <h1 className="mb-2 text-2xl font-bold">Creating your lesson</h1>
             <p className="mb-8 text-sm text-[var(--muted)]">We’re putting together a lesson just for you.</p>
-            <LoadingSteps currentStepIndex={currentStepIndex} />
+            <LoadingSteps currentStepIndex={currentStepIndex} detail={stepDetail} percent={stepPercent} />
           </div>
         </section>
       </main>

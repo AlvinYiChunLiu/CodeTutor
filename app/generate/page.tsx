@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ChangeEvent, DragEvent, FormEvent, useState } from "react";
 import SiteHeader from "@/components/ui/SiteHeader";
 import { useRouter } from "next/navigation";
+import LoadingSteps from "@/components/ui/LoadingSteps";
+import { requestLesson } from "@/lib/ai/progress";
+import { lessonUrl, saveGeneratedLesson } from "@/lib/lesson-session";
 
 type CreateMode = "new-code" | "from-code";
 
@@ -27,6 +30,7 @@ export default function GeneratePage() {
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<{ step: number; detail?: string; percent?: number }>({ step: 0 });
   const router = useRouter();
 
   function changeMode(nextMode: CreateMode) {
@@ -93,26 +97,13 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 
   if (loading) return;
   setLoading(true);
-  setMessage("Making your lesson… this can take a minute.");
+  setProgress({ step: 0 });
   try {
-    const res = await fetch("/api/lesson", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        input: mode === "new-code" ? prompt : source,
-        mode,
-        language,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(data.lesson));
-    if (typeof data.videoSrc === "string" && data.videoSrc.startsWith("/videos/")) {
-      sessionStorage.setItem("codetutor-generated-video", data.videoSrc);
-    } else {
-      sessionStorage.removeItem("codetutor-generated-video");
-    }
-    router.push("/lesson");
+    const request = { input: mode === "new-code" ? prompt : source, mode, language };
+    // Live progress: the steps under the button move as each stage of /api/lesson happens.
+    const result = await requestLesson(request, (p) => setProgress({ step: p.step, detail: p.detail, percent: p.percent }));
+    saveGeneratedLesson(result, request);
+    router.push(lessonUrl(result));
   } catch (e) {
     setMessage("");
     setError((e as Error).message || "Couldn’t make the lesson. Try again.");
@@ -185,6 +176,12 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
           {error && <p className="generator-message generator-error" role="alert">{error}</p>}
           {message && <p className="generator-message generator-info" role="status">{message} <Link href="/lesson">Try the sample lesson →</Link></p>}
           <button className="button-primary generate-submit" type="submit" disabled={loading}>{loading ? "Making your lesson…" : mode === "new-code" ? "Create my code" : "Make my learning kit"} <ArrowIcon /></button>
+          {loading && (
+            <div className="generate-progress" role="status" aria-live="polite">
+              <p>Making your lesson. This usually takes about a minute.</p>
+              <LoadingSteps currentStepIndex={progress.step} detail={progress.detail} percent={progress.percent} />
+            </div>
+          )}
           <p className="generator-footnote">Your files stay in this browser. You’re always in control.</p>
         </form>
       </section>

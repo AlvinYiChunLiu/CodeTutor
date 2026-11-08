@@ -25,6 +25,17 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 type Emit = (event: ProgressEvent) => void;
+
+/** Save to the database for Past videos. A database problem must never cost the learner their lesson. */
+async function saveIfConfigured(lesson: LessonData, videoSrc: string | null): Promise<string | null> {
+  if (!process.env.DATABASE_URL) return null;
+  try {
+    return await saveLessonToDatabase(lesson, videoSrc);
+  } catch (e) {
+    console.error("[lesson] could not save to the database (lesson still returned):", e);
+    return null;
+  }
+}
 type Result = { status: number; body: unknown };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -127,18 +138,18 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
     // still return the lesson so the learner isn't left with nothing.
     if (!process.env.ELEVENLABS_API_KEY) {
       console.log("[lesson] no ELEVENLABS_API_KEY: skipping the video, returning the lesson only");
-      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(lesson, null) : null;
+      const id = await saveIfConfigured(lesson, null);
       return { status: 200, body: { lesson, savedAs, videoSrc: null, id, meta } };
     }
     try {
       const sceneCount = lesson.chapters.reduce((n, c) => n + c.scenes.length, 0);
       emit(progress("voice", `0 of ${sceneCount} scenes`, 0));
       const result = await createLessonVideo(savedAs, sceneCount, emit);
-      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(result.lesson, result.videoSrc) : null;
+      const id = await saveIfConfigured(result.lesson, result.videoSrc);
       return { status: 200, body: { ...result, id, meta } };
     } catch (videoError) {
       console.error("[lesson] video step failed, returning the lesson without a video:", videoError);
-      const id = process.env.DATABASE_URL ? await saveLessonToDatabase(lesson, null) : null;
+      const id = await saveIfConfigured(lesson, null);
       return { status: 200, body: { lesson, savedAs, videoSrc: null, id, videoError: "The video couldn't be made this time.", meta } };
     }
   } catch (e) {

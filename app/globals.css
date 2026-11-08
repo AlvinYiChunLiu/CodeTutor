@@ -727,3 +727,25 @@ html[data-theme="dark"] .practice-copy > p.practice-error { color: #ffb4a8; back
   .practice-shortcut { display: none; }
   .practice-actions .button-primary { width: 100%; }
 }
+
+/* ------------------------------------------------------------------
+   Live loading steps, and Explain simpler / Go deeper
+   ------------------------------------------------------------------ */
+.loading-step-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 3px; }
+.loading-step-copy small { color: var(--muted); font-size: 13px; font-weight: 500; }
+.loading-step-bar { display: block; height: 4px; overflow: hidden; max-width: 260px; border-radius: 4px; background: var(--line); }
+.loading-step-bar span { display: block; height: 100%; border-radius: 4px; background: var(--blue); transition: width .3s ease; }
+.generate-progress { margin-top: 16px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft-surface); }
+.generate-progress > p { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+.adjust-lesson { margin: -4px 0 18px; }
+.adjust-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.adjust-button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px; border: 1px solid var(--line); border-radius: 20px; color: var(--ink); background: var(--surface); font-size: 14px; font-weight: 650; cursor: pointer; transition: border-color .15s, background .15s; }
+.adjust-button span { color: var(--blue-strong); font-weight: 800; }
+.adjust-button:hover:not(:disabled) { border-color: var(--blue); background: var(--blue-pale); }
+.adjust-button:disabled { cursor: not-allowed; opacity: .6; }
+.adjust-button.adjust-button-active { border-color: var(--blue); color: var(--blue-strong); background: var(--blue-pale); opacity: 1; }
+.adjust-current { padding: 6px 10px; border-radius: 20px; color: var(--blue-strong); background: var(--blue-pale); font-size: 12px; font-weight: 750; letter-spacing: .6px; text-transform: uppercase; }
+.adjust-progress { max-width: 520px; margin-top: 12px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: var(--surface); }
+.adjust-progress-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
+.adjust-error { margin: 10px 0 0; padding: 10px 12px; border-radius: 7px; color: #aa4848; background: #fff0ef; font-size: 14px; }
+html[data-theme="dark"] .adjust-error { color: #ffb4a8; background: #3a1f22; }

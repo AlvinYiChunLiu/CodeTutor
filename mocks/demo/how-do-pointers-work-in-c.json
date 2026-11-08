@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "title": "Understanding Pointers in C",
+  "summary": "Learn how pointers store memory addresses and manipulate data indirectly.",
+  "level": "beginner",
+  "codeLanguage": "c",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to learning about pointers in C!",
+          "type": "title",
+          "heading": "Understanding Pointers in C"
+        },
+        {
+          "id": "c1-s2",
+          "narration": "We start with our main function and declare an integer variable x initialized with the value 10.",
+          "type": "code",
+          "code": "#include <stdio.h>\n\nint main() {\n int x = 10;\n int *ptr = &x;\n printf(\"Value of x: %d\\n\", x);\n printf(\"Address of x: %p\\n\", (void*)&x);\n printf(\"Value at ptr: %d\\n\", *ptr);\n}",
+          "highlightLines": [
+            3,
+            4
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "Next, we declare a pointer variable ptr and assign it the address of x using the ampersand operator.",
+          "type": "code",
+          "code": "#include <stdio.h>\n\nint main() {\n int x = 10;\n int *ptr = &x;\n printf(\"Value of x: %d\\n\", x);\n printf(\"Address of x: %p\\n\", (void*)&x);\n printf(\"Value at ptr: %d\\n\", *ptr);\n}",
+          "highlightLines": [
+            5
+          ]
+        },
+        {
+          "id": "c1-s4",
+          "narration": "We print the value of x using the format specifier %d for integers.",
+          "type": "code",
+          "code": "#include <stdio.h>\n\nint main() {\n int x = 10;\n int *ptr = &x;\n printf(\"Value of x: %d\\n\", x);\n printf(\"Address of x: %p\\n\", (void*)&x);\n printf(\"Value at ptr: %d\\n\", *ptr);\n}",
+          "highlightLines": [
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Memory Address",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "Now, we print the address of x using the format specifier %p for pointers.",
+          "type": "code",
+          "code": "#include <stdio.h>\n\nint main() {\n int x = 10;\n int *ptr = &x;\n printf(\"Value of x: %d\\n\", x);\n printf(\"Address of x: %p\\n\", (void*)&x);\n printf(\"Value at ptr: %d\\n\", *ptr);\n}",
+          "highlightLines": [
+            7
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "Finally, we print the value at the address stored in ptr using the dereference operator asterisk.",
+          "type": "code",
+          "code": "#include <stdio.h>\n\nint main() {\n int x = 10;\n int *ptr = &x;\n printf(\"Value of x: %d\\n\", x);\n printf(\"Address of x: %p\\n\", (void*)&x);\n printf(\"Value at ptr: %d\\n\", *ptr);\n}",
+          "highlightLines": [
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Pointer Usage",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "The output shows the value of x, then its address, which is different every time you run it, then the value at ptr, which is the same 10 as x.",
+          "type": "output",
+          "output": "Value of x: 10\nAddress of x: 0x7ffd5e8c3a4c\nValue at ptr: 10"
+        },
+        {
+          "id": "c3-s2",
+          "narration": "In summary, pointers are variables that hold memory addresses, allowing us to access and manipulate data indirectly.",
+          "type": "recap",
+          "points": [
+            "Pointers store memory addresses.",
+            "Use the ampersand operator to get an address.",
+            "Use the asterisk operator to access the value at an address."
+          ]
+        }
+      ]
+    }
+  ]
+}

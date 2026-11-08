@@ -55,7 +55,7 @@ Reply with this JSON shape:
   "codeLanguage": "python" | "javascript" | "typescript" | "java" | "c" | "cpp",${
     needsExample
       ? `
-  "mainCode": "a short, correct example program that demonstrates the concept, ending with a call that prints something. At most 12 lines, each under 60 characters (it is shown on a video screen). Use short strings like print(\"before\")",`
+  "mainCode": "a short, correct, COMPLETE example program that demonstrates the concept (with any #include or import lines it needs, so it compiles and runs as is), ending with a call that prints something. At most 12 lines, each under 60 characters (it is shown on a video screen). Use short strings like print(\"before\")",`
       : ""
   }
   "chapters": [

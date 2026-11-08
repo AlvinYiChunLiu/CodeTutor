@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "title": "Understanding Vectors in C++",
+  "summary": "Learn what a vector is and how to use it in C++.",
+  "level": "beginner",
+  "codeLanguage": "cpp",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to our lesson on vectors in C++.",
+          "type": "title",
+          "heading": "Understanding Vectors in C++",
+          "subheading": "Learn what a vector is and how to use it in C++"
+        },
+        {
+          "id": "c1-s2",
+          "narration": "First, we include the iostream and vector libraries.",
+          "type": "code",
+          "code": "#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> numbers;\n    numbers.push_back(10);\n    numbers.push_back(20);\n    numbers.push_back(30);\n    std::cout << \"Vector elements: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    return 0;\n}",
+          "highlightLines": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "We start our main function here.",
+          "type": "code",
+          "code": "#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> numbers;\n    numbers.push_back(10);\n    numbers.push_back(20);\n    numbers.push_back(30);\n    std::cout << \"Vector elements: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    return 0;\n}",
+          "highlightLines": [
+            4
+          ]
+        },
+        {
+          "id": "c1-s4",
+          "narration": "Here, we declare a vector named numbers that will hold integers.",
+          "type": "code",
+          "code": "#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> numbers;\n    numbers.push_back(10);\n    numbers.push_back(20);\n    numbers.push_back(30);\n    std::cout << \"Vector elements: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    return 0;\n}",
+          "highlightLines": [
+            5
+          ]
+        },
+        {
+          "id": "c1-s5",
+          "narration": "We add the numbers 10, 20, and 30 to our vector using push back.",
+          "type": "code",
+          "code": "#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> numbers;\n    numbers.push_back(10);\n    numbers.push_back(20);\n    numbers.push_back(30);\n    std::cout << \"Vector elements: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    return 0;\n}",
+          "highlightLines": [
+            6,
+            7,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Adding Elements",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "Now, our vector contains just one element, 10.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              10
+            ],
+            "highlight": [
+              0
+            ],
+            "pointers": []
+          }
+        },
+        {
+          "id": "c2-s2",
+          "narration": "After adding 20, our vector now has two elements.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              10,
+              20
+            ],
+            "highlight": [
+              1
+            ],
+            "pointers": []
+          }
+        },
+        {
+          "id": "c2-s3",
+          "narration": "Finally, after adding 30, our vector contains three elements.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "highlight": [
+              2
+            ],
+            "pointers": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Displaying Elements",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "We use a range-based for loop to iterate through each element in the vector and print it.",
+          "type": "code",
+          "code": "#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> numbers;\n    numbers.push_back(10);\n    numbers.push_back(20);\n    numbers.push_back(30);\n    std::cout << \"Vector elements: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    return 0;\n}",
+          "highlightLines": [
+            9,
+            10,
+            11
+          ]
+        },
+        {
+          "id": "c3-s2",
+          "narration": "This is the output of our program, displaying all the elements in the vector.",
+          "type": "output",
+          "output": "Vector elements: 10 20 30 "
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Conclusion",
+      "scenes": [
+        {
+          "id": "c4-s1",
+          "narration": "In this lesson, we learned about vectors in C++, how to add elements to them, and how to display those elements.",
+          "type": "recap",
+          "points": [
+            "Vectors are dynamic arrays that can grow and shrink in size.",
+            "We use push back to add elements to a vector.",
+            "Range-based for loops are useful for iterating over elements in a vector."
+          ]
+        }
+      ]
+    }
+  ]
+}

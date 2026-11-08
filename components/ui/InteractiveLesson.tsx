@@ -185,7 +185,45 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
             </div>
           </div>
 
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
+        </section>
+
+        <aside className="lesson-sidebar">
+          <div className="sidebar-heading"><span className="section-eyebrow">ON THIS PAGE</span><span className="sidebar-progress">{activeStep + 1} / {steps.length}</span></div>
+          <div className="chapter-list">
+            {lesson.chapters.map((chapter, chapterIndex) => {
+              const firstStep = steps.findIndex((item) => item.chapterIndex === chapterIndex);
+              const chapterSteps = steps.map((item, index) => ({ item, index })).filter(({ item }) => item.chapterIndex === chapterIndex);
+              const completed = chapterSteps.every(({ index }) => index < activeStep);
+              return (
+                <div className={`chapter-group ${chapterIndex === activeChapter ? "chapter-current" : ""}`} key={chapter.id}>
+                  <button type="button" className="chapter-button" onClick={() => chooseStep(firstStep)}>
+                    <span className={`chapter-marker ${completed ? "chapter-completed" : ""}`}>{completed ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span>
+                    <span><b>{chapter.title}</b><small>{chapter.scenes.length} {chapter.scenes.length === 1 ? "moment" : "moments"}</small></span>
+                    <span className="chapter-chevron">{chapterIndex === activeChapter ? "⌄" : "›"}</span>
+                  </button>
+                  {chapterIndex === activeChapter && (
+                    <div className="chapter-scenes">
+                      {chapter.scenes.map((scene, sceneIndex) => {
+                        const sceneStep = firstStep + sceneIndex;
+                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => chooseStep(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="sidebar-note">
+            <span className="sidebar-note-arrow">↳</span>
+            <b>Take it at your pace.</b>
+            <p>Click any moment in the transcript to jump right to it.</p>
+          </div>
+          <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>●</span></div>
+        </aside>
+
+        <div className="lesson-wide">
+          <section className="rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-6">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
@@ -237,42 +275,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
               </button>
             </section>
           )}
-        </section>
-
-        <aside className="lesson-sidebar">
-          <div className="sidebar-heading"><span className="section-eyebrow">ON THIS PAGE</span><span className="sidebar-progress">{activeStep + 1} / {steps.length}</span></div>
-          <div className="chapter-list">
-            {lesson.chapters.map((chapter, chapterIndex) => {
-              const firstStep = steps.findIndex((item) => item.chapterIndex === chapterIndex);
-              const chapterSteps = steps.map((item, index) => ({ item, index })).filter(({ item }) => item.chapterIndex === chapterIndex);
-              const completed = chapterSteps.every(({ index }) => index < activeStep);
-              return (
-                <div className={`chapter-group ${chapterIndex === activeChapter ? "chapter-current" : ""}`} key={chapter.id}>
-                  <button type="button" className="chapter-button" onClick={() => chooseStep(firstStep)}>
-                    <span className={`chapter-marker ${completed ? "chapter-completed" : ""}`}>{completed ? "✓" : String(chapterIndex + 1).padStart(2, "0")}</span>
-                    <span><b>{chapter.title}</b><small>{chapter.scenes.length} {chapter.scenes.length === 1 ? "moment" : "moments"}</small></span>
-                    <span className="chapter-chevron">{chapterIndex === activeChapter ? "⌄" : "›"}</span>
-                  </button>
-                  {chapterIndex === activeChapter && (
-                    <div className="chapter-scenes">
-                      {chapter.scenes.map((scene, sceneIndex) => {
-                        const sceneStep = firstStep + sceneIndex;
-                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => chooseStep(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="sidebar-note">
-            <span className="sidebar-note-arrow">↳</span>
-            <b>Take it at your pace.</b>
-            <p>Click any moment in the transcript to jump right to it.</p>
-          </div>
-          <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>●</span></div>
-        </aside>
+        </div>
       </div>
     </main>
   );

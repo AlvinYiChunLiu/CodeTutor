@@ -88,8 +88,19 @@ export async function POST(req: Request) {
     }
 
     const savedAs = await saveLesson(lesson);
-    const result = await createLessonVideo(savedAs);
-    return Response.json({ ...result, meta });
+    // The video is a bonus: if narration or rendering fails (no ElevenLabs key, out of credits),
+    // still return the lesson so the learner isn't left with nothing.
+    if (!process.env.ELEVENLABS_API_KEY) {
+      console.log("[lesson] no ELEVENLABS_API_KEY: skipping the video, returning the lesson only");
+      return Response.json({ lesson, savedAs, videoSrc: null, meta });
+    }
+    try {
+      const result = await createLessonVideo(savedAs);
+      return Response.json({ ...result, meta });
+    } catch (videoError) {
+      console.error("[lesson] video step failed, returning the lesson without a video:", videoError);
+      return Response.json({ lesson, savedAs, videoSrc: null, videoError: "The video couldn't be made this time.", meta });
+    }
   } catch (e) {
     console.error("[lesson] failed:", e);
     if (e instanceof LessonGenerationError) {

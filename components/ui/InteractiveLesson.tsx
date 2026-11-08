@@ -193,11 +193,6 @@ export default function InteractiveLesson({ lesson, videoSrc }: { lesson: Lesson
     if (videoInSync) videoRef.current?.pause();
   }, [chooseStep, videoInSync]);
 
-  const selectSlide = useCallback((index: number) => {
-    chooseStep(index);
-    if (videoInSync) videoRef.current?.pause();
-  }, [chooseStep, videoInSync]);
-
   function checkVideoMatches() {
     const video = videoRef.current;
     // Only seek a video made from THIS lesson (a sample page may show another lesson's video).
@@ -230,10 +225,6 @@ export default function InteractiveLesson({ lesson, videoSrc }: { lesson: Lesson
       event.preventDefault();
       const nextStep = activeStep + (event.key === "ArrowRight" ? 1 : -1);
       if (nextStep < 0 || nextStep >= steps.length) return;
-<<<<<<< HEAD
-=======
-      event.preventDefault();
->>>>>>> 253bc33cb79ac884f202a02fd3d874dd150151bd
       selectSlide(nextStep);
     }
 

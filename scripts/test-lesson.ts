@@ -2,11 +2,12 @@
  * Run the AI pipeline without Next.js:
  *   npm run lesson:test                 → all presets
  *   npm run lesson:test -- recursion    → one preset
- * Valid lessons are saved to mocks/demo/<preset>.json (handy for offline demo caching).
+ *   npm run lesson:test -- "What is an if statement?"   → any topic (or paste code)
+ * Valid lessons are saved to mocks/demo/<name>.json (handy for offline demo caching).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { generateLesson } from "../lib/ai/lesson";
-import { LessonRequest } from "../lib/ai/request";
+import { LessonRequest, looksLikeCode } from "../lib/ai/request";
 
 try {
   process.loadEnvFile(".env.local");
@@ -26,7 +27,13 @@ const PRESETS: Record<string, unknown> = {
 };
 
 const only = process.argv[2];
-const names = only ? [only] : Object.keys(PRESETS);
+// Anything that isn't a preset name is treated as a custom topic or code snippet.
+if (only && !PRESETS[only]) {
+  const slug = only.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "custom";
+  PRESETS[slug] = { input: only, mode: looksLikeCode(only) ? "explain-code" : "teach-concept", language: process.argv[3] ?? "auto" };
+  process.argv[2] = slug;
+}
+const names = process.argv[2] ? [process.argv[2]] : Object.keys(PRESETS);
 mkdirSync("mocks/demo", { recursive: true });
 
 let failed = 0;

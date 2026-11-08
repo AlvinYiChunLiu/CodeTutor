@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "title": "Two Sum Solution",
+  "summary": "Understand how the two_sum function finds two numbers that add up to a target.",
+  "level": "beginner",
+  "codeLanguage": "python",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "narration": "Welcome to the Two Sum Solution!",
+          "type": "title",
+          "heading": "Two Sum Solution",
+          "id": "c1-s1"
+        },
+        {
+          "narration": "This function takes a list of numbers and a target sum.",
+          "type": "code",
+          "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n\nprint(two_sum([2, 7, 11, 15], 9))",
+          "highlightLines": [
+            1
+          ],
+          "id": "c1-s2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Remembering Numbers",
+      "scenes": [
+        {
+          "narration": "We use a dictionary to keep track of numbers we've seen.",
+          "type": "code",
+          "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n\nprint(two_sum([2, 7, 11, 15], 9))",
+          "highlightLines": [
+            2
+          ],
+          "id": "c2-s1"
+        },
+        {
+          "narration": "We loop through each number in the list with its index.",
+          "type": "code",
+          "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n\nprint(two_sum([2, 7, 11, 15], 9))",
+          "highlightLines": [
+            3
+          ],
+          "id": "c2-s2"
+        },
+        {
+          "narration": "For each number, we check if the number we still need, the target minus this number, is already in the dictionary. If it is, we return both indices.",
+          "type": "code",
+          "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n\nprint(two_sum([2, 7, 11, 15], 9))",
+          "highlightLines": [
+            4,
+            5
+          ],
+          "id": "c2-s3"
+        },
+        {
+          "narration": "If not, we store the current number and its index in the dictionary.",
+          "type": "code",
+          "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n\nprint(two_sum([2, 7, 11, 15], 9))",
+          "highlightLines": [
+            6
+          ],
+          "id": "c2-s4"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "Tracing the Example",
+      "scenes": [
+        {
+          "type": "diagram",
+          "narration": "First, i is 0 and the number is 2. We need 7, which we haven't seen yet, so we store 2 with its index, 0.",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              2,
+              7,
+              11,
+              15
+            ],
+            "highlight": [
+              0
+            ],
+            "pointers": [
+              {
+                "label": "i",
+                "index": 0
+              }
+            ]
+          },
+          "id": "c3-s1"
+        },
+        {
+          "type": "diagram",
+          "narration": "Next, i is 1 and the number is 7. We need 2, and it's already in the dictionary at index 0. That's a match!",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              2,
+              7,
+              11,
+              15
+            ],
+            "highlight": [
+              0,
+              1
+            ],
+            "pointers": [
+              {
+                "label": "i",
+                "index": 1
+              }
+            ]
+          },
+          "id": "c3-s2"
+        },
+        {
+          "narration": "So the program prints 0 and 1: the numbers at those positions, 2 and 7, add up to 9.",
+          "type": "output",
+          "output": "[0, 1]",
+          "id": "c3-s3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Recap",
+      "scenes": [
+        {
+          "narration": "In summary, the function finds two numbers that add up to the target and returns their indices.",
+          "type": "recap",
+          "points": [
+            "We use a dictionary to track numbers we've seen.",
+            "We loop through the list, checking if the complement exists in the dictionary.",
+            "If the complement is found, we return the indices of the two numbers.",
+            "If not, we store the current number and its index in the dictionary."
+          ],
+          "id": "c4-s1"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "title": "Async/Await Basics",
+  "summary": "Understand how async/await simplifies asynchronous code.",
+  "level": "beginner",
+  "codeLanguage": "javascript",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to our lesson on async/await. Let's dive into how it simplifies asynchronous code.",
+          "type": "title",
+          "heading": "Async/Await Basics",
+          "subheading": "Understanding Asynchronous Programming"
+        },
+        {
+          "id": "c1-s2",
+          "narration": "Here we define an asynchronous function named fetchData.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "This line logs 'Fetching data...' to the console.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Await Keyword",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "We use the await keyword here to wait for the simulateFetch function to complete.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            3
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "Once simulateFetch is done, we log its result to the console.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "The Wait and the Result",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "Now, let's look at the simulateFetch function. It returns a promise.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            7
+          ]
+        },
+        {
+          "id": "c3-s2",
+          "narration": "Inside the promise, we use setTimeout to simulate a delay of 2000 milliseconds, or 2 seconds.",
+          "type": "code",
+          "code": "async function fetchData() {\n  console.log('Fetching data...');\n  const result = await simulateFetch();\n  console.log(result);\n}\n\nfunction simulateFetch() {\n  return new Promise(resolve => setTimeout(() => resolve('Data fetched!'), 2000));\n}\n\nfetchData();",
+          "highlightLines": [
+            8
+          ]
+        },
+        {
+          "id": "c3-s3",
+          "narration": "So when we run it, 'Fetching data...' prints right away, then after 2 seconds, 'Data fetched!' appears.",
+          "type": "output",
+          "output": "Fetching data...\nData fetched!"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "title": "Recap",
+      "scenes": [
+        {
+          "id": "c4-s1",
+          "narration": "Let's recap. Async functions make asynchronous code easier to read and write. Await pauses the function until the promise resolves. SimulateFetch mimics data fetching with a delay.",
+          "type": "recap",
+          "points": [
+            "Async functions allow us to write asynchronous code that looks synchronous.",
+            "The await keyword pauses the execution of the async function until the promise is resolved.",
+            "simulateFetch simulates fetching data with a delay using a promise and setTimeout."
+          ]
+        }
+      ]
+    }
+  ]
+}

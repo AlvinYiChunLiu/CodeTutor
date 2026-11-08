@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "title": "Recursion Explained",
-  "summary": "Understand how recursion works with a factorial example.",
+  "title": "Understanding Recursion",
+  "summary": "Learn how recursion works with a simple factorial example.",
   "level": "beginner",
   "codeLanguage": "python",
   "chapters": [
@@ -11,19 +11,35 @@
       "scenes": [
         {
           "id": "c1-s1",
-          "narration": "Welcome to our lesson on recursion! Today, we'll learn how recursion works using the factorial function.",
+          "narration": "Welcome to our lesson on recursion! We'll learn how functions can call themselves using a factorial example.",
           "type": "title",
-          "heading": "Recursion Explained",
-          "subheading": "Understanding Recursion with Factorial"
+          "heading": "Understanding Recursion",
+          "subheading": "Learn how recursion works with a simple factorial example."
         },
         {
           "id": "c1-s2",
-          "narration": "Here's our function definition. We're defining a function named factorial that takes one parameter, n. The base case is when n equals zero, and the function returns one, stopping the recursion.",
+          "narration": "Here's our function named factorial. It takes one parameter, n.",
           "type": "code",
           "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
           "highlightLines": [
-            1,
-            2,
+            1
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "If n is zero, we return 1. This is called the base case.",
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
+            2
+          ]
+        },
+        {
+          "id": "c1-s4",
+          "narration": "The base case stops the recursion. Without it, we'd call factorial forever!",
+          "type": "code",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
+          "highlightLines": [
             3
           ]
         }
@@ -35,7 +51,7 @@
       "scenes": [
         {
           "id": "c2-s1",
-          "narration": "If n is not zero, the function returns n multiplied by the factorial of n minus one. This is the recursive call.",
+          "narration": "For other values of n, we return n times the factorial of n minus one. This is the recursive call.",
           "type": "code",
           "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
           "highlightLines": [
@@ -44,7 +60,7 @@
         },
         {
           "id": "c2-s2",
-          "narration": "Let's see how this works with an example. We start by calling factorial of three. Each call waits for the next one to finish.",
+          "narration": "Let's run factorial of 3. It calls factorial of 2, which calls factorial of 1, which calls factorial of 0. Each call waits for the one above it.",
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
@@ -53,6 +69,24 @@
                 "call": "factorial(3)",
                 "vars": {
                   "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
                 }
               }
             ]
@@ -60,7 +94,7 @@
         },
         {
           "id": "c2-s3",
-          "narration": "Next, factorial of two is called. It also waits for the next call to finish.",
+          "narration": "First, factorial of 0 returns 1. This is our base case.",
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
@@ -76,13 +110,26 @@
                 "vars": {
                   "n": "2"
                 }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
               }
             ]
           }
         },
         {
           "id": "c2-s4",
-          "narration": "Then, factorial of one is called. It waits for the next call to finish.",
+          "narration": "Next, factorial of 1 returns 1. It multiplies n by the result of factorial of 0.",
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
@@ -103,85 +150,22 @@
                 "call": "factorial(1)",
                 "vars": {
                   "n": "1"
-                }
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
               }
             ]
           }
         },
         {
           "id": "c2-s5",
-          "narration": "Finally, factorial of zero is called. This is our base case, so it returns one.",
-          "type": "diagram",
-          "diagram": {
-            "kind": "callstack",
-            "frames": [
-              {
-                "call": "factorial(3)",
-                "vars": {
-                  "n": "3"
-                }
-              },
-              {
-                "call": "factorial(2)",
-                "vars": {
-                  "n": "2"
-                }
-              },
-              {
-                "call": "factorial(1)",
-                "vars": {
-                  "n": "1"
-                }
-              },
-              {
-                "call": "factorial(0)",
-                "vars": {
-                  "n": "0"
-                },
-                "returns": "1"
-              }
-            ]
-          }
-        },
-        {
-          "id": "c2-s6",
-          "narration": "Now, factorial of one uses the result of factorial of zero to return one.",
-          "type": "diagram",
-          "diagram": {
-            "kind": "callstack",
-            "frames": [
-              {
-                "call": "factorial(3)",
-                "vars": {
-                  "n": "3"
-                }
-              },
-              {
-                "call": "factorial(2)",
-                "vars": {
-                  "n": "2"
-                }
-              },
-              {
-                "call": "factorial(1)",
-                "vars": {
-                  "n": "1"
-                },
-                "returns": "1"
-              },
-              {
-                "call": "factorial(0)",
-                "vars": {
-                  "n": "0"
-                },
-                "returns": "1"
-              }
-            ]
-          }
-        },
-        {
-          "id": "c2-s7",
-          "narration": "Factorial of two uses the result of factorial of one to return two.",
+          "narration": "Then, factorial of 2 returns 2. It multiplies n by the result of factorial of 1.",
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
@@ -217,8 +201,8 @@
           }
         },
         {
-          "id": "c2-s8",
-          "narration": "Lastly, factorial of three uses the result of factorial of two to return six.",
+          "id": "c2-s6",
+          "narration": "Finally, factorial of 3 returns 6. It multiplies n by the result of factorial of 2.",
           "type": "diagram",
           "diagram": {
             "kind": "callstack",
@@ -262,26 +246,19 @@
       "scenes": [
         {
           "id": "c3-s1",
-          "narration": "And here's the output of our program. The factorial of three is six.",
+          "narration": "And here's the result of our program. Factorial of 3 is 6.",
           "type": "output",
           "output": "6"
-        }
-      ]
-    },
-    {
-      "id": "c4",
-      "title": "Recap",
-      "scenes": [
+        },
         {
-          "id": "c4-s1",
-          "narration": "To wrap up, remember that recursion involves a function calling itself, always with a base case to stop it. Each call waits for the next one, and we compute the final result by combining the results of each call.",
+          "id": "c3-s2",
+          "narration": "To wrap up, remember: recursion involves self-calling functions, needs a base case, and builds results from nested calls. Great job learning about recursion!",
           "type": "recap",
           "points": [
-            "Recursion is a function calling itself.",
-            "The base case stops the recursion.",
+            "Recursion is when a function calls itself.",
+            "We need a base case to stop the recursion.",
             "Each recursive call waits for the next one to finish.",
-            "We compute the final result by multiplying the results of each call.",
-            "In our example, factorial of three is six."
+            "Factorial of 3 is calculated as 3 times 2 times 1 times 1."
           ]
         }
       ]

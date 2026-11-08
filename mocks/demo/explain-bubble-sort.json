@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "title": "Bubble Sort Basics",
+  "summary": "Understand how bubble sort works by sorting a simple list.",
+  "level": "beginner",
+  "codeLanguage": "python",
+  "chapters": [
+    {
+      "id": "c1",
+      "title": "Introduction",
+      "scenes": [
+        {
+          "id": "c1-s1",
+          "narration": "Welcome to Bubble Sort Basics. Let's learn how to sort a list of numbers.",
+          "type": "title",
+          "heading": "Bubble Sort Basics",
+          "subheading": "Sorting a Simple List"
+        },
+        {
+          "id": "c1-s2",
+          "narration": "Here's our list of numbers. We want to sort them in ascending order.",
+          "type": "code",
+          "code": "numbers = [5, 3, 8, 4]\nprint('before:', numbers)\nn = len(numbers)\nfor i in range(n):\n    for j in range(0, n-i-1):\n        if numbers[j] > numbers[j+1]:\n            numbers[j], numbers[j+1] = numbers[j+1], numbers[j]\nprint('after:', numbers)",
+          "highlightLines": [
+            1
+          ]
+        },
+        {
+          "id": "c1-s3",
+          "narration": "Let's print the list before we sort it.",
+          "type": "code",
+          "code": "numbers = [5, 3, 8, 4]\nprint('before:', numbers)\nn = len(numbers)\nfor i in range(n):\n    for j in range(0, n-i-1):\n        if numbers[j] > numbers[j+1]:\n            numbers[j], numbers[j+1] = numbers[j+1], numbers[j]\nprint('after:', numbers)",
+          "highlightLines": [
+            2
+          ]
+        },
+        {
+          "id": "c1-s4",
+          "narration": "Here's a visual representation of our list.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              5,
+              3,
+              8,
+              4
+            ],
+            "highlight": [],
+            "pointers": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "title": "Sorting the List",
+      "scenes": [
+        {
+          "id": "c2-s1",
+          "narration": "We start by finding the length of the list.",
+          "type": "code",
+          "code": "numbers = [5, 3, 8, 4]\nprint('before:', numbers)\nn = len(numbers)\nfor i in range(n):\n    for j in range(0, n-i-1):\n        if numbers[j] > numbers[j+1]:\n            numbers[j], numbers[j+1] = numbers[j+1], numbers[j]\nprint('after:', numbers)",
+          "highlightLines": [
+            3
+          ]
+        },
+        {
+          "id": "c2-s2",
+          "narration": "The outer loop runs through the list. The inner loop compares adjacent elements and swaps them if they're in the wrong order.",
+          "type": "code",
+          "code": "numbers = [5, 3, 8, 4]\nprint('before:', numbers)\nn = len(numbers)\nfor i in range(n):\n    for j in range(0, n-i-1):\n        if numbers[j] > numbers[j+1]:\n            numbers[j], numbers[j+1] = numbers[j+1], numbers[j]\nprint('after:', numbers)",
+          "highlightLines": [
+            4,
+            5
+          ]
+        },
+        {
+          "id": "c2-s3",
+          "narration": "If the current element is greater than the next, we swap them.",
+          "type": "code",
+          "code": "numbers = [5, 3, 8, 4]\nprint('before:', numbers)\nn = len(numbers)\nfor i in range(n):\n    for j in range(0, n-i-1):\n        if numbers[j] > numbers[j+1]:\n            numbers[j], numbers[j+1] = numbers[j+1], numbers[j]\nprint('after:', numbers)",
+          "highlightLines": [
+            6,
+            7
+          ]
+        },
+        {
+          "id": "c2-s4",
+          "narration": "First pass: 5 is bigger than 3, so they swap.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              3,
+              5,
+              8,
+              4
+            ],
+            "highlight": [
+              0,
+              1
+            ],
+            "pointers": [
+              {
+                "label": "j",
+                "index": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s5",
+          "narration": "Still in the first pass, 8 is bigger than 4, so they swap. The biggest number, 8, has bubbled to the end.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              3,
+              5,
+              4,
+              8
+            ],
+            "highlight": [
+              2,
+              3
+            ],
+            "pointers": [
+              {
+                "label": "j",
+                "index": 2
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s6",
+          "narration": "Second pass: 5 is bigger than 4, so they swap. Now the whole list is in order.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "array",
+            "values": [
+              3,
+              4,
+              5,
+              8
+            ],
+            "highlight": [
+              1,
+              2
+            ],
+            "pointers": [
+              {
+                "label": "j",
+                "index": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "title": "The Result",
+      "scenes": [
+        {
+          "id": "c3-s1",
+          "narration": "This is our list before and after sorting.",
+          "type": "output",
+          "output": "before: [5, 3, 8, 4]\nafter: [3, 4, 5, 8]"
+        },
+        {
+          "id": "c3-s2",
+          "narration": "In summary, bubble sort works by repeatedly stepping through the list, comparing adjacent elements, and swapping them if they're in the wrong order. This process is repeated until the list is sorted.",
+          "type": "recap",
+          "points": [
+            "Bubble sort repeatedly steps through the list",
+            "It compares adjacent elements and swaps them if needed",
+            "This process is repeated until the list is sorted"
+          ]
+        }
+      ]
+    }
+  ]
+}

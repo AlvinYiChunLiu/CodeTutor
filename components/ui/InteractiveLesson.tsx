@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Lesson, Scene } from "@/lib/schema";
 import SiteHeader from "@/components/ui/SiteHeader";
 import PracticePanel from "@/components/ui/PracticePanel";
@@ -200,7 +200,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     return index;
   }
 
-  function jumpTo(index: number) {
+  const jumpTo = useCallback((index: number) => {
     chooseStep(index);
     const video = videoRef.current;
     if (!video || !videoInSync) return;
@@ -208,7 +208,24 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     void video.play().catch(() => {});
     const box = video.getBoundingClientRect();
     if (box.top < 0 || box.bottom > window.innerHeight) video.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
+  }, [videoInSync, timeline.starts]);
+
+  useEffect(() => {
+    function handleArrowNavigation(event: KeyboardEvent) {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, button, a, video, [contenteditable='true']")) return;
+
+      const nextStep = activeStep + (event.key === "ArrowRight" ? 1 : -1);
+      if (nextStep < 0 || nextStep >= steps.length) return;
+      event.preventDefault();
+      jumpTo(nextStep);
+    }
+
+    window.addEventListener("keydown", handleArrowNavigation);
+    return () => window.removeEventListener("keydown", handleArrowNavigation);
+  }, [activeStep, jumpTo, steps.length]);
 
   if (!step) return null;
 
@@ -247,7 +264,6 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                   <span>{playing ? "AUTO-PLAYING VISUALS" : `CHAPTER ${String(activeChapter + 1).padStart(2, "0")}`}</span>
                   <p>{step.scene.narration}</p>
                 </div>
-                <span className="player-time">{formatTime(elapsed)} <i>/</i> {formatTime(Math.round(timeline.total))}</span>
               </div>
               <div className="progress-track" role="progressbar" aria-label="Lesson progress" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
                 <span style={{ width: `${progress}%` }} />

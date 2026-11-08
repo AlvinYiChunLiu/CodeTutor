@@ -43,6 +43,11 @@ async function saveIfConfigured(lesson: LessonData, videoSrc: string | null): Pr
 }
 type Result = { status: number; body: unknown };
 
+function describeError(error: unknown) {
+  if (error instanceof Error) return `${error.name}: ${error.message}${error.stack ? `\n${error.stack}` : ""}`;
+  return String(error);
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function saveLesson(lesson: LessonData) {
@@ -180,7 +185,18 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
     } catch (videoError) {
       console.error("[lesson] video step failed, returning the lesson without a video:", videoError);
       const id = await saveIfConfigured(lesson, null);
-      return { status: 200, body: { lesson, savedAs, videoSrc: null, id, videoError: "The video couldn't be made this time.", meta } };
+      return {
+        status: 200,
+        body: {
+          lesson,
+          savedAs,
+          videoSrc: null,
+          id,
+          videoError: "The video couldn't be made this time.",
+          ...(process.env.NODE_ENV === "development" ? { videoDebugError: describeError(videoError) } : {}),
+          meta,
+        },
+      };
     }
   } catch (e) {
     console.error("[lesson] failed:", e);
@@ -188,7 +204,13 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
     if (e instanceof LLMError) {
       return { status: e.status === 500 || e.status === 401 ? 500 : 502, body: { error: e.message } };
     }
-    return { status: 500, body: { error: "Something went wrong making the lesson." } };
+    return {
+      status: 500,
+      body: {
+        error: "Something went wrong making the lesson.",
+        ...(process.env.NODE_ENV === "development" ? { debugError: describeError(e) } : {}),
+      },
+    };
   }
 }
 

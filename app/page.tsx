@@ -160,7 +160,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="site-footer"><Link className="app-brand" href="/"><span className="app-brand-mark"><CodeIcon /></span><span>codetutor<span className="brand-period">.</span></span></Link><span>Code questions are always welcome here.</span><Link href="/lesson">Explore a lesson</Link></footer>
+      <footer className="site-footer"><Link className="app-brand" href="/"><span className="app-brand-mark"><CodeIcon /></span><span>codetutor<span className="brand-period">.</span></span></Link><span>Code questions are always welcome here.</span></footer>
     </main>
   );
 }

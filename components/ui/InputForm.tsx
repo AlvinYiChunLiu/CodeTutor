@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 
 export type LessonLanguage = "JavaScript" | "Python" | "TypeScript" | "Java" | "C++";
-export type LessonMode = "Explainer" | "Walkthrough" | "Debugger";
+export type LessonMode = "Explainer" | "Walkthrough";
 export type LessonDifficulty = "Beginner" | "Intermediate" | "Advanced";
 
 export type LessonInput = {
@@ -20,7 +20,7 @@ type InputFormProps = {
 const MAX_PROMPT_LENGTH = 4000;
 
 const languages: LessonLanguage[] = ["JavaScript", "Python", "TypeScript", "Java", "C++"];
-const modes: LessonMode[] = ["Explainer", "Walkthrough", "Debugger"];
+const modes: LessonMode[] = ["Explainer", "Walkthrough"];
 const difficulties: LessonDifficulty[] = ["Beginner", "Intermediate", "Advanced"];
 
 function isLessonLanguage(value: string): value is LessonLanguage {
@@ -67,7 +67,7 @@ export default function InputForm({ onSubmit }: InputFormProps) {
           <span
             id="prompt-character-count"
             aria-live="polite"
-            className={`absolute bottom-3 right-4 text-xs tabular-nums ${
+            className={`absolute bottom-3 right-4 text-sm tabular-nums ${
               prompt.length > MAX_PROMPT_LENGTH ? "font-semibold text-red-600" : "text-[var(--muted)]"
             }`}
           >

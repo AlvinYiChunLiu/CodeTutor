@@ -247,7 +247,8 @@ export function checkLesson(
   } else if (!ctx.lastAttempt && wide) {
     issues.push(`${wide} code scene(s) highlight more than 4 lines. Split them so each highlights 1–3 lines.`);
   }
-  if (n > 13 && !ctx.lastAttempt) issues.push(`${n} scenes is too long. Use 7 to 11: merge code scenes about neighbouring lines and drop repeats.`);
+  const maxScenes = ctx.req.adjust === "deeper" ? 16 : 13;
+  if (n > maxScenes && !ctx.lastAttempt) issues.push(`${n} scenes is too long. Use 7 to 11: merge code scenes about neighbouring lines and drop repeats.`);
   else if (n > 18) warnings.push(`${n} scenes is a long video`);
   const outputs = all().filter((s: Any) => s.type === "output").length;
   if (outputs > 1 && !ctx.lastAttempt) issues.push(`There are ${outputs} output scenes. Use exactly one, with the complete printed output.`);
@@ -255,8 +256,55 @@ export function checkLesson(
   const codey = (t: string) => /\b(def|function|class|for|while|if|return)\b[^.!?]*[:{]\s*$/m.test(t) || /\w\[[^\]]*\]|\w\([^)]*\)\s*[:{]|==|!=|\+=|=>|;\s*$/.test(t);
   const pasted = all().filter((s: Any) => s.type !== "title" && codey(str(s.narration))).length;
   if (pasted && !ctx.lastAttempt) issues.push(`${pasted} narration(s) contain pasted code. Narration is read aloud: explain each line in plain spoken words (e.g. "we compare each number with the one after it"), never copy the code itself.`);
+  // "Explain simpler" / "Go deeper" must visibly change the lesson, or the buttons look broken.
+  const spoken = all().map((s: Any) => str(s.narration));
+  if (ctx.req.adjust === "simpler" && !ctx.lastAttempt) {
+    const long = spoken.filter((t) => t.split(" ").length > 30).length;
+    const analogies = spoken.filter((t) => /\b(like a|like an|imagine|think of|just like|similar to)\b/i.test(t)).length;
+    if (long) issues.push(`This is the SIMPLER version but ${long} narration(s) are over 30 words. Keep every narration under 25 words.`);
+    if (analogies < 1) issues.push(`This is the SIMPLER version but it has no everyday analogy. Add one scene that says "Think of it like…" or "Imagine…".`);
+  }
+  if (ctx.req.adjust === "deeper" && !ctx.lastAttempt) {
+    const text = spoken.join(" ");
+    const topics = [
+      /\b(big[- ]?o|time complexity|o of n|linear time|quadratic|logarithmic)\b/i,
+      /\b(memory|space|call stack grows|stack frames?)\b/i,
+      /\b(edge case|empty|negative|zero|none|null)\b/i,
+      /\b(recursion ?limit|recursionerror|stack overflow|pitfall|infinite)\b/i,
+    ].filter((re) => re.test(text)).length;
+    const hasChapter = chapters.some((c) => /deeper|under the hood|beyond/i.test(c.title));
+    if (topics < 3 || !hasChapter) {
+      issues.push(`This is the GO DEEPER version but it ${hasChapter ? "" : 'has no "Going deeper" chapter and '}covers ${topics} of 4 deeper topics. Add a "Going deeper" chapter before the recap covering time complexity, memory, edge cases, and limits or pitfalls.`);
+    }
+  }
   const rambling = all().filter((s: Any) => str(s.narration).split(" ").length > 60).length;
   if (rambling && !ctx.lastAttempt) issues.push(`${rambling} scene(s) have narration over 60 words. Keep each narration to 1 or 2 short sentences (under 40 words).`);
+  // Output can't contain a string the code only RETURNS (never prints), e.g. "stop" from `return 'stop'`.
+  {
+    const code = ctx.plan.mainCode;
+    const literals = (re: RegExp) => new Set([...code.matchAll(re)].flatMap((m) => [...m[1].matchAll(/(['"`])((?:(?!\1).)*)\1/g)].map((q) => q[2])));
+    // Only a plain `return 'stop'` (the whole return value is one string), not a literal buried in other code.
+    const returned = literals(/\breturn\s+((['"`])[^'"`\n]*\2)\s*;?\s*$/gm);
+    const printed = literals(/(?:\bprint|console\.log|System\.out\.print(?:ln)?|printf|\bcout\s*<<)\s*\(?([^\n;]*)/g);
+    // If a call's result is printed directly (print(f(3))) or through a variable (x = f(3); print(x)), returns can show up.
+    const callPrinted =
+      /(?:print|console\.log|System\.out\.print(?:ln)?)\s*\(\s*\w+\s*\(/.test(code) ||
+      [...code.matchAll(/\b(\w+)\s*=\s*(?:await\s+)?\w+\s*\(/g)].some((m) =>
+        new RegExp(`(?:print|console\\.log|System\\.out\\.print(?:ln)?)\\s*\\([^)]*\\b${m[1]}\\b`).test(code),
+      );
+    for (const o of all().filter((s: Any) => s.type === "output")) {
+      const lines = str(o.output).split("\n").map((l) => l.trim());
+      const ghost = [...returned].filter((r) => r && !printed.has(r) && !callPrinted && lines.includes(r));
+      if (ghost.length) {
+        if (ctx.lastAttempt) {
+          o.output = str(o.output).split("\n").filter((l) => !ghost.includes(l.trim())).join("\n");
+          warnings.push(`removed returned-but-never-printed value(s) from the output: ${ghost.join(", ")}`);
+        } else {
+          issues.push(`The output shows ${ghost.map((g) => `"${g}"`).join(", ")}, but the code only RETURNS that value and never prints it. Show only what print statements actually print.`);
+        }
+      }
+    }
+  }
   const order = all().map((s: Any) => s.type);
   if (!ctx.lastAttempt && order.includes("output") && order.lastIndexOf("diagram") > order.indexOf("output")) {
     issues.push(`The output scene comes before a diagram scene. Put the output scene after all the diagrams, right before the recap.`);
@@ -313,6 +361,21 @@ export function checkLesson(
   // The first call (bottom frame) finishes last: its answer belongs only in the final stack scene.
   if (!ctx.lastAttempt && stacks.slice(0, -1).some((st: Any) => st.diagram.frames?.[0]?.returns !== undefined)) {
     issues.push(`A call-stack scene before the last one shows the first call (the bottom frame) already returning. The first call finishes last: show its answer only in the final call-stack scene.`);
+  }
+
+  // Frame names must use the function's real name from the code (factorial(3), not f(3)).
+  const defined = new Set(
+    [...ctx.plan.mainCode.matchAll(/(?:\bdef|\bfunction)\s+(\w+)|\b(\w+)\s*\([^)]*\)\s*\{|\b(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s*)?\(/g)]
+      .map((m) => m[1] ?? m[2] ?? m[3])
+      .filter((n) => n && !["if", "for", "while", "switch", "catch", "main"].includes(n)),
+  );
+  const badNames = new Set<string>();
+  for (const st of stacks) for (const f of st.diagram.frames ?? []) {
+    const name = str(f.call).match(/^\s*(\w+)\s*\(/)?.[1];
+    if (name && defined.size && !defined.has(name) && name !== "main") badNames.add(name);
+  }
+  if (badNames.size && !ctx.lastAttempt) {
+    issues.push(`Call-stack frames use ${[...badNames].map((n) => `"${n}(...)"`).join(", ")} but the code defines ${[...defined].join(", ")}. Write each call with the function's real name, e.g. ${[...defined][0]}(3).`);
   }
 
   const lastStack: Any = stacks.at(-1);

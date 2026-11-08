@@ -17,7 +17,8 @@
     "lesson:test": "tsx scripts/test-lesson.ts",
     "practice:test": "tsx scripts/test-practice.ts",
     "prompt-video:test": "tsx scripts/test-prompt-video.ts",
-    "lesson:tune": "tsx scripts/tune-lessons.ts"
+    "lesson:tune": "tsx scripts/tune-lessons.ts",
+    "lesson:compare": "tsx scripts/compare-adjust.ts"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",

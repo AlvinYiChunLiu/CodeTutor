@@ -15,8 +15,14 @@ const LEVEL_STYLE: Record<LessonRequest["level"], string> = {
 };
 
 const ADJUST: Record<NonNullable<LessonRequest["adjust"]>, string> = {
-  simpler: "The learner asked for a SIMPLER version: fewer chapters, shorter sentences, more analogies, no jargon.",
-  deeper: "The learner asked to GO DEEPER: add a chapter on edge cases or how it works under the hood, and mention complexity.",
+  simpler:
+    "The learner asked for a SIMPLER version. Use the simplest possible example, keep every narration under 25 words, " +
+    "include at least 1 everyday analogy that starts with \"Think of it like\" or \"Imagine\" (recursion: Russian nesting dolls; loops: laps around a track; variables: labelled boxes; arrays: a row of lockers), and avoid jargon; if you must use a term, say what it means in plain words.",
+  deeper:
+    "The learner asked to GO DEEPER. Keep the normal walkthrough, then add a final chapter titled \"Going deeper\" (before the recap) " +
+    "with at least 3 code scenes or diagram-free code scenes covering things a beginner lesson skips: time complexity (big-O, said in words), " +
+    "memory / how the call stack or data grows, edge cases (empty input, zero, negative numbers), and limits or pitfalls " +
+    "(e.g. Python's recursion limit and RecursionError). Be precise and correct.",
 };
 
 export function audienceNotes(req: LessonRequest): string {
@@ -64,7 +70,7 @@ Reply with this JSON shape:
 }
 
 Rules:
-- 3 or 4 chapters, 7 to 11 beats in total. Never fewer than 7, never more than 11.
+- 3 or 4 chapters, 7 to 11 beats in total. Never fewer than 7, never more than 11 (a GO DEEPER lesson: up to 15, with the extra beats in its "Going deeper" chapter).
 - The first beat of the first chapter is a title card. The last beat of the last chapter is a recap.
 - Each beat is one of: title card, code (say which 1–3 lines), output (what gets printed for a concrete input), array diagram (for lists/arrays/indexes), call-stack diagram (for recursion or nested function calls), recap.
 - Walk through the code: at least 3 code beats, each about a DIFFERENT 1–3 lines, in the order the code runs. Never one beat for the whole program, and never two beats about the same lines. Keep a small block together (an if with its body = one beat).
@@ -131,6 +137,7 @@ Rules:
 - Array diagrams: "values" are the actual array contents at that moment (max 12), "highlight" and "pointers" use 0-based indexes.
 - Call-stack diagrams: frames[0] is the bottom (first call); all "vars" values and "returns" are strings. "returns" is the function's RETURN VALUE, only once that call has finished; never put printed text there, and leave it out for functions that return nothing.
 - "trace" comes FIRST, before you write any scene: if the code has a function call (recursive or not), run the example by hand and list every call with its return value, starting from the call that finishes first and showing the arithmetic in "how" (factorial: f(0) = 1 base case, f(1) = 1 × f(0) = 1 × 1 = 1, f(2) = 2 × f(1) = 2 × 1 = 2, f(3) = 3 × f(2) = 3 × 2 = 6). Every "returns" in a call-stack diagram, every value in the narration and the "output" must match this trace exactly. No function calls → "trace": [].
+- Write each frame's "call" with the function's real name from the code, e.g. "factorial(3)", never a shortened "f(3)".
 - Calls finish from the TOP down, so only the top frames can have "returns": if a frame has "returns", every frame above it must too.
 - For recursion, write 3 call-stack scenes with the SAME frames, changing only "returns":
   1. growing: no "returns" at all ("each call waits for the next one")
@@ -142,7 +149,7 @@ Rules:
 - Loops: explain the loop body's lines once. Never write a second code scene for lines already highlighted; sum up the remaining iterations in one scene's narration (or an array diagram of the loop variable's values, with a pointer on each).
 - Array diagrams for a list being processed: 2 or 3 scenes showing the list as it changes, highlighting the items being compared or moved in that step.
 - Exactly ONE output scene, with the program's complete printed output in "output".
-- "output" must be the true printed output of the code for the example used.
+- "output" must be the true printed output of the code for the example used. Only print / console.log / cout lines produce output: a value a function RETURNS is not shown unless the code prints it.
 - Trace the code honestly. Before narrating what happens when calls return, check which lines run AFTER the recursive call; if none, say the calls simply finish and nothing new happens. Never claim something is printed, computed or reversed unless that line actually does it.`;
 }
 

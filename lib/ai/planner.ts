@@ -36,8 +36,10 @@ export async function planLesson(req: LessonRequest): Promise<{ plan: Plan; atte
   ];
 
   let lastIssues: string[] = [];
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  let lastText = "";
+  for (let attempt = 1; attempt <= 3; attempt++) {
     const text = await chat({ messages, temperature: attempt === 1 ? 0.4 : 0.2, maxTokens: 1500 });
+    lastText = text;
     let issues: string[];
     try {
       const parsed = Plan.safeParse(extractJson(text));
@@ -64,5 +66,6 @@ export async function planLesson(req: LessonRequest): Promise<{ plan: Plan; atte
     messages.push({ role: "assistant", content: text });
     messages.push({ role: "user", content: `Problems:\n- ${issues.join("\n- ")}\nReply with the corrected JSON only.` });
   }
-  throw new Error(`Planner failed: ${lastIssues.join("; ")}`);
+  const said = lastText.replace(/\s+/g, " ").trim().slice(0, 160);
+  throw new Error(`Planner failed: ${lastIssues.join("; ")}${said ? ` (model said: "${said}…")` : " (model sent an empty reply)"}`);
 }

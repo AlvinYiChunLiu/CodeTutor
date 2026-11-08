@@ -64,14 +64,17 @@ Reply with this JSON shape:
 }
 
 Rules:
-- 3 or 4 chapters, 7 to 11 beats in total. Never fewer than 7.
+- 3 or 4 chapters, 7 to 11 beats in total. Never fewer than 7, never more than 11.
 - The first beat of the first chapter is a title card. The last beat of the last chapter is a recap.
 - Each beat is one of: title card, code (say which 1–3 lines), output (what gets printed for a concrete input), array diagram (for lists/arrays/indexes), call-stack diagram (for recursion or nested function calls), recap.
-- Walk through the code: at least 3 code beats, each about a DIFFERENT 1–3 lines, in the order the code runs. Never one beat for the whole program.
-- Use a diagram only where it genuinely helps; at most 2 diagrams.
+- Walk through the code: at least 3 code beats, each about a DIFFERENT 1–3 lines, in the order the code runs. Never one beat for the whole program, and never two beats about the same lines. Keep a small block together (an if with its body = one beat).
+- Exactly ONE output beat, showing the program's full printed output at once.
+- Use a diagram only where it genuinely helps; at most 3 diagrams.
+- For a recursion CONCEPT, write an example function that RETURNS a value (factorial, sum of 1..n, list length), not one that only prints, so the call stack can show values coming back.
+- If the code is RECURSIVE (a function calls itself), plan exactly 3 call-stack beats in a row: (1) the stack growing, (2) the base case returning, (3) the stack unwinding with every return value. Keep the example input small (e.g. 3) so the stack has at most 5 frames.
 
 Good shape for a recursion lesson (adapt, don't copy):
-title card → code: the function signature → code: the base case → code: the recursive call → call-stack diagram going down → call-stack diagram returning → output → recap`;
+title card → code: the function signature → code: the base case → code: the recursive call → call stack: growing → call stack: base case returns → call stack: unwinding → output → recap`;
 }
 
 // ---------------------------------------------------------------- Writer
@@ -98,6 +101,7 @@ ${numberLines(args.mainCode)}
 
 Write the full lesson as JSON with this shape:
 {
+  "trace": [ { "call": "f(0)", "returns": "1", "how": "base case" }, ... ],
   "title": "string",
   "summary": "string",
   "chapters": [
@@ -121,6 +125,14 @@ Rules:
 - "highlightLines" are 1-based line numbers from the main code above: only the 1–3 lines this scene's narration talks about, never the whole program.
 - Array diagrams: "values" are the actual array contents at that moment (max 12), "highlight" and "pointers" use 0-based indexes.
 - Call-stack diagrams: frames[0] is the bottom (first call); all "vars" values and "returns" are strings. "returns" is the function's RETURN VALUE, only once that call has finished; never put printed text there, and leave it out for functions that return nothing.
+- "trace" comes FIRST, before you write any scene: if the code has a function call (recursive or not), run the example by hand and list every call with its return value, starting from the call that finishes first and showing the arithmetic in "how" (factorial: f(0) = 1 base case, f(1) = 1 × f(0) = 1 × 1 = 1, f(2) = 2 × f(1) = 2 × 1 = 2, f(3) = 3 × f(2) = 3 × 2 = 6). Every "returns" in a call-stack diagram, every value in the narration and the "output" must match this trace exactly. No function calls → "trace": [].
+- Calls finish from the TOP down, so only the top frames can have "returns": if a frame has "returns", every frame above it must too.
+- For recursion, write 3 call-stack scenes with the SAME frames, changing only "returns":
+  1. growing: no "returns" at all ("each call waits for the next one")
+  2. base case: only the top frame has "returns"
+  3. unwinding: EVERY frame has "returns", and each value is computed from the one above it (factorial: 1, 2, 6)
+  A function that returns nothing returns "None" in Python and "undefined" in JavaScript.
+- Exactly ONE output scene, with the program's complete printed output in "output".
 - "output" must be the true printed output of the code for the example used.
 - Trace the code honestly. Before narrating what happens when calls return, check which lines run AFTER the recursive call; if none, say the calls simply finish and nothing new happens. Never claim something is printed, computed or reversed unless that line actually does it.`;
 }

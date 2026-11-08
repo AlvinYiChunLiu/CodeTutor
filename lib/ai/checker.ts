@@ -64,6 +64,35 @@ function normalizeDiagram(d: Any, warnings: string[], where: string): Any {
   return d;
 }
 
+/**
+ * Does `code` define a function that calls itself? Works for Python and brace languages by
+ * looking for the function's own name inside the indented lines under its definition.
+ */
+export function isRecursive(code: string): boolean {
+  const lines = code.split("\n");
+  const defRe = /^(\s*)(?:def|function|(?:public|private|static|\s)*[\w<>\[\]]+)\s+(\w+)\s*\(/;
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(defRe);
+    if (!m || ["if", "for", "while", "return", "switch", "catch", "new"].includes(m[2])) continue;
+    const indent = m[1].length;
+    const call = new RegExp(`\\b${m[2]}\\s*\\(`);
+    for (let j = i + 1; j < lines.length; j++) {
+      const l = lines[j];
+      if (!l.trim()) continue;
+      if (l.length - l.trimStart().length <= indent && !/^\s*[})\]]/.test(l)) break; // left the body
+      if (call.test(l)) return true;
+    }
+  }
+  // JS arrow functions: const f = (n) => ... f(n - 1)
+  const arrow = code.match(/(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*=>/);
+  if (arrow) {
+    const after = code.slice(code.indexOf(arrow[0]) + arrow[0].length);
+    const body = after.split(/\n(?=\S)/)[0];
+    if (new RegExp(`\\b${arrow[1]}\\s*\\(`).test(body)) return true;
+  }
+  return false;
+}
+
 function normalizeScene(s: Any, mainCode: string, warnings: string[], where: string): Any {
   if (!s || typeof s !== "object") return s;
   let type = str(s.type).toLowerCase();
@@ -181,7 +210,53 @@ export function checkLesson(
   } else if (!ctx.lastAttempt && wide) {
     issues.push(`${wide} code scene(s) highlight more than 4 lines. Split them so each highlights 1–3 lines.`);
   }
-  if (n > 18) warnings.push(`${n} scenes is a long video`);
+  if (n > 13 && !ctx.lastAttempt) issues.push(`${n} scenes is too long. Use 7 to 11: merge code scenes about neighbouring lines and drop repeats.`);
+  else if (n > 18) warnings.push(`${n} scenes is a long video`);
+  const outputs = all().filter((s: Any) => s.type === "output").length;
+  if (outputs > 1 && !ctx.lastAttempt) issues.push(`There are ${outputs} output scenes. Use exactly one, with the complete printed output.`);
+
+  // Call stacks: returns must fill in from the top, and recursion needs the 3-step sequence.
+  const stacks = all().filter((s: Any) => s.type === "diagram" && s.diagram?.kind === "callstack");
+  stacks.forEach((s: Any) => {
+    const frames: Any[] = s.diagram.frames ?? [];
+    const firstReturn = frames.findIndex((f) => f.returns !== undefined);
+    if (firstReturn !== -1 && frames.slice(firstReturn).some((f) => f.returns === undefined)) {
+      if (ctx.lastAttempt) {
+        // Repair: a call can't return while a call above it is still running.
+        frames.slice(0, frames.findLastIndex((f) => f.returns === undefined)).forEach((f) => delete f.returns);
+        warnings.push("fixed call-stack returns that weren't filled from the top");
+      } else {
+        issues.push(`A call-stack diagram has "returns" on a lower frame while a frame above it has none. Calls finish from the top: only the top frames can have "returns".`);
+      }
+    }
+  });
+  // Every stack frame's return value must agree with the trace the writer worked out first.
+  const norm = (v: unknown) => str(v).replace(/\s+/g, "").replace(/^['"]|['"]$/g, "");
+  const traced = new Map<string, string>();
+  for (const t of Array.isArray(d.trace) ? d.trace : []) if (t?.call && t?.returns !== undefined) traced.set(norm(t.call), norm(t.returns));
+  const wrong = new Set<string>();
+  for (const st of stacks) for (const f of st.diagram.frames ?? []) {
+    const want = traced.get(norm(f.call));
+    if (f.returns !== undefined && want !== undefined && norm(f.returns) !== want) wrong.add(`${f.call} shows ${f.returns} but your trace says ${want}`);
+  }
+  if (wrong.size) {
+    if (ctx.lastAttempt) warnings.push(`call-stack values disagree with the trace: ${[...wrong].join("; ")}`);
+    else issues.push(`Call-stack return values disagree with your trace: ${[...wrong].join("; ")}. Recheck the trace step by step from the base case, then make every diagram and narration match it.`);
+  }
+  if (!ctx.lastAttempt && isRecursive(ctx.plan.mainCode) && traced.size === 0) {
+    issues.push(`The code is recursive but "trace" is empty. Fill "trace" first: every call with its return value, from the base case up.`);
+  }
+
+  const lastStack: Any = stacks.at(-1);
+  if (!ctx.lastAttempt && stacks.length >= 3 && lastStack.diagram.frames.some((f: Any) => f.returns === undefined)) {
+    issues.push(`The last call-stack scene (unwinding) must show EVERY frame finished: give every frame its "returns" value.`);
+  }
+  if (!ctx.lastAttempt && isRecursive(ctx.plan.mainCode) && stacks.length < 3) {
+    issues.push(
+      `The code is recursive but there ${stacks.length === 1 ? "is 1 call-stack diagram" : `are ${stacks.length} call-stack diagrams`}. ` +
+        `Add 3 call-stack scenes in a row with the same frames: growing (no "returns"), base case (only the top frame returns), unwinding (every frame returns).`,
+    );
+  }
 
   // Ids are ours, not the model's: always unique and stable.
   chapters = chapters.map((c, ci) => ({

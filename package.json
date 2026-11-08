@@ -15,7 +15,8 @@
     "video:render:silent-samples": "npm run video:render:loops && npm run video:render:variables",
     "video": "npm run video:audio && npm run video:render",
     "lesson:test": "tsx scripts/test-lesson.ts",
-    "practice:test": "tsx scripts/test-practice.ts"
+    "practice:test": "tsx scripts/test-practice.ts",
+    "lesson:tune": "tsx scripts/tune-lessons.ts"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",

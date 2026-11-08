@@ -38,12 +38,20 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
           <span className="window-menu">···</span>
         </div>
         <pre className="lesson-code">
-          {lines.map((line, index) => (
-            <span className={`lesson-code-line ${scene.highlightLines.includes(index + 1) ? "line-highlight" : ""}`} key={`${index}-${line}`}>
-              <span className="line-number">{index + 1}</span><code>{line || " "}</code>
-            </span>
-          ))}
-        </pre>
+  {lines.map((line, index) => (
+    <span
+      className={`lesson-code-line ${scene.highlightLines.includes(index + 1) ? "line-highlight" : ""}`}
+      key={`${index}-${line}`}
+      ref={(el) => {
+        if (el && scene.highlightLines[0] === index + 1 && el.parentElement) {
+          el.parentElement.scrollTop = el.offsetTop - 40;
+        }
+      }}
+    >
+      <span className="line-number">{index + 1}</span><code>{line || " "}</code>
+    </span>
+  ))}
+</pre>
         <div className="code-scene-note"><span /> FOLLOW THE HIGHLIGHT</div>
       </div>
     );

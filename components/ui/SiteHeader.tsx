@@ -13,7 +13,7 @@ function BrandMark() {
   );
 }
 
-export default function SiteHeader({ badge }: { badge?: string }) {
+export default function SiteHeader() {
   const pathname = usePathname();
   const [dark, setDark] = useState(false);
 
@@ -45,7 +45,6 @@ export default function SiteHeader({ badge }: { badge?: string }) {
         <Link href="/past-videos" className={pathname === "/past-videos" ? "nav-active" : ""}>Past videos</Link>
       </nav>
       <div className="header-actions">
-        {badge && <span className="header-badge">{badge}</span>}
         <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${dark ? "light" : "dark"} mode`} aria-pressed={dark}>
           <span className="theme-toggle-icon" aria-hidden="true">{dark ? "☼" : "☾"}</span>
           <span className="theme-toggle-label">{dark ? "Light" : "Dark"}</span>

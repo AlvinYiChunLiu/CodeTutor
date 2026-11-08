@@ -531,24 +531,11 @@ button { color: inherit; }
   .generate-shell .button-primary { font-size: 15px; }
   .generate-submit { width: 100%; margin-top: 18px; }.generator-footnote { margin: 10px 0 0; color: #8d9bb0; text-align: center; font-size: 12px; }
   .generate-help { width: min(780px, calc(100% - 40px)); display: flex; align-items: center; gap: 10px; margin: 15px auto 0; padding: 12px 15px; border: 1px solid var(--line); border-radius: 9px; background: var(--soft-surface); }.help-chat-icon { width: 20px; height: 20px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #aec9ec; border-radius: 50%; color: var(--blue-strong); font-size: 15px; font-weight: 700; }.generate-help p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }.generate-help b { color: var(--ink); }.generate-help a { color: var(--blue-strong); font-weight: 700; }
-  .generate-shell .app-brand { font-size: 23px; }
-  .generate-shell .app-nav a { font-size: 16px; }
-  .generate-shell .theme-toggle { font-size: 14px; }
-  .generate-shell .theme-toggle-icon { font-size: 18px; }
-  .generate-shell .header-badge { font-size: 12px; }
-
   /* Blue accents for lesson controls and illustrations */
   .lesson-shell { min-height: 100vh; color: var(--ink); background: var(--paper); transition: background .25s ease, color .25s ease; }
   .lesson-layout { color: var(--ink); }
   .lesson-shell .section-eyebrow { font-size: 12px; }
   .lesson-title-row h1, .transcript-heading h2, .practice-copy h2 { color: var(--ink); }
-  .lesson-shell .app-brand { font-size: 21px; }
-  .lesson-shell .app-nav a { font-size: 14px; }
-  .lesson-shell .app-nav a.nav-active { color: #fff; background: #2868ce; }
-  .lesson-shell .app-nav a.nav-active::after { display: none; }
-  .lesson-shell .theme-toggle { font-size: 12px; }
-  .lesson-shell .theme-toggle-icon { font-size: 16px; }
-  .lesson-shell .header-badge { font-size: 10px; }
   .lesson-player { border-color: #c8d8ee; }
   .visual-title-scene, .visual-code-scene, .visual-output-scene, .visual-diagram-scene, .visual-recap-scene { background: radial-gradient(ellipse at 70% 40%, #306ba9 0%, #214b7d 39%, #18375f 82%); }
   .visual-title-scene, .visual-code-scene, .visual-output-scene, .visual-diagram-scene, .visual-recap-scene { animation: scene-enter .35s ease both; }
@@ -620,23 +607,11 @@ button { color: inherit; }
     .app-header { width: calc(100% - 24px); }.theme-toggle-label { display: none; }.app-nav a { padding-right: 8px; padding-left: 8px; font-size: 9px; }.output-grid { grid-template-columns: 1fr; }.generator-mode-tabs button { min-height: 60px; }
   }
   @media (max-width: 650px) {
-    .lesson-shell .app-brand { font-size: 19px; }
-    .lesson-shell .app-nav a { font-size: 12px; }
-  }
-  @media (max-width: 380px) {
-    .lesson-shell .app-nav a { font-size: 11px; }
-  }
-  @media (max-width: 650px) {
     .generate-intro h1 { font-size: 40px; }
     .generator-mode-tabs b { font-size: 13px; }
     .generator-mode-tabs small { font-size: 11px; }
     .output-option-copy b { font-size: 12px; }
     .output-option-copy small { font-size: 11px; }
-    .generate-shell .app-brand { font-size: 21px; }
-    .generate-shell .app-nav a { font-size: 14px; }
-  }
-  @media (max-width: 380px) {
-    .generate-shell .app-nav a { font-size: 13px; }
   }
 
 /* ------------------------------------------------------------------
@@ -652,6 +627,8 @@ button { color: inherit; }
 .app-header .theme-toggle { font-size: 14px; }
 .app-header .theme-toggle-icon { font-size: 18px; }
 .app-header .header-badge { font-size: 12px; }
+.app-header .app-nav a.nav-active { color: #fff; background: #2868ce; }
+.app-header .app-nav a.nav-active::after { display: none; }
 
 /* Labels and eyebrows (small caps text) */
 .page-eyebrow, .section-eyebrow, .gallery-tag, .gallery-time, .lesson-breadcrumb, .field-label { font-size: 12px; }

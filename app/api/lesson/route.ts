@@ -160,18 +160,27 @@ async function buildLesson(request: LessonRequest, mock: boolean, emit: Emit): P
       if (generated.meta.warnings.length) console.log(`[lesson] warnings: ${generated.meta.warnings.join("; ")}`);
     }
 
-    const savedAs = await saveLesson(lesson);
+    // Hosted (Vercel etc.): the disk is read-only, so saving a copy can fail. That copy is only for
+    // the video worker and for debugging, so a failure here must never cost the learner the lesson.
+    let savedAs: string | null = null;
+    try {
+      savedAs = await saveLesson(lesson);
+    } catch (e) {
+      console.warn(`[lesson] could not save a copy to mocks/generated (read-only disk?): ${(e as Error).message}`);
+    }
     // The video is a bonus: if narration or rendering fails (no ElevenLabs key, out of credits),
     // still return the lesson so the learner isn't left with nothing.
-    if (!process.env.ELEVENLABS_API_KEY) {
-      console.log("[lesson] no ELEVENLABS_API_KEY: skipping the video, returning the lesson only");
+    // It needs Chrome + minutes of rendering, which serverless hosts can't do: skip it there.
+    const videoOff = !process.env.ELEVENLABS_API_KEY || !savedAs || Boolean(process.env.VERCEL) || process.env.LESSON_VIDEO === "off";
+    if (videoOff) {
+      console.log("[lesson] video skipped (no ElevenLabs key, read-only disk, or a hosted server): returning the lesson only");
       const id = await saveIfConfigured(lesson, null);
       return { status: 200, body: { lesson, savedAs, videoSrc: null, id, meta } };
     }
     try {
       const sceneCount = lesson.chapters.reduce((n, c) => n + c.scenes.length, 0);
       emit(progress("voice", `0 of ${sceneCount} scenes`, 0));
-      const result = await createLessonVideo(savedAs, sceneCount, emit);
+      const result = await createLessonVideo(savedAs!, sceneCount, emit);
       if (demo) {
         // Keep it, so the next time this topic is asked for, the video is instant too.
         try {

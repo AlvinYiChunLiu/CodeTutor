@@ -36,7 +36,10 @@ export async function cachedDemoVideo(slug: string, lesson: LessonData): Promise
   try {
     const voiced = Lesson.parse(JSON.parse(await readFile(voicedPath(slug), "utf8")));
     if (JSON.stringify(withoutAudio(voiced)) !== JSON.stringify(withoutAudio(lesson))) return null;
-    if (!(await stat(videoFile(slug))).size) return null;
+    // Hosted servers don't upload public/ next to the code (it's served separately), so only check the
+    // video file where we can see it. demo:videos commits the voiced copy and the video together.
+    const size = await stat(videoFile(slug)).then((f) => f.size, () => (process.env.VERCEL ? 1 : 0));
+    if (!size) return null;
     return { lesson: voiced, videoSrc: demoVideoSrc(slug) };
   } catch {
     return null;

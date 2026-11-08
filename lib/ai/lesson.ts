@@ -31,6 +31,7 @@ export async function generateLesson(
   const writer = new Writer(req, plan);
   let text = "";
   let issues: string[] = [];
+  let lastDraft: unknown; // most recent reply that was valid JSON, kept as a fallback
   for (let attempt = 1; attempt <= MAX_WRITER_ATTEMPTS; attempt++) {
     t = Date.now();
     text = attempt === 1 ? await writer.draft() : await writer.revise(text, issues);
@@ -40,6 +41,7 @@ export async function generateLesson(
     let draft: unknown;
     try {
       draft = extractJson(text);
+      lastDraft = draft;
     } catch (e) {
       issues = [`Your reply was not valid JSON (${(e as Error).message}).`];
       log({ step: "checker", ms: Date.now() - t, attempt, issues });
@@ -55,6 +57,18 @@ export async function generateLesson(
     }
     issues = result.issues;
     log({ step: "checker", ms: Date.now() - t, attempt, issues });
+  }
+  // Last reply was unusable: salvage the most recent valid draft with the last-attempt cleanup.
+  if (lastDraft !== undefined) {
+    t = Date.now();
+    const result = checkLesson(lastDraft, { plan, req, lastAttempt: true });
+    if (result.ok) {
+      log({ step: "checker", ms: Date.now() - t, attempt: MAX_WRITER_ATTEMPTS + 1 });
+      return {
+        lesson: result.lesson,
+        meta: { model: DEFAULT_MODEL, totalMs: Date.now() - t0, steps, warnings: ["used the best earlier draft", ...result.warnings] },
+      };
+    }
   }
   throw new LessonGenerationError(`Lesson failed the schema check after ${MAX_WRITER_ATTEMPTS} tries.`, issues, steps);
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "title": "Understanding Recursion with Python",
-  "summary": "By the end, you'll understand how recursion works in Python.",
+  "title": "Recursion Explained",
+  "summary": "Understand how recursion works with a factorial example.",
   "level": "beginner",
   "codeLanguage": "python",
   "chapters": [
@@ -11,174 +11,277 @@
       "scenes": [
         {
           "id": "c1-s1",
-          "narration": "Welcome to this lesson on recursion in Python. We'll explore how functions can call themselves to solve problems step by step.",
+          "narration": "Welcome to our lesson on recursion! Today, we'll learn how recursion works using the factorial function.",
           "type": "title",
-          "heading": "Understanding Recursion with Python",
-          "subheading": "By the end, you'll understand how recursion works in Python."
+          "heading": "Recursion Explained",
+          "subheading": "Understanding Recursion with Factorial"
         },
         {
           "id": "c1-s2",
-          "narration": "Let's start with our function signature. This is where we define our function, called 'countdown', which takes one parameter, 'n'.",
+          "narration": "Here's our function definition. We're defining a function named factorial that takes one parameter, n. The base case is when n equals zero, and the function returns one, stopping the recursion.",
           "type": "code",
-          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
           "highlightLines": [
-            1
+            1,
+            2,
+            3
           ]
         }
       ]
     },
     {
       "id": "c2",
-      "title": "Base Case",
+      "title": "Recursive Call",
       "scenes": [
         {
           "id": "c2-s1",
-          "narration": "The base case is the simplest part of our function. If 'n' equals zero, we print 'Blast off!'. This stops the recursion.",
+          "narration": "If n is not zero, the function returns n multiplied by the factorial of n minus one. This is the recursive call.",
           "type": "code",
-          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
+          "code": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(3))",
           "highlightLines": [
-            2,
-            3
+            4
           ]
         },
         {
           "id": "c2-s2",
-          "narration": "When 'n' is zero, the function prints 'Blast off!' and stops. This is like the ground floor of a building.",
-          "type": "output",
-          "output": "Blast off!"
+          "narration": "Let's see how this works with an example. We start by calling factorial of three. Each call waits for the next one to finish.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s3",
+          "narration": "Next, factorial of two is called. It also waits for the next call to finish.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s4",
+          "narration": "Then, factorial of one is called. It waits for the next call to finish.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s5",
+          "narration": "Finally, factorial of zero is called. This is our base case, so it returns one.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                }
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s6",
+          "narration": "Now, factorial of one uses the result of factorial of zero to return one.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                }
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s7",
+          "narration": "Factorial of two uses the result of factorial of one to return two.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                }
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                },
+                "returns": "2"
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
+        },
+        {
+          "id": "c2-s8",
+          "narration": "Lastly, factorial of three uses the result of factorial of two to return six.",
+          "type": "diagram",
+          "diagram": {
+            "kind": "callstack",
+            "frames": [
+              {
+                "call": "factorial(3)",
+                "vars": {
+                  "n": "3"
+                },
+                "returns": "6"
+              },
+              {
+                "call": "factorial(2)",
+                "vars": {
+                  "n": "2"
+                },
+                "returns": "2"
+              },
+              {
+                "call": "factorial(1)",
+                "vars": {
+                  "n": "1"
+                },
+                "returns": "1"
+              },
+              {
+                "call": "factorial(0)",
+                "vars": {
+                  "n": "0"
+                },
+                "returns": "1"
+              }
+            ]
+          }
         }
       ]
     },
     {
       "id": "c3",
-      "title": "Recursive Call",
+      "title": "Output",
       "scenes": [
         {
           "id": "c3-s1",
-          "narration": "If 'n' is not zero, we print the current value of 'n' and then call the function again with 'n minus one'. This is the recursive call.",
-          "type": "code",
-          "code": "def countdown(n):\n    if n == 0:\n        print('Blast off!')\n    else:\n        print(n)\n        countdown(n - 1)\n\ncountdown(5)",
-          "highlightLines": [
-            5,
-            6
-          ]
-        },
-        {
-          "id": "c3-s2",
-          "narration": "Each call to 'countdown' creates a new frame on the call stack. We keep going down until we hit the base case.",
-          "type": "diagram",
-          "diagram": {
-            "kind": "callstack",
-            "frames": [
-              {
-                "call": "countdown(5)",
-                "vars": {
-                  "n": "5"
-                }
-              },
-              {
-                "call": "countdown(4)",
-                "vars": {
-                  "n": "4"
-                }
-              },
-              {
-                "call": "countdown(3)",
-                "vars": {
-                  "n": "3"
-                }
-              },
-              {
-                "call": "countdown(2)",
-                "vars": {
-                  "n": "2"
-                }
-              },
-              {
-                "call": "countdown(1)",
-                "vars": {
-                  "n": "1"
-                }
-              },
-              {
-                "call": "countdown(0)",
-                "vars": {
-                  "n": "0"
-                },
-                "returns": "None"
-              }
-            ]
-          }
-        },
-        {
-          "id": "c3-s3",
-          "narration": "Now, we start returning from each call. Each frame pops off the stack, and the function finishes its work.",
-          "type": "diagram",
-          "diagram": {
-            "kind": "callstack",
-            "frames": [
-              {
-                "call": "countdown(5)",
-                "vars": {
-                  "n": "5"
-                }
-              },
-              {
-                "call": "countdown(4)",
-                "vars": {
-                  "n": "4"
-                }
-              },
-              {
-                "call": "countdown(3)",
-                "vars": {
-                  "n": "3"
-                }
-              },
-              {
-                "call": "countdown(2)",
-                "vars": {
-                  "n": "2"
-                }
-              },
-              {
-                "call": "countdown(1)",
-                "vars": {
-                  "n": "1"
-                },
-                "returns": "None"
-              },
-              {
-                "call": "countdown(0)",
-                "vars": {
-                  "n": "0"
-                },
-                "returns": "None"
-              }
-            ]
-          }
+          "narration": "And here's the output of our program. The factorial of three is six.",
+          "type": "output",
+          "output": "6"
         }
       ]
     },
     {
       "id": "c4",
-      "title": "Conclusion",
+      "title": "Recap",
       "scenes": [
         {
           "id": "c4-s1",
-          "narration": "When we run 'countdown' with five, it prints the numbers from five down to one, and then 'Blast off!'.",
-          "type": "output",
-          "output": "5\n4\n3\n2\n1\nBlast off!"
-        },
-        {
-          "id": "c4-s2",
-          "narration": "To sum up, recursion is a powerful tool where a function calls itself. The base case stops the recursion, and each call adds a new frame to the stack. When the base case is reached, the function returns and the stack unwinds.",
+          "narration": "To wrap up, remember that recursion involves a function calling itself, always with a base case to stop it. Each call waits for the next one, and we compute the final result by combining the results of each call.",
           "type": "recap",
           "points": [
-            "Recursion is when a function calls itself.",
+            "Recursion is a function calling itself.",
             "The base case stops the recursion.",
-            "Each recursive call creates a new frame on the call stack.",
-            "The function returns and pops frames off the stack until it finishes."
+            "Each recursive call waits for the next one to finish.",
+            "We compute the final result by multiplying the results of each call.",
+            "In our example, factorial of three is six."
           ]
         }
       ]

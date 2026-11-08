@@ -63,7 +63,7 @@ export async function chat(opts: ChatOptions): Promise<string> {
         throw err;
       }
       const responseText = await res.text();
-      let data: unknown;
+      let data: any; // shape checked below
       try {
         data = JSON.parse(responseText);
       } catch (e) {
@@ -103,7 +103,7 @@ export function extractJson(text: string): unknown {
     return JSON.parse(s);
   } catch {
     try {
-      return JSON.parse(escapeControlCharsInStrings(s).replace(/,\s*([}\]])/g, "$1"));
+      return JSON.parse(repairOutsideStrings(escapeControlCharsInStrings(s)));
     } catch (e) {
       throw new LLMError(`Model output is not valid JSON: ${(e as Error).message}`, 502, text);
     }
@@ -138,4 +138,12 @@ function escapeControlCharsInStrings(s: string): string {
     out += ch;
   }
   return out;
+}
+
+/** Fix `"key": ,` (missing value → null) and trailing commas, without touching text inside strings. */
+function repairOutsideStrings(s: string): string {
+  return s
+    .split(/("(?:[^"\\]|\\.)*")/)
+    .map((part, i) => (i % 2 === 1 ? part : part.replace(/:\s*(?=[,}\]])/g, ": null").replace(/,\s*([}\]])/g, "$1")))
+    .join("");
 }

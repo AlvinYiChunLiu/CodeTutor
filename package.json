@@ -16,7 +16,8 @@
     "video": "npm run video:audio && npm run video:render",
     "lesson:test": "tsx scripts/test-lesson.ts",
     "practice:test": "tsx scripts/test-practice.ts",
-    "prompt-video:test": "tsx scripts/test-prompt-video.ts"
+    "prompt-video:test": "tsx scripts/test-prompt-video.ts",
+    "lesson:tune": "tsx scripts/tune-lessons.ts"
   },
   "dependencies": {
     "@elevenlabs/elevenlabs-js": "^2.77.0",

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import InteractiveLesson from "@/components/ui/InteractiveLesson";
-import sampleLesson from "@/mocks/sample-lesson.json";
+import sampleLesson from "@/mocks/lesson-recursion.json";
 import { Lesson as LessonSchema, type Lesson } from "@/lib/schema";
 
 export default function LessonPage() {

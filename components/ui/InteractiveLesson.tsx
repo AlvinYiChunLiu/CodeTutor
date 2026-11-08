@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Lesson, Scene } from "@/lib/schema";
 import SiteHeader from "@/components/ui/SiteHeader";
 
@@ -14,39 +14,7 @@ function formatTime(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-function CodeSceneVisual({ scene, language }: { scene: Extract<Scene, { type: "code" }>; language: string }) {
-  const lines = useMemo(() => scene.code.split("\n"), [scene.code]);
-  const codeRef = useRef<HTMLPreElement>(null);
-
-  useEffect(() => {
-    const code = codeRef.current;
-    const highlightedLine = code?.querySelector<HTMLElement>(".line-highlight");
-    if (code && highlightedLine) code.scrollTop = highlightedLine.offsetTop - 40;
-  }, [scene]);
-
-  return (
-    <div className="visual-code-scene">
-      <div className="visual-window-top">
-        <div className="window-dots"><i /><i /><i /></div>
-        <span>{language.toLowerCase()} · example</span>
-        <span className="window-menu">···</span>
-      </div>
-      <pre className="lesson-code" ref={codeRef}>
-        {lines.map((line, index) => (
-          <span
-            className={`lesson-code-line ${scene.highlightLines.includes(index + 1) ? "line-highlight" : ""}`}
-            key={`${index}-${line}`}
-          >
-            <span className="line-number">{index + 1}</span><code>{line || " "}</code>
-          </span>
-        ))}
-      </pre>
-      <div className="code-scene-note"><span /> FOLLOW THE HIGHLIGHT</div>
-    </div>
-  );
-}
-
-const SceneVisual = memo(function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
+function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
   if (scene.type === "title") {
     return (
       <div className="visual-title-scene">
@@ -61,7 +29,32 @@ const SceneVisual = memo(function SceneVisual({ scene, language }: { scene: Scen
   }
 
   if (scene.type === "code") {
-    return <CodeSceneVisual scene={scene} language={language} />;
+    const lines = scene.code.split("\n");
+    return (
+      <div className="visual-code-scene">
+        <div className="visual-window-top">
+          <div className="window-dots"><i /><i /><i /></div>
+          <span>{language.toLowerCase()} · example</span>
+          <span className="window-menu">···</span>
+        </div>
+        <pre className="lesson-code">
+  {lines.map((line, index) => (
+    <span
+      className={`lesson-code-line ${scene.highlightLines.includes(index + 1) ? "line-highlight" : ""}`}
+      key={`${index}-${line}`}
+      ref={(el) => {
+        if (el && scene.highlightLines[0] === index + 1 && el.parentElement) {
+          el.parentElement.scrollTop = el.offsetTop - 40;
+        }
+      }}
+    >
+      <span className="line-number">{index + 1}</span><code>{line || " "}</code>
+    </span>
+  ))}
+</pre>
+        <div className="code-scene-note"><span /> FOLLOW THE HIGHLIGHT</div>
+      </div>
+    );
   }
 
   if (scene.type === "output") {
@@ -123,7 +116,7 @@ const SceneVisual = memo(function SceneVisual({ scene, language }: { scene: Scen
       <ol>{scene.points.map((point, index) => <li key={point}><span>0{index + 1}</span>{point}</li>)}</ol>
     </div>
   );
-});
+}
 
 export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursion-lesson.mp4" }: { lesson: Lesson; videoSrc?: string }) {
   const steps = useMemo<LessonStep[]>(
@@ -147,30 +140,6 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
     const timer = window.setTimeout(() => setActiveStep(activeStep + 1), 6500);
     return () => window.clearTimeout(timer);
   }, [activeStep, playing, steps.length]);
-
-  useEffect(() => {
-    if (steps.length < 2) return;
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
-      if (event.target instanceof HTMLElement && (
-        event.target.isContentEditable
-        || event.target.closest("input, textarea, select, [contenteditable='true']")
-      )) return;
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-
-      event.preventDefault();
-      setPlaying(false);
-      if (event.key === "ArrowLeft") {
-        setActiveStep((current) => current === 0 ? steps.length - 1 : current - 1);
-      } else {
-        setActiveStep((current) => Math.min(current + 1, steps.length - 1));
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [steps.length]);
 
   function chooseStep(index: number) {
     setActiveStep(index);
@@ -220,9 +189,9 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
-                <h2 className="mt-2 text-xl font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
+                <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
               </div>
-              <a className="rounded-md border border-white/15 px-4 py-2 text-sm text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-base text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
                 Download MP4
               </a>
             </div>
@@ -300,7 +269,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
           <div className="sidebar-note">
             <span className="sidebar-note-arrow">↳</span>
             <b>Take it at your pace.</b>
-            <p>Click a transcript moment or use ← and → to move between slides.</p>
+            <p>Click any moment in the transcript to jump right to it.</p>
           </div>
           <div className="sidebar-footer"><span>MADE TO MAKE IT CLICK</span><span>●</span></div>
         </aside>

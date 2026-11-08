@@ -13,7 +13,7 @@
           "id": "c1-s1",
           "narration": "Let's learn recursion: a function that solves a problem by calling itself.",
           "audio": {
-            "url": "audio/c1-s1.mp3",
+            "url": "audio/recursion/c1-s1.mp3",
             "durationSec": 5.0181875
           },
           "type": "title",
@@ -24,7 +24,7 @@
           "id": "c1-s2",
           "narration": "Here's factorial. It takes a number n and multiplies it by every number below it.",
           "audio": {
-            "url": "audio/c1-s2.mp3",
+            "url": "audio/recursion/c1-s2.mp3",
             "durationSec": 5.749625
           },
           "type": "code",
@@ -43,7 +43,7 @@
           "id": "c2-s1",
           "narration": "First, the base case. When n is one, we stop and return one. Without this, it would never end.",
           "audio": {
-            "url": "audio/c2-s1.mp3",
+            "url": "audio/recursion/c2-s1.mp3",
             "durationSec": 7.839375
           },
           "type": "code",
@@ -57,7 +57,7 @@
           "id": "c2-s2",
           "narration": "Otherwise, the function calls itself with n minus one, a slightly smaller problem.",
           "audio": {
-            "url": "audio/c2-s2.mp3",
+            "url": "audio/recursion/c2-s2.mp3",
             "durationSec": 5.8279375
           },
           "type": "code",
@@ -76,7 +76,7 @@
           "id": "c3-s1",
           "narration": "Each call waits on the stack until the base case returns. Then the answers multiply back up.",
           "audio": {
-            "url": "audio/c3-s1.mp3",
+            "url": "audio/recursion/c3-s1.mp3",
             "durationSec": 6.3765625
           },
           "type": "diagram",
@@ -109,7 +109,7 @@
           "id": "c3-s2",
           "narration": "Three times two times one gives us six.",
           "audio": {
-            "url": "audio/c3-s2.mp3",
+            "url": "audio/recursion/c3-s2.mp3",
             "durationSec": 3.5030625
           },
           "type": "output",
@@ -119,7 +119,7 @@
           "id": "c3-s3",
           "narration": "Remember: a base case to stop, and a smaller problem on every call.",
           "audio": {
-            "url": "audio/c3-s3.mp3",
+            "url": "audio/recursion/c3-s3.mp3",
             "durationSec": 5.0965625
           },
           "type": "recap",

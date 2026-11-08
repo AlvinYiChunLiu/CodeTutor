@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { Lesson } from "../lib/schema";
 
-const file = process.argv[2] ?? "mocks/sample-lesson.json";
+const file = process.argv[2] ?? "mocks/lesson-recursion.json";
 const result = Lesson.safeParse(JSON.parse(readFileSync(file, "utf8")));
 
 if (!result.success) {

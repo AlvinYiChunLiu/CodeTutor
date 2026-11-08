@@ -1,4 +1,4 @@
-# CodeTutor (hackcamp-codetutor)
+# CodeTutor
 
 **Turn any coding question or code snippet into a narrated, animated video lesson, with practice problems.**
 
@@ -6,7 +6,7 @@ Ask "What is recursion?" or paste your own code, and CodeTutor plans a short les
 checks it for mistakes, narrates it, and renders it as a video. Learners step through the lesson at their own pace,
 then practise with a generated problem that gets line-specific feedback.
 
-Live site: [codetutor.wiki](https://www.codetutor.wiki) (lessons only; see [Hosting](#hosting) for video)
+Live site: [codetutor.wiki](https://www.codetutor.wiki)
 
 ## Features
 
@@ -17,7 +17,7 @@ Live site: [codetutor.wiki](https://www.codetutor.wiki) (lessons only; see [Host
 - **Practice:** a new problem based on the lesson, in any supported language, graded with feedback on the learner's own code.
 - **Live progress:** the Generate page shows each step as it happens (planning, writing, checking, voice, video).
 - **Past lessons:** lessons are saved to a shared PostgreSQL database.
-- **Instant demo topics:** seven fact-checked lessons open instantly instead of waiting for the AI (see [Demo lessons](#demo-lessons)).
+- **Instant demo topics:** seven fact-checked lessons open instantly instead of waiting for the AI (see [Demo lessons]).
 
 ## How the AI works
 

@@ -50,10 +50,17 @@ function SceneContent({ scene, language, lessonTitle, frame, durationInFrames }:
 	}
 
 	if (scene.type === "output") {
+		// Fit the output: short results stay big; long lines get a wider box and a smaller font, then wrap.
+		const lines = scene.output.split("\n");
+		const longestLine = Math.max(1, ...lines.map((line) => line.length));
+		const width = longestLine > 32 ? 1080 : 820;
+		const fitWidth = (width - 76) / (longestLine * 0.56); // Consolas is ~0.56em per character
+		const fitHeight = 240 / (lines.length * 1.5); // room left in the 1280×720 frame
+		const fontSize = Math.round(Math.max(16, Math.min(42, fitWidth, fitHeight)));
 		return (
-			<div style={styles.outputWindow}>
+			<div style={{ ...styles.outputWindow, width }}>
 				<p style={styles.eyebrow}>PROGRAM OUTPUT</p>
-				<pre style={styles.outputText}>{scene.output}</pre>
+				<pre style={{ ...styles.outputText, fontSize }}>{scene.output}</pre>
 				<p style={styles.outputResult}>The program prints this result.</p>
 			</div>
 		);
@@ -203,8 +210,8 @@ const styles: Record<string, CSSProperties> = {
 	codeBlock: { margin: 0, fontFamily: "Consolas, monospace", lineHeight: 1.45, whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" },
 	codeLine: { minHeight: 0, padding: "2px 8px", borderRadius: 4, whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" },
 	lineNumber: { display: "inline-block", width: 48, color: "#788276", fontSize: 15, verticalAlign: "top" },
-	outputWindow: { width: 820, padding: 38, border: "1px solid #ffffff25", borderRadius: 12, backgroundColor: "#202720" },
-	outputText: { margin: 0, color: "#d8ff8a", fontFamily: "Consolas, monospace", fontSize: 42, lineHeight: 1.5 },
+	outputWindow: { width: 820, maxWidth: "100%", boxSizing: "border-box", padding: 38, border: "1px solid #ffffff25", borderRadius: 12, backgroundColor: "#202720" },
+	outputText: { margin: 0, maxHeight: 245, overflow: "hidden", color: "#d8ff8a", fontFamily: "Consolas, monospace", fontSize: 42, lineHeight: 1.5, whiteSpace: "pre-wrap", overflowWrap: "anywhere", wordBreak: "break-word" },
 	outputResult: { margin: "25px 0 0", color: "#c5cabe", fontSize: 21 },
 	stackList: { display: "flex", flexDirection: "column", gap: 12 },
 	stackFrame: { display: "grid", gridTemplateColumns: "135px 1fr 1fr auto", alignItems: "center", gap: 16, padding: "16px 20px", border: "1px solid", borderRadius: 8, backgroundColor: "#202720" },

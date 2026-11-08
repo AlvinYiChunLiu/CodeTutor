@@ -10,4 +10,5 @@ next-env.d.ts
 Claude outputs/
 /public/audio/generated/*
 /public/videos/generated/*
-/mocks/generated/*mocks/tuning/
+/mocks/generated/*
+/mocks/tuning/

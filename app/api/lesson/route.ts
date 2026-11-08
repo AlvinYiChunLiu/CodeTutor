@@ -10,7 +10,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import sample from "@/mocks/sample-lesson.json";
+import sample from "@/mocks/lesson-recursion.json";
 import { Lesson, type Lesson as LessonData } from "@/lib/schema";
 import { LessonRequest } from "@/lib/ai/request";
 import { generateLesson, LessonGenerationError } from "@/lib/ai/lesson";

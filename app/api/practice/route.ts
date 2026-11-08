@@ -4,7 +4,7 @@
  * 200 → { practice: { question, starterCode?, hint?, solution } }
  * ?mock=1 (or LLM_MOCK=1) returns the sample lesson's practice problem.
  */
-import sample from "@/mocks/sample-lesson.json";
+import sample from "@/mocks/lesson-recursion.json";
 import { makePractice, PracticeRequest } from "@/lib/ai/practice";
 import { errorResponse, readJson, shouldMock } from "@/lib/ai/http";
 

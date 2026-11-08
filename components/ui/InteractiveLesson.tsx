@@ -6,6 +6,7 @@ import SiteHeader from "@/components/ui/SiteHeader";
 import PracticePanel from "@/components/ui/PracticePanel";
 import AdjustLesson from "@/components/ui/AdjustLesson";
 import { sceneDurationInFrames } from "@/remotion/timeline";
+import { sceneLabel } from "@/lib/scene-label";
 
 type LessonStep = {
   chapterIndex: number;
@@ -323,7 +324,7 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
                     <div className="chapter-scenes">
                       {chapter.scenes.map((scene, sceneIndex) => {
                         const sceneStep = firstStep + sceneIndex;
-                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => selectSlide(sceneStep)}><i />{scene.type === "code" ? "Walk through the code" : scene.type === "diagram" ? "See it visualized" : scene.type === "output" ? "Check the result" : scene.type === "recap" ? "Key takeaways" : "Get the big picture"}</button>;
+                        return <button type="button" key={scene.id} className={sceneStep === activeStep ? "scene-current" : ""} onClick={() => selectSlide(sceneStep)}><i />{sceneLabel(scene)}</button>;
                       })}
                     </div>
                   )}

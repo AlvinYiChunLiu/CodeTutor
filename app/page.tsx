@@ -98,14 +98,12 @@ export default function Home() {
       <SiteHeader />
       <section className="main-hero">
         <div className="main-hero-copy">
-          <span className="friendly-pill"><span /> YOUR FRIENDLY CODE SIDEKICK</span>
-          <h1>Big code ideas,<br />made <span>easy to get.</span></h1>
-          <p>Bring your code or a curious question. We’ll help turn it into bite-sized explanations, visual lessons, and practice that feels good.</p>
+          <h1>Coding concepts<br />made <span>easy to get.</span></h1>
+          <p>Turn your code into bite-sized video lessons. Understand anything easily!</p>
           <div className="hero-actions">
             <Link className="button-primary" href="/generate">Let’s make something <ArrowIcon /></Link>
             <Link className="button-secondary" href="/lesson"><span className="small-play">▶</span> Explore a sample</Link>
           </div>
-          <div className="main-trust"><span className="trust-check">✓</span> No silly questions. Learn at your own pace.</div>
         </div>
         <div className="hero-art" aria-label="Illustration of code becoming a lesson">
           <div className="art-glow" />
@@ -129,7 +127,6 @@ export default function Home() {
 
       <section className="mx-auto w-[min(760px,calc(100%_-_40px))] py-12" aria-labelledby="create-lesson-heading">
         <div className="mb-6 text-center">
-          <span className="page-eyebrow">YOUR TURN</span>
           <h2 id="create-lesson-heading" className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
             Make a lesson from your question
           </h2>
@@ -163,11 +160,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="main-bottom-cta">
-        <div className="cta-code-icon"><CodeIcon /></div>
-        <div><h2>Got a code question?</h2><p>Paste it, upload it, or just tell us what you’re curious about.</p></div>
-        <Link className="button-primary" href="/generate">Start creating <ArrowIcon /></Link>
-      </section>
       <footer className="site-footer"><Link className="app-brand" href="/"><span className="app-brand-mark"><CodeIcon /></span><span>codetutor<span className="brand-period">.</span></span></Link><span>Code questions are always welcome here.</span><Link href="/lesson">Explore a lesson</Link></footer>
     </main>
   );

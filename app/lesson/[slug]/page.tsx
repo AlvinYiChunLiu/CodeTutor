@@ -5,6 +5,7 @@ import InteractiveLesson from "@/components/ui/InteractiveLesson";
 import loopsLesson from "@/mocks/lesson-loops.json";
 import variablesLesson from "@/mocks/lesson-variables.json";
 import { Lesson as LessonSchema } from "@/lib/schema";
+import { cachedDemoVideo } from "@/lib/demo-cache";
 
 const sampleLessons = {
   loops: { lesson: loopsLesson, videoSrc: "/videos/loops-lesson.mp4" },
@@ -34,5 +35,8 @@ export default async function SampleLessonPage({ params }: { params: Promise<{ s
     throw error;
   }
 
-  return <InteractiveLesson lesson={LessonSchema.parse(JSON.parse(contents))} />;
+  const lesson = LessonSchema.parse(JSON.parse(contents));
+  // Its own narrated video, if `npm run demo:videos` made one (the voiced copy keeps the timings in sync).
+  const cached = await cachedDemoVideo(slug, lesson);
+  return <InteractiveLesson lesson={cached?.lesson ?? lesson} videoSrc={cached?.videoSrc} />;
 }

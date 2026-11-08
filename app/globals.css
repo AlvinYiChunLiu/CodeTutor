@@ -923,3 +923,6 @@ html[data-theme="dark"] .lesson-shell .lesson-export-video { background: #0c2340
 .adjust-progress-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; }
 .adjust-error { margin: 10px 0 0; padding: 10px 12px; border-radius: 7px; color: #aa4848; background: #fff0ef; font-size: 14px; }
 html[data-theme="dark"] .adjust-error { color: #ffb4a8; background: #3a1f22; }
+
+/* Lesson without a video (e.g. made on the hosted site, which can't render video) */
+.lesson-shell .lesson-video-missing p { color: var(--muted); }

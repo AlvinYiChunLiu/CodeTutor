@@ -136,7 +136,7 @@ function SceneVisual({ scene, language }: { scene: Scene; language: string }) {
   );
 }
 
-export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursion-lesson.mp4" }: { lesson: Lesson; videoSrc?: string }) {
+export default function InteractiveLesson({ lesson, videoSrc }: { lesson: Lesson; videoSrc?: string }) {
   const steps = useMemo<LessonStep[]>(
     () => lesson.chapters.flatMap((chapter, chapterIndex) => chapter.scenes.map((scene, sceneIndex) => ({ chapterIndex, sceneIndex, scene }))),
     [lesson],
@@ -342,35 +342,43 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
         </aside>
 
         <div className="lesson-wide">
-          <section className="lesson-video-card">
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
-                <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
+          {videoSrc ? (
+            <section className="lesson-video-card">
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
+                  <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
+                </div>
+                <a className="lesson-video-download" href={videoSrc} download>
+                  Download MP4
+                </a>
               </div>
-              <a className="lesson-video-download" href={videoSrc} download>
-                Download MP4
-              </a>
-            </div>
-            <video
-              ref={videoRef}
-              className="lesson-export-video"
-              controls
-              preload="metadata"
-              src={videoSrc}
-              onLoadedMetadata={checkVideoMatches}
-              onPlay={() => setPlaying(false)}
-              onTimeUpdate={(e) => {
-                if (!videoInSync || e.currentTarget.paused) return;
-                const t = e.currentTarget.currentTime;
-                setElapsed(t);
-                const index = sceneAt(t);
-                if (index !== activeStep) setActiveStep(index);
-              }}
-            >
-              Your browser does not support HTML video.
-            </video>
-          </section>
+              <video
+                ref={videoRef}
+                className="lesson-export-video"
+                controls
+                preload="metadata"
+                src={videoSrc}
+                onLoadedMetadata={checkVideoMatches}
+                onPlay={() => setPlaying(false)}
+                onTimeUpdate={(e) => {
+                  if (!videoInSync || e.currentTarget.paused) return;
+                  const t = e.currentTarget.currentTime;
+                  setElapsed(t);
+                  const index = sceneAt(t);
+                  if (index !== activeStep) setActiveStep(index);
+                }}
+              >
+                Your browser does not support HTML video.
+              </video>
+            </section>
+          ) : (
+            <section className="lesson-video-card lesson-video-missing">
+              <span className="section-eyebrow">VIDEO EXPORT</span>
+              <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">No video for this lesson</h2>
+              <p className="mt-2">The slides above have the whole lesson: step through them with the arrows or the transcript below.</p>
+            </section>
+          )}
 
           <section className="transcript-section">
             <div className="transcript-heading">

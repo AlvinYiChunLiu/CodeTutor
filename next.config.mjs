@@ -4,7 +4,7 @@ const nextConfig = {
   // so list the demo lessons explicitly or "What is recursion?" and /lesson/<slug> break when deployed.
   outputFileTracingIncludes: {
     "/api/lesson": ["./mocks/demo/**/*.json", "./mocks/demo-voiced/**/*.json"],
-    "/lesson/[slug]": ["./mocks/demo/**/*.json"],
+    "/lesson/[slug]": ["./mocks/demo/**/*.json", "./mocks/demo-voiced/**/*.json"],
   },
 };
 

@@ -42,6 +42,7 @@ export default function SiteHeader({ badge }: { badge?: string }) {
         <Link href="/" className={pathname === "/" ? "nav-active" : ""}>Main</Link>
         <Link href="/lesson" className={pathname === "/lesson" ? "nav-active" : ""}>Explore a lesson</Link>
         <Link href="/generate" className={pathname === "/generate" ? "nav-active" : ""}>Generate Code</Link>
+        <Link href="/past-videos" className={pathname === "/past-videos" ? "nav-active" : ""}>Past videos</Link>
       </nav>
       <div className="header-actions">
         {badge && <span className="header-badge">{badge}</span>}

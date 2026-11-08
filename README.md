@@ -1,4 +1,4 @@
-# CodeTutor
+# CodeTutor (hackcamp-codetutor)
 
 **Turn any coding question or code snippet into a narrated, animated video lesson, with practice problems.**
 

@@ -12,6 +12,19 @@ Stack: Next.js (App Router) · React · Tailwind CSS · Remotion · Shiki
 
 API keys are only read on the server (`app/api/*/route.ts` and `lib/`). Don't prefix them with `NEXT_PUBLIC_`.
 
+## Demo lessons
+
+Add your `LLM_API_KEY` to your ignored `.env.local` file, then generate the visual demo lessons with:
+
+```sh
+npm run lesson:test -- binary-search
+npm run lesson:test -- factorial
+npm run lesson:test -- two-pointers
+npm run lesson:test -- recursion
+```
+
+Each lesson is saved under `mocks/demo/` and can be opened at `/lesson/<filename-without-extension>` (for example, `/lesson/binary-search`). Validate a saved lesson with `npm run validate -- mocks/demo/binary-search.json`.
+
 ## Folders
 
 | Folder | What goes there |

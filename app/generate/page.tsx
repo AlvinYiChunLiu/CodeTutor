@@ -106,7 +106,7 @@ async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    sessionStorage.setItem("lesson", JSON.stringify(data.lesson));
+    sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(data.lesson));
     router.push("/lesson");
   } catch (e) {
     setMessage("");

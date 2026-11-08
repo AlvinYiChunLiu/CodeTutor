@@ -1,43 +1,16 @@
 import type { CSSProperties } from "react";
 import {
 	AbsoluteFill,
-	Audio,
 	Sequence,
 	interpolate,
-	staticFile,
 	useCurrentFrame,
 } from "remotion";
 import type { Lesson, Scene } from "../lib/schema";
-
-const FPS = 30;
-const SCENE_PADDING_SECONDS = 0.8;
-const WORDS_PER_SECOND = 2.4;
+import { flattenLessonScenes, sceneDurationInFrames, type LessonSceneEntry } from "./timeline";
 
 type LessonVideoProps = { lesson: Lesson };
-type VideoScene = { scene: Scene; chapterTitle: string; chapterNumber: number; sceneNumber: number };
 
-function flattenScenes(lesson: Lesson): VideoScene[] {
-	return lesson.chapters.flatMap((chapter, chapterIndex) =>
-		chapter.scenes.map((scene, sceneIndex) => ({
-			scene,
-			chapterTitle: chapter.title,
-			chapterNumber: chapterIndex + 1,
-			sceneNumber: sceneIndex + 1,
-		})),
-	);
-}
-
-function sceneDurationInFrames(scene: Scene) {
-	const estimatedDuration = Math.max(4, scene.narration.trim().split(/\s+/).length / WORDS_PER_SECOND);
-	const duration = scene.audio?.durationSec ?? estimatedDuration;
-	return Math.ceil((duration + SCENE_PADDING_SECONDS) * FPS);
-}
-
-export function getLessonDurationInFrames(lesson: Lesson) {
-	return flattenScenes(lesson).reduce((total, { scene }) => total + sceneDurationInFrames(scene), 0);
-}
-
-function SceneContent({ scene }: { scene: Scene }) {
+function SceneContent({ scene, language, lessonTitle }: { scene: Scene; language: string; lessonTitle: string }) {
 	if (scene.type === "title") {
 		return (
 			<div style={{ maxWidth: 1050 }}>
@@ -51,7 +24,7 @@ function SceneContent({ scene }: { scene: Scene }) {
 	if (scene.type === "code") {
 		return (
 			<div style={styles.codeWindow}>
-				<div style={styles.codeHeader}><span style={styles.windowDots}>● ● ●</span><span>{"PYTHON · FACTORIAL"}</span></div>
+				<div style={styles.codeHeader}><span style={styles.windowDots}>● ● ●</span><span>{language.toUpperCase()} · EXAMPLE</span></div>
 				<pre style={styles.codeBlock}>
 					{scene.code.split("\n").map((line, index) => (
 						<div key={`${index}-${line}`} style={{
@@ -72,7 +45,7 @@ function SceneContent({ scene }: { scene: Scene }) {
 			<div style={styles.outputWindow}>
 				<p style={styles.eyebrow}>PROGRAM OUTPUT</p>
 				<pre style={styles.outputText}>{scene.output}</pre>
-				<p style={styles.outputResult}>The calls resolve to <strong>6</strong>.</p>
+				<p style={styles.outputResult}>The program prints this result.</p>
 			</div>
 		);
 	}
@@ -118,7 +91,7 @@ function SceneContent({ scene }: { scene: Scene }) {
 	return (
 		<div style={{ width: 900 }}>
 			<p style={styles.eyebrow}>THE BIG TAKEAWAYS</p>
-			<h2 style={styles.recapTitle}>Recursion, in three ideas.</h2>
+			<h2 style={styles.recapTitle}>{lessonTitle}: key ideas.</h2>
 			<ol style={styles.recapList}>
 				{scene.points.map((point, index) => (
 					<li key={point}><span style={styles.recapNumber}>0{index + 1}</span>{point}</li>
@@ -129,7 +102,7 @@ function SceneContent({ scene }: { scene: Scene }) {
 }
 
 function LessonScene({ item, index, total, durationInFrames, lessonTitle, language }: {
-	item: VideoScene;
+	item: LessonSceneEntry;
 	index: number;
 	total: number;
 	durationInFrames: number;
@@ -151,7 +124,7 @@ function LessonScene({ item, index, total, durationInFrames, lessonTitle, langua
 				<span style={styles.chapterLabel}>CHAPTER {String(item.chapterNumber).padStart(2, "0")} · {item.chapterTitle.toUpperCase()}</span>
 			</header>
 			<main style={{ ...styles.main, opacity: entrance, transform: `translateY(${lift}px)` }}>
-				<SceneContent scene={item.scene} />
+				<SceneContent scene={item.scene} language={language} lessonTitle={lessonTitle} />
 			</main>
 			<footer style={styles.footer}>
 				<div style={styles.captionMark} />
@@ -163,7 +136,7 @@ function LessonScene({ item, index, total, durationInFrames, lessonTitle, langua
 }
 
 export function LessonVideo({ lesson }: LessonVideoProps) {
-	const scenes = flattenScenes(lesson);
+	const scenes = flattenLessonScenes(lesson);
 	let nextFrame = 0;
 
 	return (
@@ -183,7 +156,6 @@ export function LessonVideo({ lesson }: LessonVideoProps) {
 							lessonTitle={lesson.title}
 							language={lesson.codeLanguage}
 						/>
-						{item.scene.audio?.url && <Audio src={staticFile(item.scene.audio.url)} />}
 					</Sequence>
 				);
 			})}

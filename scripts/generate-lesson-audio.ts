@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 import dotenv from "dotenv";
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { Lesson as LessonSchema } from "../lib/schema";
@@ -10,8 +11,9 @@ if (!process.env.ELEVENLABS_API_KEY) {
   throw new Error("Set ELEVENLABS_API_KEY in .env.local before generating narration.");
 }
 
-const lessonPath = path.resolve("mocks/sample-lesson.json");
-const audioDirectory = path.resolve("public/audio");
+const lessonPath = path.resolve(process.argv[2] || "mocks/sample-lesson.json");
+const lessonName = path.basename(lessonPath, path.extname(lessonPath)).replace(/[^a-zA-Z0-9_-]/g, "-");
+const audioDirectory = path.resolve("public/audio", lessonName);
 const videoDirectory = path.resolve("public/videos");
 const lesson = LessonSchema.parse(JSON.parse(await readFile(lessonPath, "utf8")));
 const elevenlabs = new ElevenLabsClient();
@@ -22,7 +24,8 @@ await mkdir(videoDirectory, { recursive: true });
 
 for (const chapter of lesson.chapters) {
   for (const scene of chapter.scenes) {
-    const fileName = `${scene.id}.mp3`;
+    const narrationHash = createHash("sha256").update(scene.narration).digest("hex").slice(0, 12);
+    const fileName = `${scene.id}-${narrationHash}.mp3`;
     const audioPath = path.join(audioDirectory, fileName);
     let audioBytes: Buffer;
 
@@ -40,7 +43,7 @@ for (const chapter of lesson.chapters) {
     }
 
     scene.audio = {
-      url: `audio/${fileName}`,
+      url: `audio/${lessonName}/${fileName}`,
       durationSec: (audioBytes.byteLength * 8) / 128_000,
     };
     console.log(`Generated narration for ${scene.id} (${scene.audio.durationSec.toFixed(1)}s)`);

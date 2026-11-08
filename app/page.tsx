@@ -1,5 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import InputForm, { type LessonInput } from "@/components/ui/InputForm";
+import LoadingSteps from "@/components/ui/LoadingSteps";
 import SiteHeader from "@/components/ui/SiteHeader";
+import { Lesson as LessonSchema } from "@/lib/schema";
 
 function ArrowIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
@@ -14,6 +21,72 @@ function BookIcon() {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!isSubmitting) return;
+
+    const timer = window.setInterval(() => {
+      setCurrentStepIndex((step) => Math.min(step + 1, 4));
+    }, 1200);
+    return () => window.clearInterval(timer);
+  }, [isSubmitting]);
+
+  async function handleSubmit(input: LessonInput) {
+    setError("");
+    setCurrentStepIndex(0);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/lesson", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      const result: unknown = await response.json();
+
+      if (!response.ok) {
+        const message = typeof result === "object" && result !== null && "error" in result
+          && typeof result.error === "string"
+          ? result.error
+          : `Lesson generation failed (${response.status}). Please try again.`;
+        throw new Error(message);
+      }
+
+      const lessonData = typeof result === "object" && result !== null && "lesson" in result
+        ? result.lesson
+        : result;
+      const parsedLesson = LessonSchema.safeParse(lessonData);
+      if (!parsedLesson.success) {
+        throw new Error("The lesson response was invalid. Please try again.");
+      }
+
+      window.sessionStorage.setItem("codetutor-generated-lesson", JSON.stringify(parsedLesson.data));
+      router.push("/lesson");
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Something went wrong. Please try again.");
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isSubmitting) {
+    return (
+      <main className="main-shell">
+        <SiteHeader />
+        <section className="mx-auto w-[min(560px,calc(100%_-_40px))] py-20">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 text-[var(--ink)] shadow-sm">
+            <h1 className="mb-2 text-2xl font-bold">Creating your lesson</h1>
+            <p className="mb-8 text-sm text-[var(--muted)]">We’re putting together a lesson just for you.</p>
+            <LoadingSteps currentStepIndex={currentStepIndex} />
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="main-shell">
       <SiteHeader />
@@ -48,6 +121,17 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="mx-auto w-[min(760px,calc(100%_-_40px))] py-12" aria-labelledby="create-lesson-heading">
+        <div className="mb-6 text-center">
+          <span className="page-eyebrow">YOUR TURN</span>
+          <h2 id="create-lesson-heading" className="mt-2 text-3xl font-bold tracking-tight text-[var(--ink)]">
+            Make a lesson from your question
+          </h2>
+        </div>
+        {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{error}</p>}
+        <InputForm onSubmit={handleSubmit} />
+      </section>
+
       <section className="gallery-section">
         <div className="gallery-heading">
           <div>
@@ -59,16 +143,16 @@ export default function Home() {
         </div>
         <div className="gallery-grid">
           <Link className="gallery-card gallery-featured" href="/lesson">
-            <div className="gallery-visual visual-recursion"><span>n!</span><div className="recursion-steps"><i>3</i><b>×</b><i>2</i><b>×</b><i>1</i><b>=</b><strong>6</strong></div></div>
+            <div className="gallery-visual gallery-video"><video src="/videos/recursion-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">WITH VOICEOVER</span></div>
             <div className="gallery-card-copy"><div><span className="gallery-tag">VISUAL LESSON</span><span className="gallery-time">4 MIN</span></div><h3>Recursion, without the headache</h3><p>Follow each function call and see how the answer comes back.</p><span className="gallery-open">Try this lesson <ArrowIcon /></span></div>
           </Link>
-          <Link className="gallery-card" href="/generate">
-            <div className="gallery-visual visual-code"><CodeIcon /><span>input</span><i>→</i><b>aha!</b></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">CODE WALKTHROUGH</span><span className="gallery-time">YOUR PACE</span></div><h3>Make tricky code feel simple</h3><p>Upload a snippet and choose how you want to understand it.</p><span className="gallery-open">Bring your own code <ArrowIcon /></span></div>
+          <Link className="gallery-card" href="/lesson/loops">
+            <div className="gallery-visual gallery-video"><video src="/videos/loops-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Loops, one step at a time</h3><p>See how one loop handles a list of names.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
-          <Link className="gallery-card" href="/generate">
-            <div className="gallery-visual visual-practice"><span className="practice-number">01</span><div className="practice-line" /><div className="practice-line short" /><div className="practice-choice"><b>A</b><span>Give it a try</span><i>✓</i></div></div>
-            <div className="gallery-card-copy"><div><span className="gallery-tag">PRACTICE & QUIZZES</span><span className="gallery-time">JUST FOR YOU</span></div><h3>Learn it, then lock it in</h3><p>Turn your code into a quick quiz, flashcards, or a mini challenge.</p><span className="gallery-open">Make a practice set <ArrowIcon /></span></div>
+          <Link className="gallery-card" href="/lesson/variables">
+            <div className="gallery-visual gallery-video"><video src="/videos/variables-lesson.mp4" autoPlay loop muted playsInline aria-hidden="true" /><span className="gallery-video-badge">SILENT PREVIEW</span></div>
+            <div className="gallery-card-copy"><div><span className="gallery-tag">JAVASCRIPT · BEGINNER</span><span className="gallery-time">SILENT</span></div><h3>Give a value a name</h3><p>Learn how variables store and update information.</p><span className="gallery-open">Watch the lesson <ArrowIcon /></span></div>
           </Link>
         </div>
       </section>

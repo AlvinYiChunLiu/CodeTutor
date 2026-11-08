@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "title": "Variables: give values a name",
+  "summary": "Store a value under a name, then read or update it as your program runs.",
+  "level": "beginner",
+  "codeLanguage": "javascript",
+  "chapters": [
+    {
+      "id": "variables-basics",
+      "title": "Name a value",
+      "scenes": [
+        {
+          "id": "variables-title-01",
+          "type": "title",
+          "heading": "Give a value a name.",
+          "subheading": "Variables help your program remember information.",
+          "narration": "A variable gives a value a name so your program can use it again."
+        },
+        {
+          "id": "variables-code-01",
+          "type": "code",
+          "code": "let points = 0;\npoints = points + 10;\nconsole.log(points);",
+          "highlightLines": [1],
+          "narration": "Here, points is a name that starts with the value zero."
+        },
+        {
+          "id": "variables-code-02",
+          "type": "code",
+          "code": "let points = 0;\npoints = points + 10;\nconsole.log(points);",
+          "highlightLines": [2],
+          "narration": "The next line reads the current value and stores ten back in points."
+        },
+        {
+          "id": "variables-output-01",
+          "type": "output",
+          "output": "10",
+          "narration": "When we print points, its updated value is ten."
+        },
+        {
+          "id": "variables-recap-01",
+          "type": "recap",
+          "points": [
+            "A variable associates a name with a value",
+            "Use the name to read the current value",
+            "Assign again to update what it stores"
+          ],
+          "narration": "Name values to make them easier to reuse and update."
+        }
+      ]
+    }
+  ]
+}

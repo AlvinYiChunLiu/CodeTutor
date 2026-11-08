@@ -15,8 +15,6 @@ const outputChoices = [
   { id: "video", title: "Explainer video", detail: "See the idea unfold step by step", icon: "▶" },
   { id: "walkthrough", title: "Walkthrough", detail: "A friendly, line-by-line guide", icon: "↳" },
   { id: "quiz", title: "Quiz", detail: "A few questions to check your understanding", icon: "?" },
-  { id: "flashcards", title: "Flashcards", detail: "Quick prompts for a little practice", icon: "▤" },
-  { id: "summary", title: "Plain summary", detail: "The main idea, without the jargon", icon: "≡" },
 ];
 
 export default function GeneratePage() {

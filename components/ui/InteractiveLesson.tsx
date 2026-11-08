@@ -220,9 +220,9 @@ export default function InteractiveLesson({ lesson, videoSrc = "/videos/recursio
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <span className="section-eyebrow">{hasNarrationAudio ? "VIDEO EXPORT · NARRATED" : "VIDEO EXPORT · SILENT"}</span>
-                <h2 className="mt-2 text-xl font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
+                <h2 className="mt-2 text-[1.375rem] font-semibold text-neutral-100">{hasNarrationAudio ? "Narrated lesson video" : "Silent lesson video"}</h2>
               </div>
-              <a className="rounded-md border border-white/15 px-4 py-2 text-sm text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
+              <a className="rounded-md border border-white/15 px-4 py-2 text-base text-neutral-200 transition hover:border-lime-300 hover:text-lime-200" href={videoSrc} download>
                 Download MP4
               </a>
             </div>

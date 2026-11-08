@@ -10,6 +10,7 @@ import { Lesson } from "@/lib/schema";
 import { LessonRequest } from "@/lib/ai/request";
 import { generateLesson, LessonGenerationError } from "@/lib/ai/lesson";
 import { LLMError } from "@/lib/ai/llm";
+import { shouldMock } from "@/lib/ai/http";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -30,8 +31,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const mock = new URL(req.url).searchParams.get("mock") === "1" || process.env.LLM_MOCK === "1";
+  const mock = shouldMock(req);
   if (mock) {
+    if (!process.env.LLM_API_KEY) console.log("[lesson] no LLM_API_KEY: returning the sample lesson");
     await new Promise((r) => setTimeout(r, 800)); // so the loading screen is visible
     return Response.json({ lesson: Lesson.parse(sample), meta: { model: "mock", totalMs: 800, steps: [], warnings: [] } });
   }

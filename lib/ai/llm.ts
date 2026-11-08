@@ -4,7 +4,7 @@
  */
 
 const BASE_URL = process.env.FEATHERLESS_BASE_URL ?? "https://api.featherless.ai/v1";
-export const DEFAULT_MODEL = process.env.FEATHERLESS_MODEL ?? "Qwen/Qwen2.5-72B-Instruct";
+export const DEFAULT_MODEL = process.env.FEATHERLESS_MODEL ?? "Qwen/Qwen2.5-Coder-32B-Instruct";
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 

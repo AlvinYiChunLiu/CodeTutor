@@ -18,3 +18,13 @@ export function errorResponse(route: string, e: unknown): Response {
   }
   return Response.json({ error: "Something went wrong. Try again." }, { status: 500 });
 }
+
+/**
+ * Use canned data instead of calling Featherless when:
+ *  - the URL has ?mock=1, or LLM_MOCK=1 is set, or
+ *  - there's no LLM_API_KEY on a dev machine (so teammates without the key aren't blocked).
+ */
+export function shouldMock(req: Request): boolean {
+  if (new URL(req.url).searchParams.get("mock") === "1" || process.env.LLM_MOCK === "1") return true;
+  return !process.env.LLM_API_KEY && process.env.NODE_ENV !== "production";
+}

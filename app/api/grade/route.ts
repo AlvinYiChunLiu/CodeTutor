@@ -5,7 +5,7 @@
  * ?mock=1 (or LLM_MOCK=1) returns a canned "almost" result.
  */
 import { gradeAnswer, GradeRequest } from "@/lib/ai/practice";
-import { errorResponse, readJson } from "@/lib/ai/http";
+import { errorResponse, readJson, shouldMock } from "@/lib/ai/http";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return Response.json({ error: parsed.error.issues[0]?.message ?? "Invalid request.", issues: parsed.error.issues.slice(0, 5) }, { status: 400 });
   }
 
-  const mock = new URL(req.url).searchParams.get("mock") === "1" || process.env.LLM_MOCK === "1";
+  const mock = shouldMock(req);
   if (mock) {
     return Response.json({
       result: {

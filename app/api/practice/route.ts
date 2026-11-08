@@ -6,7 +6,7 @@
  */
 import sample from "@/mocks/sample-lesson.json";
 import { makePractice, PracticeRequest } from "@/lib/ai/practice";
-import { errorResponse, readJson } from "@/lib/ai/http";
+import { errorResponse, readJson, shouldMock } from "@/lib/ai/http";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const body = await readJson(req);
   if (body instanceof Response) return body;
 
-  const mock = new URL(req.url).searchParams.get("mock") === "1" || process.env.LLM_MOCK === "1";
+  const mock = shouldMock(req);
   if (mock) {
     return Response.json({
       practice: (sample as { practice?: unknown }).practice ?? {
